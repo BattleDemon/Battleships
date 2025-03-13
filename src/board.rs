@@ -1,0 +1,8 @@
+
+struct Board {
+
+}
+
+enum Cell {
+    
+}

@@ -11,7 +11,7 @@ Define the nessesary Structs and Enums
     GameState (struct) - Tracks turns and handles win conditions
 
 Implement the game board
-    Make a 12x12 grid (instead of the usual 10x10 because of the added features)
+    Make a 10x10 grid
     Function to place ships while ensuring no overlaps
     function to display board
 
