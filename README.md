@@ -16,7 +16,7 @@
 
 ![screenshot](images/Screenshot_flowchart.png)
 
-## Timeline 
+### Timeline 
 Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
 
 ### If I get more time
