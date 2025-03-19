@@ -16,6 +16,9 @@
 
 ![screenshot](images/Screenshot_flowchart.png)
 
+## Timeline 
+Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
+
 ### If I get more time
 
   If i finish my game before it is due I will attempt to add a very simple AI to the game which will be more than a random number generater. Another thing I could do is improve the graphics or making it more user friendly.
