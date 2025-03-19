@@ -24,26 +24,33 @@ Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
   If i finish my game before it is due I will attempt to add a very simple AI to the game which will be more than a random number generater. Another thing I could do is improve the graphics or making it more user friendly.
 
 ## Prototyping 
-### Early Prototype 
-#### Code at DATE OF FIRST PROTOTYPE
+### Prototype with basic game loop
+#### Code at March 4th 
 
 #### Video of Functionality 
 
 #### Issues and Solutions 
 
-### Mid Prototype 
-#### Code at DATE OF SECOND PROTOTYPE
+### Prototype with turn based systems and actions 
+#### Code at March 27th 
 
 #### Video of Functionality 
 
 #### Issues and Solutions 
 
-### Late Prototype 
-#### Code at DATE OF LAST PROTOTYPE
+### Prototype with Ui and visuals
+#### Code at March 30th 
 
 #### Video of Functionality 
 
 #### Issues and Solutions 
+
+### Prototype with all system but needing balancing
+#### Code at April 3rd 
+
+#### Video of Functionality 
+
+#### Issues and Solution
 
 ## Reflecting 
 ### How is the overall desing 
