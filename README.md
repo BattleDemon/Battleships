@@ -14,6 +14,8 @@ So what is my twist? Well instead of you just been able to fire at the enemy you
 
 ### Flowchart
 
+![screenshot](Screenshot_flowchart.png)
+
 ### If I get more time
 
 If i finish my game before it is due I will attempt to add a very simple AI to the game which will be more than a random number generater. Another thing I could do is improve the graphics or making it more user friendly.
