@@ -1,4 +1,4 @@
-#Timeline and plan
+# Timeline and plan
 
 ## Week 1 - Core Mechanics 
 
