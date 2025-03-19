@@ -23,6 +23,7 @@
     - select grid pos
     - check if hit/miss
     - update enemy board and guess board
+- Keep a Prototype (Basic game loop working)
 
 ### Day 5 March 25
 - Implement Torpedo (missle with extra shot)
@@ -41,6 +42,7 @@
 - Implement turn based system
 - Alternate player turns
 - after play card draw new one
+- Keep a prototype (Turn systems and actions)
 
 
 ### Day 8 March 28
@@ -52,6 +54,7 @@
 
 ### Day 10 March 30
 - Visual improvments for actions maybe explosion for hit splash for miss
+- Keep a prototype (Ui and visuals)
 
 ### Day 11 March 31
 - Win loss detection
@@ -71,6 +74,7 @@
 ### Day 14 April 3
 - Improve UI
 - Text and layout
+- keep a prototype (systems all working but need to do balancing)
 
 ### Day 15 April 4
 - Playtest deck sizes
