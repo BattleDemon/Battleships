@@ -25,14 +25,25 @@ Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
 
 ## Prototyping 
 ### Early Prototype 
-#### Test
+#### Code at DATE OF FIRST PROTOTYPE
+
+#### Video of Functionality 
+
+#### Issues and Solutions 
 
 ### Mid Prototype 
+#### Code at DATE OF SECOND PROTOTYPE
+
+#### Video of Functionality 
+
+#### Issues and Solutions 
 
 ### Late Prototype 
+#### Code at DATE OF LAST PROTOTYPE
 
-### Final Product
+#### Video of Functionality 
 
+#### Issues and Solutions 
 
 ## Reflecting 
 ### How is the overall desing 
