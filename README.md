@@ -1,4 +1,4 @@
-# Battleship - - - - - - - - - - - - - - - - - - - Dexter Hart
+# Battleship 
 ## Preplanning
 ### What is Battleships
 
