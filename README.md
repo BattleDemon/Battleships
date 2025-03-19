@@ -14,7 +14,7 @@
 
 ### Flowchart
 
-![screenshot](Screenshot_flowchart.png)
+![screenshot](images/Screenshot_flowchart.png)
 
 ### If I get more time
 
