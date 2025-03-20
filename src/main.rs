@@ -6,7 +6,7 @@ use macroquad::prelude::*;
 
 
 // Constants
-const GRID_SIZE:usize = 10;
+const GRID_SIZE:usize = 10; 
 const HAND_SIZE:usize = 3;
 const DECK_SIZE: usize = 48;
 
@@ -35,11 +35,11 @@ enum Orientation {
 // Used to keep track of what type of ship 
 #[derive(Clone)]
 enum ShipType {
-    Battleship,
-    Cruiser,
-    Submarine,
-    Destroyer,
-    Dreadnaught,
+    Battleship, // ship size 4
+    Cruiser, // ship size 3
+    Submarine, // ship size 3
+    Destroyer, // ship size 2
+    Dreadnaught, // ship size 5
 }
 
 
@@ -57,14 +57,19 @@ enum ActionType {
     Missle,
     Torpedo,
     Patrol,
-    Reinforce,
     RadarScan,
-    AirDefence,
+    Reinforce,
 }
 
 // Keeps a vector of actions and used to randomly select them
 struct Deck {
     deck_list: [ActionType; DECK_SIZE]
+    // deck contents
+    // missle the most common ( 16/48 )
+    // torpedo ( 10/48 )
+    // patrol ( 8/48 )
+    // Radarscan ( 7/48 )
+    // Reinforce ( 7/48 )
 }
 
 // Track all player related variables 
@@ -89,9 +94,12 @@ impl Board {
         }
     }
     
-    fn change_cell(&mut self, x:usize,y:usize,ctype:Cells) {
+    fn change_cell(&mut self, x:usize,y:usize,ctype:Cells,mut grid: Grid)-> Grid {
         // Changes the provided cell to occupied
         self.cells[x][y] = ctype;
+        grid.color_cell(x, y, GRAY);
+
+        grid
     }
 }
 
@@ -106,22 +114,19 @@ impl Deck {
     // Deck Constructor
     fn new() -> Self {
         Deck {
-            deck_list: [ActionType::Missle; DECK_SIZE]
+            deck_list: [ActionType::Missle; DECK_SIZE],
         }
-    }
-    fn randomise_deck() {
-        
     }
 
     fn shuffle() {
-
+        // randomly select a permutation of the deck 
     }
 
     fn draw_card() {
 
     }
 }
-/* 
+
 // Player functions
 impl Player {
     // Player Constructor
@@ -136,35 +141,35 @@ impl Player {
         }
     }
 }
-*/
+
 
 // Main
 #[macroquad::main("Battleships")]
 async fn main() {
     request_new_screen_size(1280., 720.);
 
-    let mut test_player_board = Board::new(); 
+    let mut test_player_board = Board::new();
+    let mut test_grid = Grid::new(400.0,400.0,10,10,1.0); 
     let mut test_quess_board = Board::new();
+    let mut test_grid2 = Grid::new(400.0,400.0,10,10,1.0);
 
     // Define Placeholder ships
-    test_player_board.change_cell(1,2,Cells::Occupied);
-    test_player_board.change_cell(2,2,Cells::Occupied);
+    test_grid = test_player_board.change_cell(0,2,Cells::Occupied,test_grid);
+    test_grid = test_player_board.change_cell(0,3,Cells::Occupied,test_grid);
 
-    test_player_board.change_cell(7,5,Cells::Occupied);
-    test_player_board.change_cell(8,5,Cells::Occupied);
-    test_player_board.change_cell(9,5,Cells::Occupied);
+    test_grid = test_player_board.change_cell(7,5,Cells::Occupied,test_grid);
+    test_grid = test_player_board.change_cell(8,5,Cells::Occupied,test_grid);
+    test_grid = test_player_board.change_cell(9,5,Cells::Occupied,test_grid);
 
     // Place holder grids 
-    let mut test_grid = Grid::new(400.0,400.0,10,10,1.0);
     test_grid.set_x_offset(macroquad_grid_dex::Position::Pixels((150.)));
     test_grid.set_y_offset(macroquad_grid_dex::Position::Pixels((50.)));
     test_grid.set_cell_bg_color(WHITE);
 
-    let mut test_grid2 = Grid::new(400.0,400.0,10,10,1.0);
+    
     test_grid2.set_x_offset(macroquad_grid_dex::Position::Pixels((screen_width()-100.)));
     test_grid2.set_y_offset(macroquad_grid_dex::Position::Pixels((50.)));
     test_grid2.set_cell_bg_color(WHITE);
-
 
     loop {
         clear_background(WHITE);
