@@ -6,7 +6,7 @@
 - Set up window and game loop &#x2611;
 - draw 10x10 grid &#x2611;
 - create board and cells &#x2611;
-- display placeholderships 
+- display placeholderships &#x2611;
 
 ### Day 2 March 21
 - Define ship struct
