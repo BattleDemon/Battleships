@@ -1,5 +1,8 @@
 // Imports
+
+use macroquad_grid::Grid;
 use macroquad::prelude::*;
+
 
 // Constants
 const GRID_SIZE:usize = 10;
@@ -8,7 +11,7 @@ const DECK_SIZE: usize = 48;
 
 // Structs and Enums
 // Cells used to keep track of the state of a cell/coordinate on the board
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 enum Cells {
     Empty, // Nothig is on this cell or you don't know if something is there
     Occupied, // The cell has a ship
@@ -64,6 +67,7 @@ struct Deck {
 }
 
 // Track all player related variables 
+
 struct Player {
     board: Board,
     guess_board: Board,
@@ -72,6 +76,7 @@ struct Player {
     ships: Vec<Ship>,
     ship_count: usize,
 }
+
 
 // implements
 // Board Functions
@@ -83,8 +88,9 @@ impl Board {
         }
     }
     
-    fn place_ship() {
-
+    fn change_cell(&mut self, x:usize,y:usize,ctype:Cells) {
+        // Changes the provided cell to occupied
+        self.cells[x][y] = ctype;
     }
 }
 
@@ -114,7 +120,7 @@ impl Deck {
 
     }
 }
-
+/* 
 // Player functions
 impl Player {
     // Player Constructor
@@ -129,11 +135,29 @@ impl Player {
         }
     }
 }
+*/
 
 // Main
 #[macroquad::main("Battleships")]
 async fn main() {
+    let mut test_player_board = Board::new(); 
+    let mut test_quess_board = Board::new();
+
+    // Define Placeholder ships
+    test_player_board.change_cell(1,2,Cells::Occupied);
+    test_player_board.change_cell(2,2,Cells::Occupied);
+
+    test_player_board.change_cell(7,5,Cells::Occupied);
+    test_player_board.change_cell(8,5,Cells::Occupied);
+    test_player_board.change_cell(9,5,Cells::Occupied);
+
+    let test_grid = Grid::new(100.0,100.0,10,10,10.0);
+
     loop {
+        clear_background(PURPLE);
+
+        
+        //test_grid.draw();
 
         next_frame().await
     }
