@@ -3,7 +3,7 @@
 ## Week 1 - Core Mechanics 
 
 ### Day 1 March 20
-- Set up window and game loop
+- Set up window and game loop        _/
 - draw 10x10 grid
 - create board and cells
 - display placeholderships
