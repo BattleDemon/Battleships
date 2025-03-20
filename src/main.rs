@@ -1,6 +1,7 @@
 // Imports
 
-use macroquad_grid::Grid;
+extern crate macroquad_grid_dex;
+use macroquad_grid_dex::Grid;
 use macroquad::prelude::*;
 
 
@@ -140,6 +141,8 @@ impl Player {
 // Main
 #[macroquad::main("Battleships")]
 async fn main() {
+    request_new_screen_size(1280., 720.);
+
     let mut test_player_board = Board::new(); 
     let mut test_quess_board = Board::new();
 
@@ -151,13 +154,24 @@ async fn main() {
     test_player_board.change_cell(8,5,Cells::Occupied);
     test_player_board.change_cell(9,5,Cells::Occupied);
 
-    let test_grid = Grid::new(100.0,100.0,10,10,10.0);
+    // Place holder grids 
+    let mut test_grid = Grid::new(400.0,400.0,10,10,1.0);
+    test_grid.set_x_offset(macroquad_grid_dex::Position::Pixels((150.)));
+    test_grid.set_y_offset(macroquad_grid_dex::Position::Pixels((50.)));
+    test_grid.set_cell_bg_color(WHITE);
+
+    let mut test_grid2 = Grid::new(400.0,400.0,10,10,1.0);
+    test_grid2.set_x_offset(macroquad_grid_dex::Position::Pixels((screen_width()-100.)));
+    test_grid2.set_y_offset(macroquad_grid_dex::Position::Pixels((50.)));
+    test_grid2.set_cell_bg_color(WHITE);
+
 
     loop {
-        clear_background(PURPLE);
+        clear_background(WHITE);
 
         
-        //test_grid.draw();
+        test_grid.draw();
+        test_grid2.draw();
 
         next_frame().await
     }
