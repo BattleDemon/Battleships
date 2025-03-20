@@ -3,14 +3,14 @@
 ## Week 1 - Core Mechanics 
 
 ### Day 1 March 20
-- Set up window and game loop &check
-- draw 10x10 grid
-- create board and cells
-- display placeholderships
+- Set up window and game loop &#x2611;
+- draw 10x10 grid &#x2611;
+- create board and cells &#x2611;
+- display placeholderships 
 
 ### Day 2 March 21
 - Define ship struct
-- Implement place ship func
+- Implement place ship func &#x2611;
 - randomly placeship (place holder you can place them yourself later)
 
 ### Day 3 March 22
