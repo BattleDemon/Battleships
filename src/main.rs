@@ -171,6 +171,8 @@ async fn main() {
     test_grid2.set_y_offset(macroquad_grid_dex::Position::Pixels((50.)));
     test_grid2.set_cell_bg_color(WHITE);
 
+    test_grid2.set_cell_text(2,2,Some("X"));
+
     loop {
         clear_background(WHITE);
 
