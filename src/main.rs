@@ -4,7 +4,6 @@ use macroquad::prelude::*;
 extern crate macroquad_grid_dex;
 use macroquad_grid_dex::Grid;
 
-
 // Constants
 const GRID_SIZE:usize = 10; 
 const HAND_SIZE:usize = 3;
@@ -41,7 +40,6 @@ enum ShipType {
     Dreadnaught, // ship size 5
 }
 
-
 // Track ships, its positions and orientation
 #[derive(Clone)]
 struct Ship {
@@ -72,7 +70,6 @@ struct Deck {
 }
 
 // Track all player related variables 
-
 struct Player {
     board: Board,
     guess_board: Board,
@@ -81,7 +78,6 @@ struct Player {
     ships: Vec<Ship>,
     ship_count: usize,
 }
-
 
 // implements
 // Board Functions
@@ -115,6 +111,29 @@ impl Deck {
         Deck {
             deck_list: [ActionType::Missle; DECK_SIZE],
         }
+    }
+
+    fn build(&mut self) {
+        let mut deck_pos = 17; // first card not a missle
+
+        loop {
+            if deck_pos <= 26 {
+                self.deck_list[deck_pos] = ActionType::Torpedo;
+            }
+            else if deck_pos <= 34 {
+                self.deck_list[deck_pos] = ActionType::Patrol;
+            }
+            else if deck_pos <= 41 {
+                self.deck_list[17] = ActionType::Reinforce;
+            }
+            else if deck_pos <= 48 {
+                self.deck_list[17] = ActionType::RadarScan;
+            }
+            else if deck_pos == 49 {
+                break;
+            }
+            deck_pos += 1;
+        }  
     }
 
     fn shuffle(&mut self,){
@@ -163,13 +182,12 @@ async fn main() {
     test_grid = test_player_board.change_cell(9,5,Cells::Occupied,test_grid);
 
     // Place holder grids 
-    test_grid.set_x_offset(macroquad_grid_dex::Position::Pixels((150.)));
-    test_grid.set_y_offset(macroquad_grid_dex::Position::Pixels((50.)));
+    test_grid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
+    test_grid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
     test_grid.set_cell_bg_color(WHITE);
 
-    
-    test_grid2.set_x_offset(macroquad_grid_dex::Position::Pixels((screen_width()-100.)));
-    test_grid2.set_y_offset(macroquad_grid_dex::Position::Pixels((50.)));
+    test_grid2.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
+    test_grid2.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
     test_grid2.set_cell_bg_color(WHITE);
 
     test_grid2.set_cell_text(2,2,Some("X"));
@@ -177,7 +195,6 @@ async fn main() {
     loop {
         clear_background(WHITE);
 
-        
         test_grid.draw();
         test_grid2.draw();
 
