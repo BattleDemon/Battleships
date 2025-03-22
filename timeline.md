@@ -14,8 +14,8 @@
 - randomly placeship (place holder you can place them yourself later)
 
 ### Day 3 March 22
-- Create Deck with list of action cards 
-- Implement Shuffle
+- Create Deck with list of action cards  &#x2611;
+- Implement Shuffle &#x2611;
 - Implement draw card
 
 ### Day 4 March 23
