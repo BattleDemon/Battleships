@@ -1,8 +1,8 @@
 // Imports
-
+use ::rand::prelude::SliceRandom;
+use macroquad::prelude::*;
 extern crate macroquad_grid_dex;
 use macroquad_grid_dex::Grid;
-use macroquad::prelude::*;
 
 
 // Constants
@@ -10,7 +10,6 @@ const GRID_SIZE:usize = 10;
 const HAND_SIZE:usize = 3;
 const DECK_SIZE: usize = 48;
 
-// Structs and Enums
 // Cells used to keep track of the state of a cell/coordinate on the board
 #[derive(Copy, Clone, PartialEq)]
 enum Cells {
@@ -118,8 +117,10 @@ impl Deck {
         }
     }
 
-    fn shuffle() {
+    fn shuffle(&mut self,){
         // randomly select a permutation of the deck 
+        let mut rng = ::rand::rng();
+        self.deck_list.shuffle(&mut rng);
     }
 
     fn draw_card() {
