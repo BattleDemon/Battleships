@@ -160,6 +160,21 @@ impl Player {
             ship_count: 5,
         }
     }
+
+    fn fire_missile(&mut self, target_x: usize, target_y: usize) {
+        let cell = &mut self.guess_board.cells[target_x][target_y];
+        if *cell == Cells::Occupied {
+            *cell = Cells::Hit;
+            println!("Hit!");
+        } else {
+            *cell = Cells::Miss;
+            println!("Miss!");
+        }
+    }
+
+    fn check_hit(&self, target_x: usize, target_y: usize) -> bool {
+        self.guess_board.cells[target_x][target_y] == Cells::Occupied
+    }
 }
 
 
