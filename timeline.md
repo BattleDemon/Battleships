@@ -11,7 +11,7 @@
 ### Day 2 March 21
 - Define ship struct
 - Implement place ship func &#x2611;
-- randomly placeship (place holder you can place them yourself later)
+- randomly placeship (place holder you can place them yourself later) &#x2611;
 
 ### Day 3 March 22
 - Create Deck with list of action cards  &#x2611;
@@ -23,7 +23,7 @@
     - select grid pos &#x2611;
     - check if hit/miss &#x2611;
     - update enemy board and guess board &#x2611;
-- Keep a Prototype (Basic game loop working)
+- Keep a Prototype (Basic game loop working) &#x2611;
 
 ### Day 5 March 24
 - Implement Torpedo (missle with extra shot)
@@ -40,7 +40,7 @@
 ### Day 7 March 26
 - Implement Air Defence
 - Implement turn based system
-- Alternate player turns
+- Alternate player turns &#x2611;
 - after play card draw new one
 - Keep a prototype (Turn systems and actions)
 
