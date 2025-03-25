@@ -26,12 +26,113 @@ Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
 ## Prototyping 
 ### Prototype with basic game loop
 #### Code at March 25th 
+Main loop 
 ```rs
-enum Cells {
-    Empty, // Nothig is on this cell or you don't know if something is there
-    Occupied, // The cell has a ship
-    Hit, // Hit a Ship
-    Miss, // Fired and missed
+// Main
+#[macroquad::main("Battleships")]
+async fn main() {
+    request_new_screen_size(1280., 720.); // change screen size
+
+    //let bgm = audio::load_sound("src/Bismarck.wav").await.unwrap();
+    //let bgm_params = audio::PlaySoundParams{looped:true,volume:1.};
+    //audio::play_sound(&bgm, bgm_params);
+
+    // make player
+    let mut player1 = Player::new();
+    player1.deck.build(); // build the deck
+    player1.deck.shuffle(); // shuffle the deck
+
+    // make opponent
+    let mut opponent = Player::new();
+    opponent.deck.build(); // build the deck
+    opponent.deck.shuffle(); // shuffle the deck
+
+    // Define Placeholder ships player 1
+    player1.board.change_cell(0,2,Cells::Occupied,&mut player1.boardgrid);
+    player1.board.change_cell(0,3,Cells::Occupied,&mut player1.boardgrid);
+
+    player1.board.change_cell(7,5,Cells::Occupied,&mut player1.boardgrid);
+    player1.board.change_cell(8,5,Cells::Occupied,&mut player1.boardgrid);
+    player1.board.change_cell(9,5,Cells::Occupied,&mut player1.boardgrid);
+
+    // Change the positon of the boards
+    player1.boardgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
+    player1.boardgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
+    player1.boardgrid.set_cell_bg_color(BLACK);
+    player1.boardgrid.set_gap_color(GREEN);
+
+    player1.guessgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
+    player1.guessgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
+    player1.guessgrid.set_cell_bg_color(BLACK);
+    player1.guessgrid.set_gap_color(GREEN);
+
+    opponent.boardgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
+    opponent.boardgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
+    opponent.boardgrid.set_cell_bg_color(BLACK);
+    opponent.boardgrid.set_gap_color(GREEN);
+
+    opponent.guessgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
+    opponent.guessgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
+    opponent.guessgrid.set_cell_bg_color(BLACK);
+    opponent.guessgrid.set_gap_color(GREEN);
+
+
+    // opponent enemy ships
+    opponent.board.change_cell(3,3,Cells::Occupied,&mut opponent.boardgrid);
+    opponent.board.change_cell(3,4,Cells::Occupied,&mut opponent.boardgrid);
+    opponent.board.change_cell(3,5,Cells::Occupied,&mut opponent.boardgrid);
+
+    opponent.board.change_cell(7,9,Cells::Occupied,&mut opponent.boardgrid);
+    opponent.board.change_cell(6,9,Cells::Occupied,&mut opponent.boardgrid);
+
+    let mut player1_turn = true;
+    loop {
+        clear_background(BLACK);
+
+        if player1_turn == true {
+            player1.boardgrid.draw();
+            player1.guessgrid.draw();
+        }
+        else {
+            opponent.boardgrid.draw();
+            opponent.guessgrid.draw();
+        }
+        
+        if is_key_pressed(KeyCode::A) {
+
+            let nums: Vec<usize> = (0..10).collect();
+                let mut rng = ::rand::rng();
+                let tempx = nums.choose(&mut rng);
+                let tempy = nums.choose(&mut rng);
+                let x: usize = *tempx.unwrap();
+                let y: usize = *tempy.unwrap();
+
+            if player1_turn == true {
+                player1.fire_missile(&mut opponent,x,y);
+                
+            }
+            else {
+                opponent.fire_missile(&mut player1,x,y)
+            }
+            player1_turn = !player1_turn;
+        }
+
+        if is_mouse_button_pressed(MouseButton::Left) {
+            if player1_turn {
+                if let Some((x, y)) = player1.get_clicked_cell() {
+                    player1.fire_missile(&mut opponent, x, y);
+                    player1_turn = false;
+                }
+            } else {
+                if let Some((x, y)) = opponent.get_clicked_cell() {
+                    opponent.fire_missile(&mut player1, x, y);
+                    player1_turn = true;
+                }
+            }
+        }
+
+        next_frame().await
+    }
 }
 ```
 #### Video of Functionality 
