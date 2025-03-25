@@ -196,7 +196,7 @@ impl Player {
     fn get_clicked_cell(&self) -> Option<(usize, usize)> {
         let (mouse_x, mouse_y) = mouse_position();
         
-        let grid_x_offset = 710.0;
+        let grid_x_offset = 700.0;
         let grid_y_offset = 50.0;
         let cell_size = 40.0;  // This should match your grid cell size
         let grid_size_px = cell_size * GRID_SIZE as f32;
@@ -333,6 +333,7 @@ async fn main() {
     opponent.place_ship(ShipType::Destroyer,Orientation::Horizontal);
 
     let mut player1_turn = true;
+    let mut player_acted:bool = false;
     loop {
         clear_background(BLACK);
 
@@ -365,16 +366,25 @@ async fn main() {
         }
 
         if is_mouse_button_pressed(MouseButton::Left) {
-            if player1_turn {
-                if let Some((x, y)) = player1.get_clicked_cell() {
-                    player1.fire_missile(&mut opponent, x, y);
-                    player1_turn = false;
+            if player_acted == false {
+                if player1_turn {
+                    if let Some((x, y)) = player1.get_clicked_cell() {
+                        player1.fire_missile(&mut opponent, x, y);
+                        player_acted = true;
+                    }
+                } else {
+                    if let Some((x, y)) = opponent.get_clicked_cell() {
+                        opponent.fire_missile(&mut player1, x, y);
+                        player_acted = true;
+                    }
                 }
-            } else {
-                if let Some((x, y)) = opponent.get_clicked_cell() {
-                    opponent.fire_missile(&mut player1, x, y);
-                    player1_turn = true;
-                }
+            }
+        }
+
+        if is_key_pressed(KeyCode::Space) {
+            if player_acted == true {
+                player1_turn = !player1_turn;
+                player_acted = false;
             }
         }
 
