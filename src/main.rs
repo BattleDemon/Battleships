@@ -296,12 +296,11 @@ async fn main() {
     opponent.deck.shuffle(); // shuffle the deck
 
     // Define Placeholder ships player 1
-    player1.board.change_cell(0,2,Cells::Occupied,&mut player1.boardgrid);
-    player1.board.change_cell(0,3,Cells::Occupied,&mut player1.boardgrid);
-
-    player1.board.change_cell(7,5,Cells::Occupied,&mut player1.boardgrid);
-    player1.board.change_cell(8,5,Cells::Occupied,&mut player1.boardgrid);
-    player1.board.change_cell(9,5,Cells::Occupied,&mut player1.boardgrid);
+    player1.place_ship(ShipType::Battleship,Orientation::Verticle);
+    player1.place_ship(ShipType::Submarine,Orientation::Verticle);
+    player1.place_ship(ShipType::Cruiser,Orientation::Horizontal);
+    player1.place_ship(ShipType::Dreadnaught,Orientation::Verticle);
+    player1.place_ship(ShipType::Destroyer,Orientation::Horizontal);
 
     // Change the positon of the boards
     player1.boardgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
@@ -344,25 +343,6 @@ async fn main() {
         else {
             opponent.boardgrid.draw();
             opponent.guessgrid.draw();
-        }
-        
-        if is_key_pressed(KeyCode::A) {
-
-            let nums: Vec<usize> = (0..10).collect();
-                let mut rng = ::rand::rng();
-                let tempx = nums.choose(&mut rng);
-                let tempy = nums.choose(&mut rng);
-                let x: usize = *tempx.unwrap();
-                let y: usize = *tempy.unwrap();
-
-            if player1_turn == true {
-                player1.fire_missile(&mut opponent,x,y);
-                
-            }
-            else {
-                opponent.fire_missile(&mut player1,x,y)
-            }
-            player1_turn = !player1_turn;
         }
 
         if is_mouse_button_pressed(MouseButton::Left) {
