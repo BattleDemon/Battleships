@@ -25,8 +25,15 @@ Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
 
 ## Prototyping 
 ### Prototype with basic game loop
-#### Code at March 24th 
-
+#### Code at March 25th 
+```rs
+enum Cells {
+    Empty, // Nothig is on this cell or you don't know if something is there
+    Occupied, // The cell has a ship
+    Hit, // Hit a Ship
+    Miss, // Fired and missed
+}
+```
 #### Video of Functionality 
 
 #### Issues and Solutions 
