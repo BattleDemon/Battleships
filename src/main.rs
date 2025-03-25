@@ -263,7 +263,14 @@ async fn main() {
             player1_turn = !player1_turn;
         }
         
-
+        if is_key_pressed(KeyCode::A) {
+            let nums: Vec<usize> = (0..10).collect();
+            let rng = ::rand::rng();
+            nums.shuffle(&mut rng);
+            let x = nums.choose(&mut rng);
+            let y = nums.choose(&mut rng);
+            player1.fire_missile(&mut opponent,x,y);
+        }
 
         next_frame().await
     }
