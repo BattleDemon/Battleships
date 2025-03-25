@@ -25,14 +25,14 @@ Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
 
 ## Prototyping 
 ### Prototype with basic game loop
-#### Code at March 4th 
+#### Code at March 24th 
 
 #### Video of Functionality 
 
 #### Issues and Solutions 
 
 ### Prototype with turn based systems and actions 
-#### Code at March 27th 
+#### Code at March 30th 
 
 #### Video of Functionality 
 
