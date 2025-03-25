@@ -20,7 +20,7 @@
 
 ### Day 4 March 23
 - Implement missle &#x2611;
-    - select grid pos
+    - select grid pos &#x2611;
     - check if hit/miss &#x2611;
     - update enemy board and guess board &#x2611;
 - Keep a Prototype (Basic game loop working)
