@@ -1,6 +1,6 @@
 // Imports
-use ::rand::prelude::SliceRandom;
-use macroquad::prelude::*;
+use ::rand::prelude::{SliceRandom,IndexedRandom};
+use macroquad::{audio, prelude::*};
 extern crate macroquad_grid_dex;
 use macroquad_grid_dex::Grid;
 
@@ -92,17 +92,18 @@ impl Board {
     }
     
     fn change_cell(&mut self, x:usize,y:usize,ctype:Cells,grid:&mut Grid) {
+
+        if self.cells[x][y] != Cells::Hit {
+            match ctype {
+                Cells::Empty => grid.color_cell(x,y ,BLACK),
+                Cells::Occupied => grid.color_cell(x,y,GREEN),
+                Cells::Hit => grid.color_cell(x, y, RED),
+                Cells::Miss => {grid.set_cell_text(x,y, Some("0"));
+                                grid.color_cell(x,y,GRAY); },
+            }
+            self.cells[x][y] = ctype;
+        }  
         // Changes the provided cell to occupied
-        self.cells[x][y] = ctype;
-
-        match ctype {
-            Cells::Empty => grid.color_cell(x,y ,BLACK),
-            Cells::Occupied => grid.color_cell(x,y,GREEN),
-            Cells::Hit => grid.color_cell(x, y, RED),
-            Cells::Miss => {grid.set_cell_text(x,y, Some("0"));
-                            grid.color_cell(x,y,GRAY); },
-        }
-
     }
 }
 
@@ -191,6 +192,26 @@ impl Player {
     fn check_hit(&self, target_x: usize, target_y: usize) -> bool {
         self.guess_board.cells[target_x][target_y] == Cells::Occupied
     }
+
+    fn get_clicked_cell(&self) -> Option<(usize, usize)> {
+        let (mouse_x, mouse_y) = mouse_position();
+        
+        let grid_x_offset = 710.0;
+        let grid_y_offset = 50.0;
+        let cell_size = 40.0;  // This should match your grid cell size
+        let grid_size_px = cell_size * GRID_SIZE as f32;
+    
+        // Check if the mouse is within the bounds of the grid
+        if mouse_x >= grid_x_offset && mouse_x < grid_x_offset + grid_size_px &&
+           mouse_y >= grid_y_offset && mouse_y < grid_y_offset + grid_size_px {
+            // Swap x and y calculation to fix the issue
+            let x = ((mouse_y - grid_y_offset) / cell_size) as usize;  // Use mouse_y for x
+            let y = ((mouse_x - grid_x_offset) / cell_size) as usize;  // Use mouse_x for y
+            return Some((x, y));
+        }
+    
+        None
+    }
 }
 
 
@@ -198,6 +219,10 @@ impl Player {
 #[macroquad::main("Battleships")]
 async fn main() {
     request_new_screen_size(1280., 720.); // change screen size
+
+    //let bgm = audio::load_sound("src/Bismarck.wav").await.unwrap();
+    //let bgm_params = audio::PlaySoundParams{looped:true,volume:1.};
+    //audio::play_sound(&bgm, bgm_params);
 
     // make player
     let mut player1 = Player::new();
@@ -241,9 +266,11 @@ async fn main() {
 
     // opponent enemy ships
     opponent.board.change_cell(3,3,Cells::Occupied,&mut opponent.boardgrid);
+    opponent.board.change_cell(3,4,Cells::Occupied,&mut opponent.boardgrid);
+    opponent.board.change_cell(3,5,Cells::Occupied,&mut opponent.boardgrid);
 
-    player1.fire_missile(&mut opponent, 3, 3);
-    player1.fire_missile(&mut opponent, 5,2);
+    opponent.board.change_cell(7,9,Cells::Occupied,&mut opponent.boardgrid);
+    opponent.board.change_cell(6,9,Cells::Occupied,&mut opponent.boardgrid);
 
     let mut player1_turn = true;
     loop {
@@ -257,19 +284,38 @@ async fn main() {
             opponent.boardgrid.draw();
             opponent.guessgrid.draw();
         }
-
-        if is_key_pressed(KeyCode::Q) {
-            println!("key down");
-            player1_turn = !player1_turn;
-        }
         
         if is_key_pressed(KeyCode::A) {
+
             let nums: Vec<usize> = (0..10).collect();
-            let rng = ::rand::rng();
-            nums.shuffle(&mut rng);
-            let x = nums.choose(&mut rng);
-            let y = nums.choose(&mut rng);
-            player1.fire_missile(&mut opponent,x,y);
+                let mut rng = ::rand::rng();
+                let tempx = nums.choose(&mut rng);
+                let tempy = nums.choose(&mut rng);
+                let x: usize = *tempx.unwrap();
+                let y: usize = *tempy.unwrap();
+
+            if player1_turn == true {
+                player1.fire_missile(&mut opponent,x,y);
+                
+            }
+            else {
+                opponent.fire_missile(&mut player1,x,y)
+            }
+            player1_turn = !player1_turn;
+        }
+
+        if is_mouse_button_pressed(MouseButton::Left) {
+            if player1_turn {
+                if let Some((x, y)) = player1.get_clicked_cell() {
+                    player1.fire_missile(&mut opponent, x, y);
+                    player1_turn = false;
+                }
+            } else {
+                if let Some((x, y)) = opponent.get_clicked_cell() {
+                    opponent.fire_missile(&mut player1, x, y);
+                    player1_turn = true;
+                }
+            }
         }
 
         next_frame().await
