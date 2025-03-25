@@ -72,7 +72,9 @@ struct Deck {
 // Track all player related variables 
 struct Player {
     board: Board,
+    boardgrid: Grid,
     guess_board: Board,
+    guessgrid: Grid,
     hand: Vec<ActionType>,
     deck: Deck,
     ships: Vec<Ship>,
@@ -89,12 +91,18 @@ impl Board {
         }
     }
     
-    fn change_cell(&mut self, x:usize,y:usize,ctype:Cells,mut grid: Grid)-> Grid {
+    fn change_cell(&mut self, x:usize,y:usize,ctype:Cells,grid:&mut Grid) {
         // Changes the provided cell to occupied
         self.cells[x][y] = ctype;
-        grid.color_cell(x, y, GRAY);
 
-        grid
+        match ctype {
+            Cells::Empty => grid.color_cell(x,y ,BLACK),
+            Cells::Occupied => grid.color_cell(x,y,GREEN),
+            Cells::Hit => grid.color_cell(x, y, RED),
+            Cells::Miss => {grid.set_cell_text(x,y, Some("0"));
+                            grid.color_cell(x,y,GRAY); },
+        }
+
     }
 }
 
@@ -124,12 +132,12 @@ impl Deck {
                 self.deck_list[deck_pos] = ActionType::Patrol;
             }
             else if deck_pos <= 41 {
-                self.deck_list[17] = ActionType::Reinforce;
+                self.deck_list[deck_pos] = ActionType::Reinforce;
             }
-            else if deck_pos <= 48 {
-                self.deck_list[17] = ActionType::RadarScan;
+            else if deck_pos <= 47 {
+                self.deck_list[deck_pos] = ActionType::RadarScan;
             }
-            else if deck_pos == 49 {
+            else if deck_pos == 48 {
                 break;
             }
             deck_pos += 1;
@@ -153,7 +161,9 @@ impl Player {
     fn new() -> Self {
         Player{
             board: Board::new(),
+            boardgrid: Grid::new(400.0,400.0,10,10,1.0),
             guess_board: Board::new(),
+            guessgrid: Grid::new(400.0,400.0,10,10,1.0),
             hand: Vec::new(),
             deck: Deck::new(),
             ships: Vec::new(),
@@ -161,13 +171,19 @@ impl Player {
         }
     }
 
-    fn fire_missile(&mut self, target_x: usize, target_y: usize) {
+    fn fire_missile(&mut self, opponent: &mut Player , target_x: usize, target_y: usize) {
+        // create local mutable cell for both self and your opponent
         let cell = &mut self.guess_board.cells[target_x][target_y];
-        if *cell == Cells::Occupied {
-            *cell = Cells::Hit;
+        let ocell = &mut opponent.board.cells[target_x][target_y];
+
+        // Check if your opponents cell is occupied if so then muts it to be a hit
+        if *ocell == Cells::Occupied {
+            self.guess_board.change_cell(target_x, target_y, Cells::Hit, &mut self.guessgrid);
+            opponent.board.change_cell(target_x,target_y,Cells::Hit,&mut opponent.boardgrid);
             println!("Hit!");
-        } else {
-            *cell = Cells::Miss;
+        } else { // muts it to be a miss
+            self.guess_board.change_cell(target_x,target_y,Cells::Miss,&mut self.guessgrid);
+            opponent.board.change_cell(target_x,target_y,Cells::Miss,&mut opponent.boardgrid);
             println!("Miss!");
         }
     }
@@ -181,37 +197,73 @@ impl Player {
 // Main
 #[macroquad::main("Battleships")]
 async fn main() {
-    request_new_screen_size(1280., 720.);
+    request_new_screen_size(1280., 720.); // change screen size
 
-    let mut test_player_board = Board::new();
-    let mut test_grid = Grid::new(400.0,400.0,10,10,1.0); 
-    let mut test_quess_board = Board::new();
-    let mut test_grid2 = Grid::new(400.0,400.0,10,10,1.0);
+    // make player
+    let mut player1 = Player::new();
+    player1.deck.build(); // build the deck
+    player1.deck.shuffle(); // shuffle the deck
 
-    // Define Placeholder ships
-    test_grid = test_player_board.change_cell(0,2,Cells::Occupied,test_grid);
-    test_grid = test_player_board.change_cell(0,3,Cells::Occupied,test_grid);
+    // make opponent
+    let mut opponent = Player::new();
+    opponent.deck.build(); // build the deck
+    opponent.deck.shuffle(); // shuffle the deck
 
-    test_grid = test_player_board.change_cell(7,5,Cells::Occupied,test_grid);
-    test_grid = test_player_board.change_cell(8,5,Cells::Occupied,test_grid);
-    test_grid = test_player_board.change_cell(9,5,Cells::Occupied,test_grid);
+    // Define Placeholder ships player 1
+    player1.board.change_cell(0,2,Cells::Occupied,&mut player1.boardgrid);
+    player1.board.change_cell(0,3,Cells::Occupied,&mut player1.boardgrid);
 
-    // Place holder grids 
-    test_grid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
-    test_grid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
-    test_grid.set_cell_bg_color(WHITE);
+    player1.board.change_cell(7,5,Cells::Occupied,&mut player1.boardgrid);
+    player1.board.change_cell(8,5,Cells::Occupied,&mut player1.boardgrid);
+    player1.board.change_cell(9,5,Cells::Occupied,&mut player1.boardgrid);
 
-    test_grid2.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
-    test_grid2.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
-    test_grid2.set_cell_bg_color(WHITE);
+    // Change the positon of the boards
+    player1.boardgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
+    player1.boardgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
+    player1.boardgrid.set_cell_bg_color(BLACK);
+    player1.boardgrid.set_gap_color(GREEN);
 
-    test_grid2.set_cell_text(2,2,Some("X"));
+    player1.guessgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
+    player1.guessgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
+    player1.guessgrid.set_cell_bg_color(BLACK);
+    player1.guessgrid.set_gap_color(GREEN);
 
+    opponent.boardgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
+    opponent.boardgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
+    opponent.boardgrid.set_cell_bg_color(BLACK);
+    opponent.boardgrid.set_gap_color(GREEN);
+
+    opponent.guessgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
+    opponent.guessgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
+    opponent.guessgrid.set_cell_bg_color(BLACK);
+    opponent.guessgrid.set_gap_color(GREEN);
+
+
+    // opponent enemy ships
+    opponent.board.change_cell(3,3,Cells::Occupied,&mut opponent.boardgrid);
+
+    player1.fire_missile(&mut opponent, 3, 3);
+    player1.fire_missile(&mut opponent, 5,2);
+
+    let mut player1_turn = true;
     loop {
-        clear_background(WHITE);
+        clear_background(BLACK);
 
-        test_grid.draw();
-        test_grid2.draw();
+        if player1_turn == true {
+            player1.boardgrid.draw();
+            player1.guessgrid.draw();
+        }
+        else {
+            opponent.boardgrid.draw();
+            opponent.guessgrid.draw();
+        }
+
+        if is_key_pressed(KeyCode::Q) {
+            println!("key down");
+            player1_turn = !player1_turn;
+        }
+        
+
 
         next_frame().await
     }
