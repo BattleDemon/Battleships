@@ -197,7 +197,7 @@ impl Player {
 }
 ```
 #### Video of Functionality 
-
+[![IT Prototype 25 March](https://img.youtube.com/vi/NM8lwhZ-a-o/0.jpg)](https://www.youtube.com/watch?v=NM8lwhZ-a-o)
 #### Issues and Solutions 
 
 ### Prototype with turn based systems and actions 
