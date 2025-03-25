@@ -196,7 +196,7 @@ impl Player {
     }
 }
 ```
-#### Video of Functionality 
+#### Video of Functionality (link to youtube)
 [![IT Prototype 25 March](https://img.youtube.com/vi/NM8lwhZ-a-o/0.jpg)](https://www.youtube.com/watch?v=NM8lwhZ-a-o)
 #### Issues and Solutions 
 
