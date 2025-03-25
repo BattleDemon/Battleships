@@ -19,10 +19,10 @@
 - Implement draw card
 
 ### Day 4 March 23
-- Implement missle
+- Implement missle &#x2611;
     - select grid pos
-    - check if hit/miss
-    - update enemy board and guess board
+    - check if hit/miss &#x2611;
+    - update enemy board and guess board &#x2611;
 - Keep a Prototype (Basic game loop working)
 
 ### Day 5 March 24
