@@ -212,6 +212,67 @@ impl Player {
     
         None
     }
+
+    fn place_ship(&mut self, ship_type: ShipType, orientation: Orientation) -> Option<Ship> {
+        let mut rng = ::rand::rng(); // Corrected RNG call
+    
+        let ship_length = match ship_type {
+            ShipType::Battleship => 4,
+            ShipType::Cruiser => 3,
+            ShipType::Submarine => 3,
+            ShipType::Destroyer => 2,
+            ShipType::Dreadnaught => 5,
+        };
+    
+        // Get random starting position
+        let possible_pos: Vec<usize> = (0..GRID_SIZE).collect();
+    
+        let tempx = possible_pos.choose(&mut rng);
+        let tempy = possible_pos.choose(&mut rng);
+        let mut x: usize = *tempx.unwrap();
+        let mut y: usize = *tempy.unwrap();
+    
+        // Determine possible movement directions
+        let mut directions = match orientation {
+            Orientation::Horizontal => vec![(0, 1), (0, -1)], // Right, Left (y changes)
+            Orientation::Verticle => vec![(1, 0), (-1, 0)],   // Down, Up (x changes)
+        };
+    
+        directions.shuffle(&mut rng); // Randomize direction order
+        let (dx, dy) = directions[0]; // Pick a random direction
+    
+        let mut positions = vec![];
+    
+        for _ in 0..ship_length {
+            // Check bounds properly
+            if x >= GRID_SIZE || y >= GRID_SIZE {
+                return None; // Out of bounds, restart
+            }
+    
+            // If space is occupied, restart the process
+            if self.board.cells[x][y] != Cells::Empty {
+                return None;
+            }
+    
+            positions.push((x, y));
+            x = (x as isize + dx) as usize;
+            y = (y as isize + dy) as usize;
+        }
+    
+        // Place the ship using change_cell
+        for &(sx, sy) in &positions {
+            self.board.change_cell(sx, sy, Cells::Occupied, &mut self.boardgrid);
+        }
+    
+        let ship = Ship {
+            ship_type,
+            positions,
+            orientation,
+        };
+    
+        self.ships.push(ship.clone()); // Track ship in player's list
+        Some(ship)
+    }
 }
 
 
@@ -265,12 +326,11 @@ async fn main() {
 
 
     // opponent enemy ships
-    opponent.board.change_cell(3,3,Cells::Occupied,&mut opponent.boardgrid);
-    opponent.board.change_cell(3,4,Cells::Occupied,&mut opponent.boardgrid);
-    opponent.board.change_cell(3,5,Cells::Occupied,&mut opponent.boardgrid);
-
-    opponent.board.change_cell(7,9,Cells::Occupied,&mut opponent.boardgrid);
-    opponent.board.change_cell(6,9,Cells::Occupied,&mut opponent.boardgrid);
+    opponent.place_ship(ShipType::Battleship,Orientation::Verticle);
+    opponent.place_ship(ShipType::Submarine,Orientation::Verticle);
+    opponent.place_ship(ShipType::Cruiser,Orientation::Horizontal);
+    opponent.place_ship(ShipType::Dreadnaught,Orientation::Verticle);
+    opponent.place_ship(ShipType::Destroyer,Orientation::Horizontal);
 
     let mut player1_turn = true;
     loop {
