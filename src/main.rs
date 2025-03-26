@@ -62,8 +62,8 @@ enum ActionType {
 struct Deck {
     deck_list: [ActionType; DECK_SIZE]
     // deck contents
-    // missle the most common ( 16/48 )
-    // torpedo ( 10/48 ) after some quick testing this is very very overpowered so i will reduce the number of this action in the deck
+    // missle the most common ( 20/48 )
+    // torpedo ( 6/48 ) 
     // patrol ( 8/48 )
     // Radarscan ( 7/48 )
     // Reinforce ( 7/48 )
@@ -95,7 +95,7 @@ impl Board {
 
         if self.cells[x][y] != Cells::Hit {
             match ctype {
-                Cells::Empty => grid.color_cell(x,y ,BLACK),
+                Cells::Empty => grid.color_cell(x,y ,DARKGRAY),
                 Cells::Occupied => grid.color_cell(x,y,GREEN),
                 Cells::Hit => grid.color_cell(x, y, RED),
                 Cells::Miss => {grid.set_cell_text(x,y, Some("0"));
@@ -234,6 +234,25 @@ impl Player {
         }
 
         None
+    }
+
+    fn radar_scan(&mut self, opponent: &mut Player, target_x: usize, target_y: usize) {
+        let offsets = [(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)];
+    
+        for &(dx, dy) in &offsets {
+            let nx = target_x as isize + dx;
+            let ny = target_y as isize + dy;
+    
+            if nx >= 0 && nx < GRID_SIZE as isize && ny >= 0 && ny < GRID_SIZE as isize {
+                let ux = nx as usize;
+                let uy = ny as usize;
+                let cell = opponent.board.cells[ux][uy];
+    
+                // Update the guess board to reflect the revealed state
+                self.guess_board.change_cell(ux, uy, cell, &mut self.guessgrid);
+            }
+        }
+        println!("Radar scan complete!");
     }
 
     fn check_hit(&self, target_x: usize, target_y: usize) -> bool {
@@ -432,6 +451,24 @@ async fn main() {
                 } else {
                     if let Some(target_x) = opponent.get_torpedo_target_column() {
                         opponent.fire_torpedo(&mut player1, target_x);
+                        player_acted = true;
+                    }
+                }
+            }else {
+                println!("Already used your action this turn!!");
+            }
+        }
+
+        if is_key_pressed(KeyCode::R) {
+            if player_acted == false {
+                if player1_turn {
+                    if let Some((x, y)) = player1.get_clicked_cell() {
+                        player1.radar_scan(&mut opponent, x, y);
+                        player_acted = true;
+                    }
+                } else {
+                    if let Some((x, y)) = player1.get_clicked_cell() {
+                        opponent.radar_scan(&mut player1, x, y);
                         player_acted = true;
                     }
                 }
