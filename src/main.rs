@@ -189,6 +189,10 @@ impl Player {
         }
     }
 
+    fn fire_torpedo() {
+        
+    }
+
     fn check_hit(&self, target_x: usize, target_y: usize) -> bool {
         self.guess_board.cells[target_x][target_y] == Cells::Occupied
     }
