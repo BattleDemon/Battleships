@@ -25,7 +25,7 @@ Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
 
 ## Prototyping 
 ### Prototype with basic game loop
-#### Code at March 25th 
+#### Code at March 24th 
 Main loop 
 ```rs
 // Main
@@ -201,7 +201,7 @@ impl Player {
 #### Issues and Solutions 
 
 ### Prototype with turn based systems and actions 
-#### Code at March 30th 
+#### Code at March 27th 
 
 #### Video of Functionality 
 
