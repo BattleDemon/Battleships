@@ -189,8 +189,50 @@ impl Player {
         }
     }
 
-    fn fire_torpedo() {
-        
+    fn fire_torpedo(&mut self, opponent: &mut Player, target_x: usize) {
+        // Start from the bottom of the selected column
+        let mut y = GRID_SIZE - 1; // Starting from the bottom
+
+        // Move the torpedo upwards
+        while y >= 0 {
+            // Check if the cell is occupied by a ship
+            if opponent.board.cells[target_x][y] == Cells::Occupied {
+                // Mark the cell as hit and stop the torpedo
+                self.guess_board.change_cell(target_x, y, Cells::Hit, &mut self.guessgrid);
+                opponent.board.change_cell(target_x, y, Cells::Hit, &mut opponent.boardgrid);
+                println!("Torpedo hit!");
+                break;
+            } else {
+                // Mark the cell as missed and continue moving up
+                self.guess_board.change_cell(target_x, y, Cells::Miss, &mut self.guessgrid);
+                opponent.board.change_cell(target_x, y, Cells::Miss, &mut opponent.boardgrid);
+                println!("Torpedo missed!");
+            }
+
+            // Move the torpedo upwards (decrease y-coordinate)
+            if y == 0 { break; } // Ensure we don't go out of bounds
+            y -= 1;
+        }
+    }
+
+    fn get_torpedo_target_column(&self) -> Option<usize> {
+        let (mouse_x, mouse_y) = mouse_position();
+
+        let grid_x_offset = 700.0; // Grid offset for the guessboard
+        let grid_y_offset = 50.0;
+        let cell_size = 40.0; // Cell size, same as before
+
+        let grid_size_px = cell_size * GRID_SIZE as f32;
+
+        // Check if the mouse click is within the bounds of the grid
+        if mouse_x >= grid_x_offset && mouse_x < grid_x_offset + grid_size_px &&
+           mouse_y >= grid_y_offset && mouse_y < grid_y_offset + grid_size_px {
+            let x = ((mouse_y - grid_y_offset) / cell_size) as usize;  // Row (Y)
+            let y = ((mouse_x - grid_x_offset) / cell_size) as usize;  // Column (X)
+            return Some(y); // Return the column where the torpedo will fire
+        }
+
+        None
     }
 
     fn check_hit(&self, target_x: usize, target_y: usize) -> bool {
@@ -387,15 +429,3 @@ async fn main() {
         next_frame().await
     }
 }
-/* 
-https://ourworldindata.org/grapher/measles-cases-and-death-rate
-https://ourworldindata.org/grapher/global-smallpox-cases
-https://ourworldindata.org/grapher/daily-cases-covid-region
-https://ourworldindata.org/grapher/incidence-of-hivaids
-https://ourworldindata.org/grapher/new-cases-of-hiv-infection
-https://ourworldindata.org/grapher/new-reported-cases-tetanus
-https://www.who.int/news-room/questions-and-answers/item/herd-immunity-lockdowns-and-covid-19
-https://www.cdc.gov/hepatitis-surveillance-2022/hepatitis-c/index.html
-https://www.who.int/teams/global-hiv-hepatitis-and-stis-programmes/hiv/strategic-information/hiv-data-and-statistics
-https://immunizationdata.who.int/global/wiise-detail-page/mumps-reported-cases-and-incidence?CODE=Global&YEAR=
-*/
