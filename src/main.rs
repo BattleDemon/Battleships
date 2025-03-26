@@ -387,3 +387,15 @@ async fn main() {
         next_frame().await
     }
 }
+/* 
+https://ourworldindata.org/grapher/measles-cases-and-death-rate
+https://ourworldindata.org/grapher/global-smallpox-cases
+https://ourworldindata.org/grapher/daily-cases-covid-region
+https://ourworldindata.org/grapher/incidence-of-hivaids
+https://ourworldindata.org/grapher/new-cases-of-hiv-infection
+https://ourworldindata.org/grapher/new-reported-cases-tetanus
+https://www.who.int/news-room/questions-and-answers/item/herd-immunity-lockdowns-and-covid-19
+https://www.cdc.gov/hepatitis-surveillance-2022/hepatitis-c/index.html
+https://www.who.int/teams/global-hiv-hepatitis-and-stis-programmes/hiv/strategic-information/hiv-data-and-statistics
+https://immunizationdata.who.int/global/wiise-detail-page/mumps-reported-cases-and-incidence?CODE=Global&YEAR=
+*/
