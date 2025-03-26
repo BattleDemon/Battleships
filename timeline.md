@@ -9,7 +9,7 @@
 - display placeholderships &#x2611;
 
 ### Day 2 March 21
-- Define ship struct
+- Define ship struct &#x2611;
 - Implement place ship func &#x2611;
 - randomly placeship (place holder you can place them yourself later) &#x2611;
 
