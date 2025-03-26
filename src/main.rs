@@ -63,7 +63,7 @@ struct Deck {
     deck_list: [ActionType; DECK_SIZE]
     // deck contents
     // missle the most common ( 16/48 )
-    // torpedo ( 10/48 )
+    // torpedo ( 10/48 ) after some quick testing this is very very overpowered so i will reduce the number of this action in the deck
     // patrol ( 8/48 )
     // Radarscan ( 7/48 )
     // Reinforce ( 7/48 )
@@ -189,29 +189,30 @@ impl Player {
         }
     }
 
-    fn fire_torpedo(&mut self, opponent: &mut Player, target_x: usize) {
-        // Start from the bottom of the selected column
-        let mut y = GRID_SIZE - 1; // Starting from the bottom
-
-        // Move the torpedo upwards
-        while y >= 0 {
-            // Check if the cell is occupied by a ship
-            if opponent.board.cells[target_x][y] == Cells::Occupied {
-                // Mark the cell as hit and stop the torpedo
-                self.guess_board.change_cell(target_x, y, Cells::Hit, &mut self.guessgrid);
-                opponent.board.change_cell(target_x, y, Cells::Hit, &mut opponent.boardgrid);
-                println!("Torpedo hit!");
-                break;
-            } else {
-                // Mark the cell as missed and continue moving up
-                self.guess_board.change_cell(target_x, y, Cells::Miss, &mut self.guessgrid);
-                opponent.board.change_cell(target_x, y, Cells::Miss, &mut opponent.boardgrid);
-                println!("Torpedo missed!");
+    fn fire_torpedo(&mut self, opponent: &mut Player, target_y: usize) {
+        let mut x = GRID_SIZE - 1; // Start at the bottom row
+    
+        while x < GRID_SIZE {
+            match opponent.board.cells[x][target_y] {
+                Cells::Occupied => {
+                    self.guess_board.change_cell(x, target_y, Cells::Hit, &mut self.guessgrid);
+                    opponent.board.change_cell(x, target_y, Cells::Hit, &mut opponent.boardgrid);
+                    println!("Torpedo hit!");
+                    break;
+                }
+                Cells::Hit => {
+                    println!("Torpedo stopped! Already hit here.");
+                    break; // Stop if it reaches a previously hit ship
+                }
+                _ => {
+                    self.guess_board.change_cell(x, target_y, Cells::Miss, &mut self.guessgrid);
+                    opponent.board.change_cell(x, target_y, Cells::Miss, &mut opponent.boardgrid);
+                    println!("Torpedo missed!");
+                }
             }
-
-            // Move the torpedo upwards (decrease y-coordinate)
-            if y == 0 { break; } // Ensure we don't go out of bounds
-            y -= 1;
+    
+            if x == 0 { break; } // Stop before underflowing
+            x -= 1; // Move upwards
         }
     }
 
@@ -416,11 +417,32 @@ async fn main() {
                         player_acted = true;
                     }
                 }
+            } else {
+                println!("Already used your action this turn!!");
+            }
+        }
+
+        if is_key_pressed(KeyCode::T) {  // Press "T" to fire a torpedo
+            if player_acted == false {
+                if player1_turn {
+                    if let Some(target_x) = player1.get_torpedo_target_column() {
+                        player1.fire_torpedo(&mut opponent, target_x);
+                        player_acted = true;
+                    }
+                } else {
+                    if let Some(target_x) = opponent.get_torpedo_target_column() {
+                        opponent.fire_torpedo(&mut player1, target_x);
+                        player_acted = true;
+                    }
+                }
+            }else {
+                println!("Already used your action this turn!!");
             }
         }
 
         if is_key_pressed(KeyCode::Space) {
             if player_acted == true {
+                println!("Player changed");
                 player1_turn = !player1_turn;
                 player_acted = false;
             }
