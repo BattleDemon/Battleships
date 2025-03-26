@@ -26,8 +26,8 @@
 - Keep a Prototype (Basic game loop working) &#x2611;
 
 ### Day 5 March 24
-- Implement Torpedo (missle with extra shot)
-- Implemen radar scan
+- Implement Torpedo (missle with extra shot) &#x2611;
+- Implemen radar scan &#x2611;
 
 ### Day 6 March 25
 - Implement Patrol
@@ -39,7 +39,7 @@
 
 ### Day 7 March 26
 - Implement Air Defence
-- Implement turn based system
+- Implement turn based system &#x2611;
 - Alternate player turns &#x2611;
 - after play card draw new one
 - Keep a prototype (Turn systems and actions)
