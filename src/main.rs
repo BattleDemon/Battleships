@@ -215,7 +215,7 @@ impl Player {
 
     fn place_ship(&mut self, ship_type: ShipType, orientation: Orientation) -> Option<Ship> {
         let mut rng = ::rand::rng(); // Corrected RNG call
-    
+        
         let ship_length = match ship_type {
             ShipType::Battleship => 4,
             ShipType::Cruiser => 3,
@@ -223,55 +223,67 @@ impl Player {
             ShipType::Destroyer => 2,
             ShipType::Dreadnaught => 5,
         };
-    
-        // Get random starting position
+        
         let possible_pos: Vec<usize> = (0..GRID_SIZE).collect();
+        
+        for _ in 0..100 { // Try up to 100 times to find a valid placement
+            let tempx = possible_pos.choose(&mut rng);
+            let tempy = possible_pos.choose(&mut rng);
+            let mut x: usize = *tempx.unwrap();
+            let mut y: usize = *tempy.unwrap();
     
-        let tempx = possible_pos.choose(&mut rng);
-        let tempy = possible_pos.choose(&mut rng);
-        let mut x: usize = *tempx.unwrap();
-        let mut y: usize = *tempy.unwrap();
+            // Determine possible movement directions
+            let mut directions = match orientation {
+                Orientation::Horizontal => vec![(0, 1), (0, -1)], // Right, Left (y changes)
+                Orientation::Verticle => vec![(1, 0), (-1, 0)],   // Down, Up (x changes)
+            };
+            
+            directions.shuffle(&mut rng); // Randomize direction order
+            let (dx, dy) = directions[0]; // Pick a random direction
+            
+            let mut positions = vec![];
     
-        // Determine possible movement directions
-        let mut directions = match orientation {
-            Orientation::Horizontal => vec![(0, 1), (0, -1)], // Right, Left (y changes)
-            Orientation::Verticle => vec![(1, 0), (-1, 0)],   // Down, Up (x changes)
-        };
+            // Check if ship fits within bounds for the chosen direction
+            let mut fits = true;
+            let mut temp_x = x;
+            let mut temp_y = y;
     
-        directions.shuffle(&mut rng); // Randomize direction order
-        let (dx, dy) = directions[0]; // Pick a random direction
+            for _ in 0..ship_length {
+                // Check if out of bounds at any step
+                if temp_x >= GRID_SIZE || temp_y >= GRID_SIZE {
+                    fits = false;
+                    break;
+                }
+                positions.push((temp_x, temp_y));
+                temp_x = (temp_x as isize + dx) as usize;
+                temp_y = (temp_y as isize + dy) as usize;
+            }
     
-        let mut positions = vec![];
-    
-        for _ in 0..ship_length {
-            // Check bounds properly
-            if x >= GRID_SIZE || y >= GRID_SIZE {
-                return None; // Out of bounds, restart
+            if !fits {
+                continue; // Try again with a new position
             }
     
             // If space is occupied, restart the process
-            if self.board.cells[x][y] != Cells::Empty {
-                return None;
+            if positions.iter().any(|&(px, py)| self.board.cells[px][py] != Cells::Empty) {
+                continue;
             }
     
-            positions.push((x, y));
-            x = (x as isize + dx) as usize;
-            y = (y as isize + dy) as usize;
+            // Place the ship using change_cell
+            for &(sx, sy) in &positions {
+                self.board.change_cell(sx, sy, Cells::Occupied, &mut self.boardgrid);
+            }
+    
+            let ship = Ship {
+                ship_type,
+                positions,
+                orientation,
+            };
+            
+            self.ships.push(ship.clone()); // Track ship in player's list
+            return Some(ship); // Successfully placed the ship
         }
     
-        // Place the ship using change_cell
-        for &(sx, sy) in &positions {
-            self.board.change_cell(sx, sy, Cells::Occupied, &mut self.boardgrid);
-        }
-    
-        let ship = Ship {
-            ship_type,
-            positions,
-            orientation,
-        };
-    
-        self.ships.push(ship.clone()); // Track ship in player's list
-        Some(ship)
+        None // If placement failed after 100 retries
     }
 }
 
