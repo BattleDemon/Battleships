@@ -83,12 +83,58 @@ Main Loop
 
 Change Cell function
 ```rs
+fn change_cell(&mut self, x:usize,y:usize,ctype:Cells,grid:&mut Grid) {
 
+        if self.cells[x][y] != Cells::Hit {
+            match ctype {
+                Cells::Empty => grid.color_cell(x,y ,BLACK),
+                Cells::Occupied => grid.color_cell(x,y,GREEN),
+                Cells::Hit => grid.color_cell(x, y, RED),
+                Cells::Miss => {grid.set_cell_text(x,y, Some("0"));
+                                grid.color_cell(x,y,GRAY); },
+            }
+            self.cells[x][y] = ctype;
+        }  
 ```
 
 Fire Missle and get clicked cell Functions
 ```rs
+fn fire_missile(&mut self, opponent: &mut Player , target_x: usize, target_y: usize) {
+        // create local mutable cell for both self and your opponent
+        let cell = &mut self.guess_board.cells[target_x][target_y];
+        let ocell = &mut opponent.board.cells[target_x][target_y];
 
+        // Check if your opponents cell is occupied if so then muts it to be a hit
+        if *ocell == Cells::Occupied {
+            self.guess_board.change_cell(target_x, target_y, Cells::Hit, &mut self.guessgrid);
+            opponent.board.change_cell(target_x,target_y,Cells::Hit,&mut opponent.boardgrid);
+            println!("Hit!");
+        } else { // muts it to be a miss
+            self.guess_board.change_cell(target_x,target_y,Cells::Miss,&mut self.guessgrid);
+            opponent.board.change_cell(target_x,target_y,Cells::Miss,&mut opponent.boardgrid);
+            println!("Miss!");
+        }
+    }
+
+fn get_clicked_cell(&self) -> Option<(usize, usize)> {
+        let (mouse_x, mouse_y) = mouse_position();
+        
+        let grid_x_offset = 710.0;
+        let grid_y_offset = 50.0;
+        let cell_size = 40.0;  // This should match your grid cell size
+        let grid_size_px = cell_size * GRID_SIZE as f32;
+    
+        // Check if the mouse is within the bounds of the grid
+        if mouse_x >= grid_x_offset && mouse_x < grid_x_offset + grid_size_px &&
+           mouse_y >= grid_y_offset && mouse_y < grid_y_offset + grid_size_px {
+            // Swap x and y calculation to fix the issue
+            let x = ((mouse_y - grid_y_offset) / cell_size) as usize;  // Use mouse_y for x
+            let y = ((mouse_x - grid_x_offset) / cell_size) as usize;  // Use mouse_x for y
+            return Some((x, y));
+        }
+    
+        None
+    }
 ```
 #### Video of Functionality (link to youtube)
 [![IT Prototype 25 March](https://img.youtube.com/vi/NM8lwhZ-a-o/0.jpg)](https://www.youtube.com/watch?v=NM8lwhZ-a-o)
