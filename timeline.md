@@ -33,12 +33,11 @@
 - Implement Patrol
     - Move 1 space in any direction
     - Prevent moving out of bounds and onto other ships
-- Implement Reinforce
+- Implement Reinforce &#x2611;
 
 ## Week 2 - Turn system, ui, visuals
 
 ### Day 7 March 26
-- Implement Air Defence
 - Implement turn based system &#x2611;
 - Alternate player turns &#x2611;
 - after play card draw new one
