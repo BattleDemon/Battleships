@@ -24,184 +24,51 @@ Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
   If i finish my game before it is due I will attempt to add a very simple AI to the game which will be more than a random number generater. Another thing I could do is improve the graphics or making it more user friendly.
 
 ## Prototyping 
-### Prototype with basic game loop
+### Prototype 1: Basic game loop 
 #### Code at March 24th 
-Main loop 
+To view all code at this point please see https://github.com/BattleDemon/Battleships/blob/Prototypes/Prototype1.rs
+
+Main Loop
 ```rs
-// Main
-#[macroquad::main("Battleships")]
-async fn main() {
-    request_new_screen_size(1280., 720.); // change screen size
 
-    //let bgm = audio::load_sound("src/Bismarck.wav").await.unwrap();
-    //let bgm_params = audio::PlaySoundParams{looped:true,volume:1.};
-    //audio::play_sound(&bgm, bgm_params);
-
-    // make player
-    let mut player1 = Player::new();
-    player1.deck.build(); // build the deck
-    player1.deck.shuffle(); // shuffle the deck
-
-    // make opponent
-    let mut opponent = Player::new();
-    opponent.deck.build(); // build the deck
-    opponent.deck.shuffle(); // shuffle the deck
-
-    // Define Placeholder ships player 1
-    player1.board.change_cell(0,2,Cells::Occupied,&mut player1.boardgrid);
-    player1.board.change_cell(0,3,Cells::Occupied,&mut player1.boardgrid);
-
-    player1.board.change_cell(7,5,Cells::Occupied,&mut player1.boardgrid);
-    player1.board.change_cell(8,5,Cells::Occupied,&mut player1.boardgrid);
-    player1.board.change_cell(9,5,Cells::Occupied,&mut player1.boardgrid);
-
-    // Change the positon of the boards
-    player1.boardgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
-    player1.boardgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
-    player1.boardgrid.set_cell_bg_color(BLACK);
-    player1.boardgrid.set_gap_color(GREEN);
-
-    player1.guessgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
-    player1.guessgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
-    player1.guessgrid.set_cell_bg_color(BLACK);
-    player1.guessgrid.set_gap_color(GREEN);
-
-    opponent.boardgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
-    opponent.boardgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
-    opponent.boardgrid.set_cell_bg_color(BLACK);
-    opponent.boardgrid.set_gap_color(GREEN);
-
-    opponent.guessgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
-    opponent.guessgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
-    opponent.guessgrid.set_cell_bg_color(BLACK);
-    opponent.guessgrid.set_gap_color(GREEN);
-
-
-    // opponent enemy ships
-    opponent.board.change_cell(3,3,Cells::Occupied,&mut opponent.boardgrid);
-    opponent.board.change_cell(3,4,Cells::Occupied,&mut opponent.boardgrid);
-    opponent.board.change_cell(3,5,Cells::Occupied,&mut opponent.boardgrid);
-
-    opponent.board.change_cell(7,9,Cells::Occupied,&mut opponent.boardgrid);
-    opponent.board.change_cell(6,9,Cells::Occupied,&mut opponent.boardgrid);
-
-    let mut player1_turn = true;
-    loop {
-        clear_background(BLACK);
-
-        if player1_turn == true {
-            player1.boardgrid.draw();
-            player1.guessgrid.draw();
-        }
-        else {
-            opponent.boardgrid.draw();
-            opponent.guessgrid.draw();
-        }
-        
-        if is_key_pressed(KeyCode::A) {
-
-            let nums: Vec<usize> = (0..10).collect();
-                let mut rng = ::rand::rng();
-                let tempx = nums.choose(&mut rng);
-                let tempy = nums.choose(&mut rng);
-                let x: usize = *tempx.unwrap();
-                let y: usize = *tempy.unwrap();
-
-            if player1_turn == true {
-                player1.fire_missile(&mut opponent,x,y);
-                
-            }
-            else {
-                opponent.fire_missile(&mut player1,x,y)
-            }
-            player1_turn = !player1_turn;
-        }
-
-        if is_mouse_button_pressed(MouseButton::Left) {
-            if player1_turn {
-                if let Some((x, y)) = player1.get_clicked_cell() {
-                    player1.fire_missile(&mut opponent, x, y);
-                    player1_turn = false;
-                }
-            } else {
-                if let Some((x, y)) = opponent.get_clicked_cell() {
-                    opponent.fire_missile(&mut player1, x, y);
-                    player1_turn = true;
-                }
-            }
-        }
-
-        next_frame().await
-    }
-}
 ```
 
-Player struct
+Change Cell function
 ```rs
-// Player functions
-impl Player {
-    // Player Constructor
-    fn new() -> Self {
-        Player{
-            board: Board::new(),
-            boardgrid: Grid::new(400.0,400.0,10,10,1.0),
-            guess_board: Board::new(),
-            guessgrid: Grid::new(400.0,400.0,10,10,1.0),
-            hand: Vec::new(),
-            deck: Deck::new(),
-            ships: Vec::new(),
-            ship_count: 5,
-        }
-    }
 
-    fn fire_missile(&mut self, opponent: &mut Player , target_x: usize, target_y: usize) {
-        // create local mutable cell for both self and your opponent
-        let cell = &mut self.guess_board.cells[target_x][target_y];
-        let ocell = &mut opponent.board.cells[target_x][target_y];
+```
 
-        // Check if your opponents cell is occupied if so then muts it to be a hit
-        if *ocell == Cells::Occupied {
-            self.guess_board.change_cell(target_x, target_y, Cells::Hit, &mut self.guessgrid);
-            opponent.board.change_cell(target_x,target_y,Cells::Hit,&mut opponent.boardgrid);
-            println!("Hit!");
-        } else { // muts it to be a miss
-            self.guess_board.change_cell(target_x,target_y,Cells::Miss,&mut self.guessgrid);
-            opponent.board.change_cell(target_x,target_y,Cells::Miss,&mut opponent.boardgrid);
-            println!("Miss!");
-        }
-    }
+Fire Missle and get clicked cell Functions
+```rs
 
-    fn check_hit(&self, target_x: usize, target_y: usize) -> bool {
-        self.guess_board.cells[target_x][target_y] == Cells::Occupied
-    }
-
-    fn get_clicked_cell(&self) -> Option<(usize, usize)> {
-        let (mouse_x, mouse_y) = mouse_position();
-        
-        let grid_x_offset = 710.0;
-        let grid_y_offset = 50.0;
-        let cell_size = 40.0;  // This should match your grid cell size
-        let grid_size_px = cell_size * GRID_SIZE as f32;
-    
-        // Check if the mouse is within the bounds of the grid
-        if mouse_x >= grid_x_offset && mouse_x < grid_x_offset + grid_size_px &&
-           mouse_y >= grid_y_offset && mouse_y < grid_y_offset + grid_size_px {
-            // Swap x and y calculation to fix the issue
-            let x = ((mouse_y - grid_y_offset) / cell_size) as usize;  // Use mouse_y for x
-            let y = ((mouse_x - grid_x_offset) / cell_size) as usize;  // Use mouse_x for y
-            return Some((x, y));
-        }
-    
-        None
-    }
-}
 ```
 #### Video of Functionality (link to youtube)
 [![IT Prototype 25 March](https://img.youtube.com/vi/NM8lwhZ-a-o/0.jpg)](https://www.youtube.com/watch?v=NM8lwhZ-a-o)
 #### Issues and Solutions 
 
-### Prototype with turn based systems and actions 
+### Prototype 2: Added Torpedo and Radar scan actions and random ship placement
 #### Code at March 27th 
+To view all code at this point please see 
+
+Main Loop
+```rs
+
+```
+
+Torpedo Function
+```rs
+
+```
+
+Radarscan Function
+```rs
+
+```
+
+Random Ship Placement
+```rs
+
+```
 
 #### Video of Functionality 
 
