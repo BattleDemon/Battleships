@@ -17,6 +17,7 @@ enum Cells {
     Occupied, // The cell has a ship
     Hit, // Hit a Ship
     Miss, // Fired and missed
+    Reinforced, // after been hit it goes down to occupied then it can be hit
 }
 
 // Board used to keep track of the four game boards 2 per player 
@@ -103,6 +104,7 @@ impl Board {
                 Cells::Hit => grid.color_cell(x, y, RED), // if the provided cell is hit it will display as red
                 Cells::Miss => {grid.set_cell_text(x,y, Some("0")); // if the provided cell is miss it will show as grey with a 0 in it
                                 grid.color_cell(x,y,GRAY); },
+                Cells::Reinforced => grid.color_cell(x, y, DARKGREEN), // 
             }
             self.cells[x][y] = ctype; // changed the cell in the board to the provided cell
         }  
@@ -176,21 +178,26 @@ impl Player {
     }
 
     // Base fire type used in every battleship game
-    fn fire_missile(&mut self, opponent: &mut Player , target_x: usize, target_y: usize) {
-        // create local mutable cell for your opponent 
-        let ocell = &mut opponent.board.cells[target_x][target_y]; // refrence to cell cords provided
-
-        // Check if your opponents cell is occupied if so then muts it to be a hit
-        if *ocell == Cells::Occupied {
-            // if cell is occupied then it will change it to a hit for the player and opponent
-            self.guess_board.change_cell(target_x, target_y, Cells::Hit, &mut self.guessgrid); 
-            opponent.board.change_cell(target_x,target_y,Cells::Hit,&mut opponent.boardgrid);
-            println!("Hit!");
-        } else { // muts it to be a miss
-            // if cell is empty then it changes to display that it is a miss
-            self.guess_board.change_cell(target_x,target_y,Cells::Miss,&mut self.guessgrid);
-            opponent.board.change_cell(target_x,target_y,Cells::Miss,&mut opponent.boardgrid);
-            println!("Miss!");
+    fn fire_missile(&mut self, opponent: &mut Player, target_x: usize, target_y: usize) {
+        let ocell = &mut opponent.board.cells[target_x][target_y];
+    
+        match *ocell {
+            Cells::Reinforced => {
+                println!("Reinforced hit! Cell downgraded to Occupied.");
+                opponent.board.change_cell(target_x, target_y, Cells::Occupied, &mut opponent.boardgrid);
+                // After reinforcing a cell, it is now occupied and will be updated visually to reflect this change.
+                self.guess_board.change_cell(target_x, target_y, Cells::Occupied, &mut self.guessgrid); // Update feedback grid
+            }
+            Cells::Occupied => {
+                opponent.board.change_cell(target_x, target_y, Cells::Hit, &mut opponent.boardgrid);
+                self.guess_board.change_cell(target_x, target_y, Cells::Hit, &mut self.guessgrid);
+                println!("Hit!");
+            }
+            _ => {
+                opponent.board.change_cell(target_x, target_y, Cells::Miss, &mut opponent.boardgrid);
+                self.guess_board.change_cell(target_x, target_y, Cells::Miss, &mut self.guessgrid);
+                println!("Miss!");
+            }
         }
     }
 
@@ -200,17 +207,26 @@ impl Player {
     
         while x < GRID_SIZE {
             match opponent.board.cells[x][target_y] {
+                Cells::Reinforced => {
+                    // If the cell is reinforced, downgrade it to occupied
+                    opponent.board.change_cell(x, target_y, Cells::Occupied, &mut opponent.boardgrid);
+                    println!("Torpedo hit a reinforced cell! Protection removed.");
+                    break;
+                }
                 Cells::Occupied => {
+                    // Normal hit on an occupied cell
                     self.guess_board.change_cell(x, target_y, Cells::Hit, &mut self.guessgrid);
                     opponent.board.change_cell(x, target_y, Cells::Hit, &mut opponent.boardgrid);
                     println!("Torpedo hit!");
                     break;
                 }
                 Cells::Hit => {
+                    // Stop if it reaches an already hit cell
                     println!("Torpedo stopped! Already hit here.");
-                    break; // Stop if it reaches a previously hit ship
+                    break;
                 }
                 _ => {
+                    // Otherwise, mark as miss and continue upwards
                     self.guess_board.change_cell(x, target_y, Cells::Miss, &mut self.guessgrid);
                     opponent.board.change_cell(x, target_y, Cells::Miss, &mut opponent.boardgrid);
                     println!("Torpedo missed!");
@@ -221,6 +237,7 @@ impl Player {
             x -= 1; // Move upwards
         }
     }
+    
 
     fn get_torpedo_target_column(&self) -> Option<usize> {
         let (mouse_x, mouse_y) = mouse_position();
@@ -265,6 +282,26 @@ impl Player {
         self.guess_board.cells[target_x][target_y] == Cells::Occupied
     }
 
+    fn reinforce(&mut self, target_x: usize, target_y: usize) {
+        let current_state = self.board.cells[target_x][target_y];
+        
+        match current_state {
+            Cells::Occupied => {
+                // Reinforce the cell if it's occupied and not already reinforced
+                self.board.change_cell(target_x, target_y, Cells::Reinforced, &mut self.boardgrid);
+                println!("Cell at ({}, {}) reinforced!", target_x, target_y);
+            }
+            Cells::Reinforced => {
+                // Already reinforced
+                println!("Cell at ({}, {}) is already reinforced.", target_x, target_y);
+            }
+            _ => {
+                // Cannot reinforce an empty or hit cell
+                println!("Cannot reinforce cell at ({}, {}). It must be occupied.", target_x, target_y);
+            }
+        }
+    }
+
     fn get_clicked_cell(&self) -> Option<(usize, usize)> {
         let (mouse_x, mouse_y) = mouse_position();
         
@@ -285,6 +322,23 @@ impl Player {
         None
     }
 
+    fn get_clicked_cell_on_own_board(&self) -> Option<(usize, usize)> {
+        let (mouse_x, mouse_y) = mouse_position();
+        
+        let grid_x_offset = 150.0;
+        let grid_y_offset = 50.0;
+        let cell_size = 40.0;  
+        let grid_size_px = cell_size * GRID_SIZE as f32;
+
+        if mouse_x >= grid_x_offset && mouse_x < grid_x_offset + grid_size_px &&
+           mouse_y >= grid_y_offset && mouse_y < grid_y_offset + grid_size_px {
+            let x = ((mouse_y - grid_y_offset) / cell_size) as usize;
+            let y = ((mouse_x - grid_x_offset) / cell_size) as usize;
+            return Some((x, y));
+        }
+        None
+    }
+
     fn place_ship(&mut self, ship_type: ShipType, orientation: Orientation) -> Option<Ship> {
         let mut rng = ::rand::rng(); // Corrected RNG call
         
@@ -301,8 +355,8 @@ impl Player {
         for _ in 0..100 { // Try up to 100 times to find a valid placement
             let tempx = possible_pos.choose(&mut rng);
             let tempy = possible_pos.choose(&mut rng);
-            let mut x: usize = *tempx.unwrap();
-            let mut y: usize = *tempy.unwrap();
+            let x: usize = *tempx.unwrap();
+            let y: usize = *tempy.unwrap();
     
             // Determine possible movement directions
             let mut directions = match orientation {
@@ -465,7 +519,7 @@ async fn main() {
             }
         }
 
-        if is_key_pressed(KeyCode::R) {
+        if is_key_pressed(KeyCode::S) {
             if player_acted == false {
                 if player1_turn {
                     if let Some((x, y)) = player1.get_clicked_cell() {
@@ -479,6 +533,24 @@ async fn main() {
                     }
                 }
             }else {
+                println!("Already used your action this turn!!");
+            }
+        }
+
+        if is_key_pressed(KeyCode::R) { // Reinforce Hull
+            if !player_acted {
+                if player1_turn {
+                    if let Some((x, y)) = player1.get_clicked_cell_on_own_board() {
+                        player1.reinforce(x, y);
+                        player_acted = true;
+                    }
+                } else {
+                    if let Some((x, y)) = opponent.get_clicked_cell_on_own_board(){
+                        opponent.reinforce(x, y);
+                        player_acted = true;
+                    }
+                }
+            } else {
                 println!("Already used your action this turn!!");
             }
         }
