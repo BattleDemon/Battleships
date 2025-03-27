@@ -9,6 +9,7 @@ const GRID_SIZE:usize = 10;
 const HAND_SIZE:usize = 3;
 const DECK_SIZE: usize = 48;
 
+/* -------- Structs and Enum -------- */
 // Cells used to keep track of the state of a cell/coordinate on the board
 #[derive(Copy, Clone, PartialEq)]
 enum Cells {
@@ -43,19 +44,19 @@ enum ShipType {
 // Track ships, its positions and orientation
 #[derive(Clone)]
 struct Ship {
-    ship_type: ShipType,
+    ship_type: ShipType, // Tracks the type of ship. see above
     positions: Vec<(usize,usize)>,// Cords ship occupies
-    orientation: Orientation,
+    orientation: Orientation, // Orientation of the ship used for ship generation
 }
 
 // Tracks all types of actions 
 #[derive(Copy, Clone)]
 enum ActionType {
-    Missle,
-    Torpedo,
-    Patrol,
-    RadarScan,
-    Reinforce,
+    Missle, // Missle is the base battle ships fire ability
+    Torpedo, // Torpedo fires from a point on the x axis then shots upwards along the y axis until it hits a occupied or already hit cell or leaves the grid
+    Patrol, // Allows the player to move a ship with all of its cells (no cell has been hit) one direction in the x or y axis (intended to use when seen by radar)
+    RadarScan, // reveals what is on the selected position and those adjacent to it 
+    Reinforce, // unsure if i will add this but it would give a cell an extra life 
 }
 
 // Keeps a vector of actions and used to randomly select them
@@ -71,18 +72,19 @@ struct Deck {
 
 // Track all player related variables 
 struct Player {
-    board: Board,
-    boardgrid: Grid,
-    guess_board: Board,
-    guessgrid: Grid,
-    hand: Vec<ActionType>,
-    deck: Deck,
-    ships: Vec<Ship>,
-    ship_count: usize,
+    board: Board, // Players board
+    boardgrid: Grid, // Players grid (displayable version of board)
+    guess_board: Board, // board where player guesses the enemies ships
+    guessgrid: Grid, // displayable version of above
+    hand: Vec<ActionType>, // stores the action cards that can be selected to use once each turn
+    deck: Deck, // Deck where action cards are drawn from 
+    ships: Vec<Ship>, // list of ships attached to the player
+    ship_count: usize, // number of ships with at least one cell (if 0 then game over you lost)
 }
 
-// implements
-// Board Functions
+/*-------- Impl for Structs -------- */
+// think of impl as been the functions inside a python class
+// Board Functions 
 impl Board {
     // Board Constructor
     fn new() -> Self {
@@ -91,19 +93,19 @@ impl Board {
         }
     }
     
-    fn change_cell(&mut self, x:usize,y:usize,ctype:Cells,grid:&mut Grid) {
+    // Change the inputed cell to the provided cell type
+    fn change_cell(&mut self, x:usize,y:usize,ctype:Cells,grid:&mut Grid) { 
 
-        if self.cells[x][y] != Cells::Hit {
+        if self.cells[x][y] != Cells::Hit { // Stops the cell from changing if the cell on the board is already hit i will have to make a way around this to add patrol in the future
             match ctype {
-                Cells::Empty => grid.color_cell(x,y ,DARKGRAY),
-                Cells::Occupied => grid.color_cell(x,y,GREEN),
-                Cells::Hit => grid.color_cell(x, y, RED),
-                Cells::Miss => {grid.set_cell_text(x,y, Some("0"));
+                Cells::Empty => grid.color_cell(x,y ,DARKGRAY), // if the provided cell is empty it will make the displayed grid cell dark grey
+                Cells::Occupied => grid.color_cell(x,y,GREEN), // if the provided cell is occupied it will display as green
+                Cells::Hit => grid.color_cell(x, y, RED), // if the provided cell is hit it will display as red
+                Cells::Miss => {grid.set_cell_text(x,y, Some("0")); // if the provided cell is miss it will show as grey with a 0 in it
                                 grid.color_cell(x,y,GRAY); },
             }
-            self.cells[x][y] = ctype;
+            self.cells[x][y] = ctype; // changed the cell in the board to the provided cell
         }  
-        // Changes the provided cell to occupied
     }
 }
 
@@ -114,41 +116,42 @@ impl Ship {
     }
 }
 
+// Deck functions
 impl Deck {
     // Deck Constructor
     fn new() -> Self {
         Deck {
-            deck_list: [ActionType::Missle; DECK_SIZE],
+            deck_list: [ActionType::Missle; DECK_SIZE], // make a vector of size deck size
         }
     }
 
-    fn build(&mut self) {
+    fn build(&mut self) { // changes the values of the elements in the vector to its respective action card based of of the deck probability in the deck struct 
         let mut deck_pos = 17; // first card not a missle
 
         loop {
             if deck_pos <= 26 {
-                self.deck_list[deck_pos] = ActionType::Torpedo;
+                self.deck_list[deck_pos] = ActionType::Torpedo; // makes 10 torpedos
             }
             else if deck_pos <= 34 {
-                self.deck_list[deck_pos] = ActionType::Patrol;
+                self.deck_list[deck_pos] = ActionType::Patrol; // makes 6 patrols
             }
             else if deck_pos <= 41 {
-                self.deck_list[deck_pos] = ActionType::Reinforce;
+                self.deck_list[deck_pos] = ActionType::Reinforce; // makes 6 reinforces
             }
             else if deck_pos <= 47 {
-                self.deck_list[deck_pos] = ActionType::RadarScan;
+                self.deck_list[deck_pos] = ActionType::RadarScan; // makes 6 radar scans
             }
             else if deck_pos == 48 {
-                break;
+                break; // breaks out of the loop
             }
-            deck_pos += 1;
+            deck_pos += 1; // increase the deck pos then runs the loop
         }  
     }
 
     fn shuffle(&mut self,){
         // randomly select a permutation of the deck 
         let mut rng = ::rand::rng();
-        self.deck_list.shuffle(&mut rng);
+        self.deck_list.shuffle(&mut rng); // randomly selct a permutation of the deck list vector 
     }
 
     fn draw_card() {
@@ -156,39 +159,42 @@ impl Deck {
     }
 }
 
-// Player functions
+/*-------- Player Implementations -------- */
 impl Player {
     // Player Constructor
     fn new() -> Self {
         Player{
-            board: Board::new(),
-            boardgrid: Grid::new(400.0,400.0,10,10,1.0),
-            guess_board: Board::new(),
-            guessgrid: Grid::new(400.0,400.0,10,10,1.0),
-            hand: Vec::new(),
-            deck: Deck::new(),
-            ships: Vec::new(),
+            board: Board::new(), // creates an instance of the board struct
+            boardgrid: Grid::new(400.0,400.0,10,10,1.0), // creates a grid with the provided values
+            guess_board: Board::new(), // creates an instance of the board struct
+            guessgrid: Grid::new(400.0,400.0,10,10,1.0), // creates a grid with the provided values
+            hand: Vec::new(), // Vector to store what actions are in the hand
+            deck: Deck::new(), // creates an instance of the deck struct
+            ships: Vec::new(), // creates a vectore of ship structs
             ship_count: 5,
         }
     }
 
+    // Base fire type used in every battleship game
     fn fire_missile(&mut self, opponent: &mut Player , target_x: usize, target_y: usize) {
-        // create local mutable cell for both self and your opponent
-        let cell = &mut self.guess_board.cells[target_x][target_y];
-        let ocell = &mut opponent.board.cells[target_x][target_y];
+        // create local mutable cell for your opponent 
+        let ocell = &mut opponent.board.cells[target_x][target_y]; // refrence to cell cords provided
 
         // Check if your opponents cell is occupied if so then muts it to be a hit
         if *ocell == Cells::Occupied {
-            self.guess_board.change_cell(target_x, target_y, Cells::Hit, &mut self.guessgrid);
+            // if cell is occupied then it will change it to a hit for the player and opponent
+            self.guess_board.change_cell(target_x, target_y, Cells::Hit, &mut self.guessgrid); 
             opponent.board.change_cell(target_x,target_y,Cells::Hit,&mut opponent.boardgrid);
             println!("Hit!");
         } else { // muts it to be a miss
+            // if cell is empty then it changes to display that it is a miss
             self.guess_board.change_cell(target_x,target_y,Cells::Miss,&mut self.guessgrid);
             opponent.board.change_cell(target_x,target_y,Cells::Miss,&mut opponent.boardgrid);
             println!("Miss!");
         }
     }
 
+    // Twist new firing func - shot up from a x pos until hit occupied or hit cell or leaves the grid
     fn fire_torpedo(&mut self, opponent: &mut Player, target_y: usize) {
         let mut x = GRID_SIZE - 1; // Start at the bottom row
     
@@ -354,7 +360,7 @@ impl Player {
 }
 
 
-// Main
+/*-------- Main -------- */
 #[macroquad::main("Battleships")]
 async fn main() {
     request_new_screen_size(1280., 720.); // change screen size
