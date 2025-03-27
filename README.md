@@ -94,7 +94,8 @@ fn change_cell(&mut self, x:usize,y:usize,ctype:Cells,grid:&mut Grid) {
                                 grid.color_cell(x,y,GRAY); },
             }
             self.cells[x][y] = ctype;
-        }  
+        }
+    }
 ```
 
 Fire Missle and get clicked cell Functions
