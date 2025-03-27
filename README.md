@@ -375,7 +375,7 @@ fn place_ship(&mut self, ship_type: ShipType, orientation: Orientation) -> Optio
 ```
 
 #### Video of Functionality 
-
+[![IT Prototype 27 March](https://img.youtube.com/vi/BdwVXEb1Fnw/0.jpg)](https://www.youtube.com/watch?v=BdwVXEb1Fnw)
 #### Issues and Solutions 
 
 ### Prototype with Ui and visuals
