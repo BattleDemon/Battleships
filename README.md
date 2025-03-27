@@ -143,7 +143,7 @@ fn get_clicked_cell(&self) -> Option<(usize, usize)> {
 
 ### Prototype 2: Added Torpedo and Radar scan actions and random ship placement
 #### Code at March 27th 
-To view all code at this point please see https://github.com/BattleDemon/Battleships/blob/Prototypes/Prototype2.rs
+To view all code at this point please see [https://github.com/BattleDemon/Battleships/blob/Prototypes/Prototype2.rs](https://github.com/BattleDemon/Battleships/blob/main/Prototypes/Prototype2.rs)
 
 Main Loop
 ```rs
