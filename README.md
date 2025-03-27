@@ -30,7 +30,55 @@ To view all code at this point please see https://github.com/BattleDemon/Battles
 
 Main Loop
 ```rs
+    let mut player1_turn = true;
+    loop {
+        clear_background(BLACK);
 
+        if player1_turn == true {
+            player1.boardgrid.draw();
+            player1.guessgrid.draw();
+        }
+        else {
+            opponent.boardgrid.draw();
+            opponent.guessgrid.draw();
+        }
+        
+        if is_key_pressed(KeyCode::A) {
+
+            let nums: Vec<usize> = (0..10).collect();
+                let mut rng = ::rand::rng();
+                let tempx = nums.choose(&mut rng);
+                let tempy = nums.choose(&mut rng);
+                let x: usize = *tempx.unwrap();
+                let y: usize = *tempy.unwrap();
+
+            if player1_turn == true {
+                player1.fire_missile(&mut opponent,x,y);
+                
+            }
+            else {
+                opponent.fire_missile(&mut player1,x,y)
+            }
+            player1_turn = !player1_turn;
+        }
+
+        if is_mouse_button_pressed(MouseButton::Left) {
+            if player1_turn {
+                if let Some((x, y)) = player1.get_clicked_cell() {
+                    player1.fire_missile(&mut opponent, x, y);
+                    player1_turn = false;
+                }
+            } else {
+                if let Some((x, y)) = opponent.get_clicked_cell() {
+                    opponent.fire_missile(&mut player1, x, y);
+                    player1_turn = true;
+                }
+            }
+        }
+
+        next_frame().await
+    }
+}
 ```
 
 Change Cell function
