@@ -457,6 +457,8 @@ async fn main() {
                         player_acted = true;
                         if hit {
                             audio::play_sound_once(&MISSLE_SOUND);
+                        }else {
+                            audio::play_sound_once(&SPLASH_SOUND);
                         }
                     }
                 } else {
@@ -466,6 +468,8 @@ async fn main() {
                         player_acted = true;
                         if hit {
                             audio::play_sound_once(&MISSLE_SOUND);
+                        }else {
+                            audio::play_sound_once(&SPLASH_SOUND);
                         }
                     }
                 }
@@ -476,13 +480,14 @@ async fn main() {
         
         if is_key_pressed(KeyCode::T) {
             if !player_acted {
+                audio::play_sound_once(&TORPEDO_SOUND);
                 if player1_turn {
                     if let Some(target_x) = player1.get_torpedo_target_column() {
                         let hit = player1.fire_torpedo(&mut opponent, target_x);
                         println!("Torpedo {}", if hit { "hit!" } else { "missed." });
                         player_acted = true;
                         if hit {
-                            audio::play_sound_once(&TORPEDO_SOUND);
+                            // Put a explosion sound effect
                         }
                     }
                 } else {
@@ -491,7 +496,7 @@ async fn main() {
                         println!("Torpedo {}", if hit { "hit!" } else { "missed." });
                         player_acted = true;
                         if hit {
-                            audio::play_sound_once(&TORPEDO_SOUND);
+                            // Put a explosion sound effect
                         }
                     }
                 }
