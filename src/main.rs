@@ -463,9 +463,10 @@ impl Player {
                 new_positions.push((new_x, new_y));
             }
 
-            // Clear old positions
+            // Clear old positions - change back to BLACK (default)
             for &(x, y) in &ship.positions {
-                self.board.change_cell(x, y, Cells::Empty, &mut self.boardgrid);
+                self.boardgrid.color_cell(x, y, BLACK);  // Set to black instead of changing cell type
+                self.board.cells[x][y] = Cells::Empty;   // Still mark as empty in the backend
             }
 
             // Update ship positions
@@ -496,11 +497,12 @@ impl Player {
 
     fn cancel_patrol(&mut self) {
         if let Some(ship_idx) = self.patrol_ship {
-            // Remove highlight
+            // Remove highlight and reset to proper colors
             for &(x, y) in &self.ships[ship_idx].positions {
                 match self.board.cells[x][y] {
                     Cells::Occupied => self.boardgrid.color_cell(x, y, GREEN),
                     Cells::Reinforced => self.boardgrid.color_cell(x, y, DARKGREEN),
+                    Cells::Empty => self.boardgrid.color_cell(x, y, BLACK),  // Reset empty cells to black
                     _ => {}
                 }
             }
@@ -509,6 +511,7 @@ impl Player {
         self.patrol_ship = None;
         self.patrol_frames = 0;
     }
+
 
     fn update_patrol(&mut self) {
         if self.patrol_mode && self.patrol_frames > 0 {
@@ -549,7 +552,7 @@ async fn main() {
 
     player1.boardgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
     player1.boardgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
-    player1.boardgrid.set_cell_bg_color(DARKGRAY);
+    player1.boardgrid.set_cell_bg_color(BLACK);
     player1.boardgrid.set_gap_color(GREEN);
 
     player1.guessgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
@@ -559,7 +562,7 @@ async fn main() {
 
     opponent.boardgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
     opponent.boardgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
-    opponent.boardgrid.set_cell_bg_color(DARKGRAY);
+    opponent.boardgrid.set_cell_bg_color(BLACK);
     opponent.boardgrid.set_gap_color(GREEN);
 
     opponent.guessgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
