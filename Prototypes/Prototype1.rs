@@ -220,10 +220,6 @@ impl Player {
 async fn main() {
     request_new_screen_size(1280., 720.); // change screen size
 
-    //let bgm = audio::load_sound("src/Bismarck.wav").await.unwrap();
-    //let bgm_params = audio::PlaySoundParams{looped:true,volume:1.};
-    //audio::play_sound(&bgm, bgm_params);
-
     // make player
     let mut player1 = Player::new();
     player1.deck.build(); // build the deck
