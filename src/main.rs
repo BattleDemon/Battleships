@@ -604,7 +604,7 @@ impl Player {
 
 fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
     for (i, card) in hand.iter().enumerate() {
-        let card_x = x + (i as f32 * 60.0);
+        let card_x = x + (i as f32 * 70.0);
         let color = match card {
             ActionType::Missle => RED,
             ActionType::Torpedo => BLUE,
@@ -622,10 +622,10 @@ fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
                 ActionType::RadarScan => "Radar",
                 ActionType::Reinforce => "Reinforce",
             },
-            card_x + 5.0,
+            card_x + 2.0,
             y + 40.0,
             20.0,
-            WHITE,
+            BLACK,
         );
     }
 }
@@ -856,12 +856,12 @@ async fn main() {
 
 
         if !player1_turn {
-            draw_text("Player 2's turn", (screen_width()/2.0)-100.0, 45.0, 30.0, WHITE);
+            draw_text("Player 2's turn", (screen_width()/2.0)-120.0, 45.0, 30.0, WHITE);
             draw_hand_to_screen(&opponent.hand, (screen_width()/2.0)-100.0, 500.0);
 
         }else{
             draw_text("Player 1's turn", (screen_width()/2.0)-100.0, 45.0, 30.0, WHITE);
-            draw_hand_to_screen(&player1.hand, (screen_width()/2.0)-100.0, 500.0);
+            draw_hand_to_screen(&player1.hand, (screen_width()/2.0)-120.0, 500.0);
 
         }
         
