@@ -613,7 +613,7 @@ fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
             ActionType::Reinforce => GREEN,
         };
         
-        draw_rectangle(card_x, y, 50.0, 80.0, color);
+        draw_rectangle(card_x, y, 70.0, 100.0, color);
         draw_text(
             match card {
                 ActionType::Missle => "Missile",
@@ -629,6 +629,8 @@ fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
         );
     }
 }
+
+
 /*-------- Main -------- */
 #[macroquad::main("Battleships")]
 async fn main() {
@@ -852,15 +854,17 @@ async fn main() {
             }
         }
 
-        /* 
-        draw_hand_to_screen(&player1.hand, 50.0, 500.0);
 
         if !player1_turn {
-            draw_text("Player 2's turn", 50.0, 490.0, 30.0, WHITE);
+            draw_text("Player 2's turn", (screen_width()/2.0)-100.0, 45.0, 30.0, WHITE);
+            draw_hand_to_screen(&opponent.hand, (screen_width()/2.0)-100.0, 500.0);
+
         }else{
-            draw_text("Player 1's turn", 50.0, 490.0, 30.0, WHITE);
+            draw_text("Player 1's turn", (screen_width()/2.0)-100.0, 45.0, 30.0, WHITE);
+            draw_hand_to_screen(&player1.hand, (screen_width()/2.0)-100.0, 500.0);
+
         }
-        */
+        
         
         next_frame().await;
     }
