@@ -9,6 +9,12 @@ const GRID_SIZE: usize = 10;
 const HAND_SIZE: usize = 3;
 const DECK_SIZE: usize = 48;
 
+const REINFORCE_SOUND: &[u8] = include_bytes!("Sound/Reinforce(new version).wav");
+const SONAR_SOUND: &[u8] = include_bytes!("Sound/Sonar(new version).wav");
+const MISSLE_SOUND: &[u8] = include_bytes!("Sound/Sound Effect - Missile Launch.wav");
+const SPLASH_SOUND: &[u8] = include_bytes!("Sound/Splash(new version).wav");
+const TORPEDO_SOUND: &[u8] = include_bytes!("Sound/Torpedo(new version).wav");
+
 /* -------- Structs and Enum -------- */
 // Cells used to keep track of the state of a cell/coordinate on the board
 #[derive(Copy, Clone, PartialEq)]
@@ -628,11 +634,11 @@ fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
 async fn main() {
     request_new_screen_size(1280., 720.);
 
-    let reinforce_sound = audio::load_sound("src/Sound/Reinforce(new version).wav").await.unwrap();
-    let torpedo_sound = audio::load_sound("src/Sound/Torpedo(new version).wav").await.unwrap();
-    let sonar_sound = audio::load_sound("src/Sound/Sonar(new version).wav").await.unwrap();
-    let splash_sound = audio::load_sound("src/Sound/Splash(new version).wav").await.unwrap();
-    let missle_sound = audio::load_sound("src/Sound/Sound Effect - Missile Launch.wav").await.unwrap();
+    let reinforce_sound = audio::load_sound_from_bytes(REINFORCE_SOUND).await.unwrap();
+    let torpedo_sound = audio::load_sound_from_bytes(TORPEDO_SOUND).await.unwrap();
+    let sonar_sound = audio::load_sound_from_bytes(SONAR_SOUND).await.unwrap();
+    let splash_sound = audio::load_sound_from_bytes(SPLASH_SOUND).await.unwrap();
+    let missle_sound = audio::load_sound_from_bytes(MISSLE_SOUND).await.unwrap();
 
     let mut player1 = Player::new();
     player1.deck.build();
