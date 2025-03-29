@@ -560,6 +560,33 @@ impl Player {
 
 }
 
+fn draw_hand(hand: &[ActionType], x: f32, y: f32) {
+    for (i, card) in hand.iter().enumerate() {
+        let card_x = x + (i as f32 * 60.0);
+        let color = match card {
+            ActionType::Missle => RED,
+            ActionType::Torpedo => BLUE,
+            ActionType::Patrol => YELLOW,
+            ActionType::RadarScan => PURPLE,
+            ActionType::Reinforce => GREEN,
+        };
+        
+        draw_rectangle(card_x, y, 50.0, 80.0, color);
+        draw_text(
+            match card {
+                ActionType::Missle => "Missile",
+                ActionType::Torpedo => "Torpedo",
+                ActionType::Patrol => "Patrol",
+                ActionType::RadarScan => "Radar",
+                ActionType::Reinforce => "Reinforce",
+            },
+            card_x + 5.0,
+            y + 40.0,
+            20.0,
+            WHITE,
+        );
+    }
+}
 /*-------- Main -------- */
 #[macroquad::main("Battleships")]
 async fn main() {
@@ -781,6 +808,13 @@ async fn main() {
                 player1_turn = !player1_turn;
                 player_acted = false;
             }
+        }
+
+        draw_hand(&player1.hand, 50.0, 500.0);
+        if !player1_turn {
+            draw_text("Player 2's turn", 50.0, 490.0, 30.0, WHITE);
+        }else{
+            draw_text("Player 1's turn", 50.0, 490.0, 30.0, WHITE);
         }
 
         next_frame().await;
