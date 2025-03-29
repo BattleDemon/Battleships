@@ -96,10 +96,7 @@ impl Board {
                 Cells::Empty => grid.color_cell(x, y, DARKGRAY),
                 Cells::Occupied => grid.color_cell(x, y, GREEN),
                 Cells::Hit => grid.color_cell(x, y, RED),
-                Cells::Miss => {
-                    grid.set_cell_text(x, y, Some("0"));
-                    grid.color_cell(x, y, GRAY);
-                },
+                Cells::Miss => grid.color_cell(x, y, GRAY),
                 Cells::Reinforced => grid.color_cell(x, y, DARKGREEN),
             }
             self.cells[x][y] = ctype;
