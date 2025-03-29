@@ -447,17 +447,6 @@ impl Player {
     fn try_patrol_move(&mut self, dir_x: isize, dir_y: isize) -> bool {
         if let Some(ship_idx) = self.patrol_ship {
             let ship = &mut self.ships[ship_idx];
-            
-            // Double-check that ship hasn't been hit while waiting
-            let has_hit = ship.positions.iter().any(|&(px, py)| {
-                self.board.cells[px][py] == Cells::Hit
-            });
-
-            if has_hit {
-                println!("Ship was hit while waiting to move!");
-                self.cancel_patrol();
-                return false;
-            }
 
             // Track which positions were reinforced
             let mut reinforced_positions = Vec::new();
