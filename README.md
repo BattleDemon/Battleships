@@ -378,15 +378,37 @@ fn place_ship(&mut self, ship_type: ShipType, orientation: Orientation) -> Optio
 [![IT Prototype 27 March](https://img.youtube.com/vi/BdwVXEb1Fnw/0.jpg)](https://www.youtube.com/watch?v=BdwVXEb1Fnw)
 #### Issues and Solutions 
 
-### Prototype with Ui and visuals
+### Prototype 3: Reinforce and Patrol
 #### Code at March 30th 
+To view all code at this point please see "PUT LINK TO PROTOTYPE 3"
+
+```rs
+// Reinforce functions
+```
+
+```rs 
+// patrol functiosn
+```
+
+```rs 
+// How they work in the main loop
+```
 
 #### Video of Functionality 
 
 #### Issues and Solutions 
 
-### Prototype with all system but needing balancing
+### Prototype 4: Hand display and fully developed action systems
 #### Code at April 3rd 
+To view all code at this point please see "PUT LINK TO PROTOTYPE 4"
+
+```rs
+// Hand related Functions
+```
+
+```rs
+// How do actions work with the hand system
+```
 
 #### Video of Functionality 
 

@@ -16,7 +16,7 @@
 ### Day 3 March 22
 - Create Deck with list of action cards  &#x2611;
 - Implement Shuffle &#x2611;
-- Implement draw card
+- Implement draw card &#x2611;
 
 ### Day 4 March 23
 - Implement missle &#x2611;
@@ -40,16 +40,16 @@
 ### Day 7 March 26
 - Implement turn based system &#x2611;
 - Alternate player turns &#x2611;
-- after play card draw new one
-- Keep a prototype (Turn systems and actions)
+- after play card draw new one &#x2611;
+- Keep a prototype (Turn systems and actions) &#x2611;
 
 
 ### Day 8 March 27
 - Light debugging and making sure every thing works
 
 ### Day 9 March 28
-- Display hand on screen
-- allow clikc to select action
+- Display hand on screen &#x2611;
+- allow clikc to select action 
 
 ### Day 10 March 29
 - Visual improvments for actions maybe explosion for hit splash for miss
