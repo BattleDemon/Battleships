@@ -51,7 +51,7 @@ struct Ship {
 }
 
 // Tracks all types of actions 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 enum ActionType {
     Missle,     // Missle is the base battle ships fire ability
     Torpedo,    // Torpedo fires from a point on the x axis then shots upwards along the y axis
@@ -62,7 +62,7 @@ enum ActionType {
 
 // Keeps a vector of actions and used to randomly select them
 struct Deck {
-    deck_list: [ActionType; DECK_SIZE],
+    deck_list: Vec<ActionType>,  
 }
 
 // Track all player related variables 
@@ -119,35 +119,43 @@ impl Deck {
     // Deck Constructor
     fn new() -> Self {
         Deck {
-            deck_list: [ActionType::Missle; DECK_SIZE],
+            deck_list: Vec::with_capacity(DECK_SIZE),
         }
     }
 
     fn build(&mut self) {
-        let mut deck_pos = 17;
-
-        loop {
-            if deck_pos <= 26 {
-                self.deck_list[deck_pos] = ActionType::Torpedo;
-            } else if deck_pos <= 34 {
-                self.deck_list[deck_pos] = ActionType::Patrol;
-            } else if deck_pos <= 41 {
-                self.deck_list[deck_pos] = ActionType::Reinforce;
-            } else if deck_pos <= 47 {
-                self.deck_list[deck_pos] = ActionType::RadarScan;
-            } else if deck_pos == 48 {
-                break;
-            }
-            deck_pos += 1;
-        }  
+        // Clear any existing cards
+        self.deck_list.clear();
+        
+        // Add Missile cards (first 16 cards)
+        for _ in 0..16 {
+            self.deck_list.push(ActionType::Missle);
+        }
+        
+        // Add Torpedo cards (next 9 cards)
+        for _ in 0..9 {
+            self.deck_list.push(ActionType::Torpedo);
+        }
+        
+        // Add Patrol cards (next 8 cards)
+        for _ in 0..8 {
+            self.deck_list.push(ActionType::Patrol);
+        }
+        
+        // Add Reinforce cards (next 7 cards)
+        for _ in 0..7 {
+            self.deck_list.push(ActionType::Reinforce);
+        }
+        
+        // Add RadarScan cards (last 8 cards)
+        for _ in 0..8 {
+            self.deck_list.push(ActionType::RadarScan);
+        }
     }
 
     fn shuffle(&mut self) {
         let mut rng = ::rand::rng();
         self.deck_list.shuffle(&mut rng);
-    }
-
-    fn draw_card() {
     }
 }
 
@@ -523,6 +531,33 @@ impl Player {
         }
     }
 
+    fn draw_card(&mut self) -> Option<ActionType> {
+        self.deck.deck_list.pop()
+    }
+
+    fn draw_hand(&mut self) {
+        while self.hand.len() < HAND_SIZE {
+            if let Some(card) = self.draw_card() {
+                self.hand.push(card);
+            } else {
+                break; // No more cards in deck
+            }
+        }
+    }
+
+    fn has_card(&self, action_type: ActionType) -> bool {
+        self.hand.contains(&action_type)
+    }
+
+    fn use_card(&mut self, action_type: ActionType) -> bool {
+        if let Some(pos) = self.hand.iter().position(|&x| x == action_type) {
+            self.hand.remove(pos);
+            true
+        } else {
+            false
+        }
+    }
+
 }
 
 /*-------- Main -------- */
@@ -539,10 +574,12 @@ async fn main() {
     let mut player1 = Player::new();
     player1.deck.build();
     player1.deck.shuffle();
+    player1.draw_hand();  // Draw initial hand
 
     let mut opponent = Player::new();
     opponent.deck.build();
     opponent.deck.shuffle();
+    opponent.draw_hand();  // Draw initial hand
 
     player1.place_ship(ShipType::Battleship, Orientation::Verticle);
     player1.place_ship(ShipType::Submarine, Orientation::Verticle);
@@ -740,6 +777,7 @@ async fn main() {
         if is_key_pressed(KeyCode::Space) {
             if player_acted {
                 println!("Player changed");
+                println!(" ");
                 player1_turn = !player1_turn;
                 player_acted = false;
             }
