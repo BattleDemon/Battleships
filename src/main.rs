@@ -177,7 +177,7 @@ impl Player {
 
     fn fire_missile(&mut self, opponent: &mut Player, target_x: usize, target_y: usize) -> bool {
         let ocell = &mut opponent.board.cells[target_x][target_y];
-    
+        
         match *ocell {
             Cells::Reinforced => {
                 println!("Reinforced hit! Cell downgraded to Occupied.");
@@ -189,6 +189,14 @@ impl Player {
                 opponent.board.change_cell(target_x, target_y, Cells::Hit, &mut opponent.boardgrid);
                 self.guess_board.change_cell(target_x, target_y, Cells::Hit, &mut self.guessgrid);
                 println!("Hit!");
+                
+                // Check if this hit destroyed a ship
+                if let Some(ship_idx) = opponent.find_ship_at(target_x, target_y) {
+                    if opponent.is_ship_destroyed(ship_idx) {
+                        println!("Ship completely destroyed!");
+                        opponent.update_ship_count();
+                    }
+                }
                 true
             }
             _ => {
@@ -217,6 +225,14 @@ impl Player {
                     opponent.board.change_cell(x, target_y, Cells::Hit, &mut opponent.boardgrid);
                     println!("Torpedo hit!");
                     hit_something = true;
+                    
+                    // Check if this hit destroyed a ship
+                    if let Some(ship_idx) = opponent.find_ship_at(x, target_y) {
+                        if opponent.is_ship_destroyed(ship_idx) {
+                            println!("Ship completely destroyed by torpedo!");
+                            opponent.update_ship_count();
+                        }
+                    }
                     break;
                 }
                 Cells::Hit => {
@@ -555,9 +571,32 @@ impl Player {
         }
     }
 
+   // Returns the index of the ship at the given coordinates, if any
+    fn find_ship_at(&self, x: usize, y: usize) -> Option<usize> {
+        self.ships.iter()
+            .position(|ship| ship.positions.contains(&(x, y)))
+    }
+
+    // Checks if a specific ship is completely destroyed
+    fn is_ship_destroyed(&self, ship_idx: usize) -> bool {
+        self.ships[ship_idx].positions.iter()
+            .all(|&(x, y)| self.board.cells[x][y] == Cells::Hit)
+    }
+
+    // Updates the ship count based on which ships are still alive
+    fn update_ship_count(&mut self) {
+        self.ship_count = self.ships.iter()
+            .filter(|ship| {
+                // A ship is still alive if at least one of its cells isn't hit
+                ship.positions.iter()
+                    .any(|&(x, y)| self.board.cells[x][y] != Cells::Hit)
+            })
+            .count();
+    }
+
 }
 
-fn draw_hand(hand: &[ActionType], x: f32, y: f32) {
+fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
     for (i, card) in hand.iter().enumerate() {
         let card_x = x + (i as f32 * 60.0);
         let color = match card {
@@ -808,7 +847,7 @@ async fn main() {
         }
 
         /* 
-        draw_hand(&player1.hand, 50.0, 500.0);
+        draw_hand_to_screen(&player1.hand, 50.0, 500.0);
 
         if !player1_turn {
             draw_text("Player 2's turn", 50.0, 490.0, 30.0, WHITE);
