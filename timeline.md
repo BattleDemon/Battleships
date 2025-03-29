@@ -30,9 +30,9 @@
 - Implemen radar scan &#x2611;
 
 ### Day 6 March 25
-- Implement Patrol
-    - Move 1 space in any direction
-    - Prevent moving out of bounds and onto other ships
+- Implement Patrol &#x2611;
+    - Move 1 space in any direction &#x2611;
+    - Prevent moving out of bounds and onto other ships &#x2611;
 - Implement Reinforce &#x2611;
 
 ## Week 2 - Turn system, ui, visuals
