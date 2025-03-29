@@ -589,10 +589,10 @@ fn draw_hand(hand: &[ActionType], x: f32, y: f32) {
 async fn main() {
     request_new_screen_size(1280., 720.);
 
-    let REINFORCE_SOUND = audio::load_sound("src/Sound/Welding sound Effects.wav").await.unwrap();
-    let TORPEDO_SOUND = audio::load_sound("src/Sound/Torpedo - Free Sound Effect.wav").await.unwrap();
-    let SONAR_SOUND = audio::load_sound("src/Sound/Submarine Sonar Ping Sound - Sonar Sound Effect.wav").await.unwrap();
-    let SPLASH_SOUND = audio::load_sound("src/Sound/Splash Sound Effect.wav").await.unwrap();
+    let REINFORCE_SOUND = audio::load_sound("src/Sound/Reinforce(new version).wav").await.unwrap();
+    let TORPEDO_SOUND = audio::load_sound("src/Sound/Torpedo(new version).wav").await.unwrap();
+    let SONAR_SOUND = audio::load_sound("src/Sound/Sonar(new version).wav").await.unwrap();
+    let SPLASH_SOUND = audio::load_sound("src/Sound/Splash(new version).wav").await.unwrap();
     let MISSLE_SOUND = audio::load_sound("src/Sound/Sound Effect - Missile Launch.wav").await.unwrap();
 
     let mut player1 = Player::new();
