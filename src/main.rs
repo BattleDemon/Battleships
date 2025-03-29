@@ -810,13 +810,16 @@ async fn main() {
             }
         }
 
+        /* 
         draw_hand(&player1.hand, 50.0, 500.0);
+
         if !player1_turn {
             draw_text("Player 2's turn", 50.0, 490.0, 30.0, WHITE);
         }else{
             draw_text("Player 1's turn", 50.0, 490.0, 30.0, WHITE);
         }
-
+        */
+        
         next_frame().await;
     }
 }
