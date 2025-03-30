@@ -9,6 +9,12 @@ const GRID_SIZE: usize = 10;
 const HAND_SIZE: usize = 3;
 const DECK_SIZE: usize = 48;
 
+const REINFORCE_SOUND: &[u8] = include_bytes!("Sound/Reinforce(new version).wav");
+const SONAR_SOUND: &[u8] = include_bytes!("Sound/Sonar(new version).wav");
+const MISSLE_SOUND: &[u8] = include_bytes!("Sound/Sound Effect - Missile Launch.wav");
+const SPLASH_SOUND: &[u8] = include_bytes!("Sound/Splash(new version).wav");
+const TORPEDO_SOUND: &[u8] = include_bytes!("Sound/Torpedo(new version).wav");
+
 /* -------- Structs and Enum -------- */
 // Cells used to keep track of the state of a cell/coordinate on the board
 #[derive(Copy, Clone, PartialEq)]
@@ -529,12 +535,12 @@ impl Player {
 #[macroquad::main("Battleships")]
 async fn main() {
     request_new_screen_size(1280., 720.);
-
-    let REINFORCE_SOUND = audio::load_sound("src/Sound/Welding sound Effects.wav").await.unwrap();
-    let TORPEDO_SOUND = audio::load_sound("src/Sound/Torpedo - Free Sound Effect.wav").await.unwrap();
-    let SONAR_SOUND = audio::load_sound("src/Sound/Submarine Sonar Ping Sound - Sonar Sound Effect.wav").await.unwrap();
-    let SPLASH_SOUND = audio::load_sound("src/Sound/Splash Sound Effect.wav").await.unwrap();
-    let MISSLE_SOUND = audio::load_sound("src/Sound/Sound Effect - Missile Launch.wav").await.unwrap();
+    
+    let tREINFORCE_SOUND = audio::load_sound_from_bytes(REINFORCE_SOUND).await.unwrap();
+    let tTORPEDO_SOUND = audio::load_sound_from_bytes(TORPEDO_SOUND).await.unwrap();
+    let tSONAR_SOUND = audio::load_sound_from_bytes(SONAR_SOUND).await.unwrap();
+    let tSPLASH_SOUND = audio::load_sound_from_bytes(SPLASH_SOUND).await.unwrap();
+    let tMISSLE_SOUND = audio::load_sound_from_bytes(MISSLE_SOUND).await.unwrap();
 
     let mut player1 = Player::new();
     player1.deck.build();
@@ -600,9 +606,9 @@ async fn main() {
                         println!("Missile {}", if hit { "hit!" } else { "missed." });
                         player_acted = true;
                         if hit {
-                            audio::play_sound_once(&MISSLE_SOUND);
+                           audio::play_sound_once(&tMISSLE_SOUND);
                         }else {
-                            audio::play_sound_once(&SPLASH_SOUND);
+                           audio::play_sound_once(&tSPLASH_SOUND);
                         }
                     }
                 } else {
@@ -611,9 +617,9 @@ async fn main() {
                         println!("Missile {}", if hit { "hit!" } else { "missed." });
                         player_acted = true;
                         if hit {
-                            audio::play_sound_once(&MISSLE_SOUND);
+                            audio::play_sound_once(&tMISSLE_SOUND);
                         }else {
-                            audio::play_sound_once(&SPLASH_SOUND);
+                            audio::play_sound_once(&tSPLASH_SOUND);
                         }
                     }
                 }
@@ -624,7 +630,7 @@ async fn main() {
         
         if is_key_pressed(KeyCode::T) {
             if !player_acted {
-                audio::play_sound_once(&TORPEDO_SOUND);
+                audio::play_sound_once(&tTORPEDO_SOUND);
                 if player1_turn {
                     if let Some(target_x) = player1.get_torpedo_target_column() {
                         let hit = player1.fire_torpedo(&mut opponent, target_x);
@@ -657,7 +663,7 @@ async fn main() {
                         println!("Reinforcement {}", if success { "successful!" } else { "failed." });
                         player_acted = true;
                         if success {
-                            audio::play_sound_once(&REINFORCE_SOUND);
+                            audio::play_sound_once(&tREINFORCE_SOUND);
                         }
                     }
                 } else {
@@ -666,7 +672,7 @@ async fn main() {
                         println!("Reinforcement {}", if success { "successful!" } else { "failed." });
                         player_acted = true;
                         if success {
-                            audio::play_sound_once(&REINFORCE_SOUND);
+                            audio::play_sound_once(&tREINFORCE_SOUND);
                         }
                     }
                 }
@@ -677,7 +683,7 @@ async fn main() {
 
         if is_key_pressed(KeyCode::S) {
             if !player_acted {
-                audio::play_sound_once(&SONAR_SOUND);
+                audio::play_sound_once(&tSONAR_SOUND);
                 if player1_turn {
                     if let Some((x, y)) = player1.get_clicked_cell() {
                         player1.radar_scan(&mut opponent, x, y);
