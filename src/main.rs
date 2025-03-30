@@ -676,7 +676,7 @@ async fn main() {
     let mut player1_turn = true;
     let mut player_acted = false;
     let mut player_won = 0;
-    let mut turncounter: f64 = 0.0;
+    let mut turncounter: f64 = 1.0;
     
     loop {
         clear_background(BLACK);
@@ -872,6 +872,10 @@ async fn main() {
             player_won = 1;
             break;
         }
+        
+        let mut temp_turncounter = (turncounter/2.0).floor();
+        
+        draw_text(format!("Turn: {}", temp_turncounter).as_str(),75.0,45.0,30.0,WHITE);
         
         next_frame().await;
     }
