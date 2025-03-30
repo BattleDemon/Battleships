@@ -293,10 +293,6 @@ impl Player {
         println!("Radar scan complete!");
     }
 
-    fn check_hit(&self, target_x: usize, target_y: usize) -> bool {
-        self.guess_board.cells[target_x][target_y] == Cells::Occupied
-    }
-
     fn reinforce(&mut self, target_x: usize, target_y: usize) -> bool {
         let current_state = self.board.cells[target_x][target_y];
         
