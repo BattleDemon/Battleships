@@ -675,6 +675,8 @@ async fn main() {
 
     let mut player1_turn = true;
     let mut player_acted = false;
+    let mut player_won = 0;
+    let mut turncounter: f64 = 0.0;
     
     loop {
         clear_background(BLACK);
@@ -774,16 +776,17 @@ async fn main() {
 
         if is_key_pressed(KeyCode::S) {
             if !player_acted {
-                audio::play_sound_once(&sonar_sound);
                 if player1_turn {
                     if let Some((x, y)) = player1.get_clicked_cell() {
                         player1.radar_scan(&mut opponent, x, y);
                         player_acted = true;
+                        audio::play_sound_once(&sonar_sound);
                     }
                 } else {
                     if let Some((x, y)) = player1.get_clicked_cell() {
                         opponent.radar_scan(&mut player1, x, y);
                         player_acted = true;
+                        audio::play_sound_once(&sonar_sound);
                     }
                 }
             } else {
@@ -840,20 +843,57 @@ async fn main() {
                 println!(" ");
                 player1_turn = !player1_turn;
                 player_acted = false;
+                turncounter += 1.0;
             }
         }
 
 
         if !player1_turn {
             draw_text("Player 2's turn", (screen_width()/2.0)-120.0, 45.0, 30.0, WHITE);
-            draw_hand_to_screen(&opponent.hand, (screen_width()/2.0)-100.0, 500.0);
+            //draw_hand_to_screen(&opponent.hand, (screen_width()/2.0)-100.0, 500.0);
 
         }else{
             draw_text("Player 1's turn", (screen_width()/2.0)-100.0, 45.0, 30.0, WHITE);
-            draw_hand_to_screen(&player1.hand, (screen_width()/2.0)-120.0, 500.0);
+            //draw_hand_to_screen(&player1.hand, (screen_width()/2.0)-120.0, 500.0);
 
         }
         
+        if is_key_pressed(KeyCode::K){
+            player1.ship_count = 0;
+        }
+        if is_key_pressed(KeyCode::J){
+            opponent.ship_count = 0;
+        }
+
+        if player1.ship_count == 0 {
+            player_won = -1;
+            break;
+        }else if opponent.ship_count == 0 {
+            player_won = 1;
+            break;
+        }
+        
+        next_frame().await;
+    }
+
+    turncounter = turncounter /2.0;
+    turncounter = turncounter.floor();
+    loop {
+        if player_won == -1 {
+            clear_background(BLACK);
+            draw_text("Player 2 Won!!", (screen_width()/2.0)-200.0, screen_height()/2.0, 60.0, WHITE);
+            draw_text(format!("After {} turns",turncounter).as_str(),(screen_width()/2.0)-180.0,(screen_height()/2.0)+50.0,30.0,WHITE);
+        }
+        else if player_won == 1 {
+            clear_background(BLACK);
+            draw_text("Player 1 Won!!", (screen_width()/2.0)-200.0, screen_height()/2.0, 60.0, WHITE);
+        }
+
+        if is_key_pressed(KeyCode::Space){
+            break;
+        }
+
+        draw_text(format!("After {} turns",turncounter).as_str(),(screen_width()/2.0)-180.0,(screen_height()/2.0)+50.0,30.0,WHITE);
         
         next_frame().await;
     }
