@@ -9,6 +9,7 @@ const GRID_SIZE: usize = 10;
 const HAND_SIZE: usize = 3;
 const DECK_SIZE: usize = 48;
 
+// Sound Effects Constants (Bytes)
 const REINFORCE_SOUND: &[u8] = include_bytes!("Sound/Reinforce(new version).wav");
 const SONAR_SOUND: &[u8] = include_bytes!("Sound/Sonar(new version).wav");
 const MISSLE_SOUND: &[u8] = include_bytes!("Sound/Sound Effect - Missile Launch.wav");
@@ -166,7 +167,7 @@ impl Deck {
 impl Player {
     // Player Constructor
     fn new() -> Self {
-        Player {
+        let mut p =Player {
             board: Board::new(),
             boardgrid: Grid::new(400.0, 400.0, 10, 10, 1.0),
             guess_board: Board::new(),
@@ -178,7 +179,29 @@ impl Player {
             patrol_mode: false,
             patrol_ship: None,
             patrol_frames: 0,
-        }
+        };
+
+        p.deck.build();
+        p.deck.shuffle();
+        p.draw_hand();
+        
+        p.place_ship(ShipType::Battleship, Orientation::Verticle);
+        p.place_ship(ShipType::Submarine, Orientation::Verticle);
+        p.place_ship(ShipType::Cruiser, Orientation::Horizontal);
+        p.place_ship(ShipType::Dreadnaught, Orientation::Verticle);
+        p.place_ship(ShipType::Destroyer, Orientation::Horizontal);
+
+        p.boardgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
+        p.boardgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
+        p.boardgrid.set_cell_bg_color(BLACK);
+        p.boardgrid.set_gap_color(GREEN);
+
+        p.guessgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
+        p.guessgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
+        p.guessgrid.set_cell_bg_color(BLACK);
+        p.guessgrid.set_gap_color(GREEN);
+
+        return p;
     }
 
     fn fire_missile(&mut self, opponent: &mut Player, target_x: usize, target_y: usize) -> bool {
@@ -621,53 +644,18 @@ fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
 async fn main() {
     request_new_screen_size(1280., 720.);
 
+    // Load sound effects from data
     let reinforce_sound = audio::load_sound_from_bytes(REINFORCE_SOUND).await.unwrap();
     let torpedo_sound = audio::load_sound_from_bytes(TORPEDO_SOUND).await.unwrap();
     let sonar_sound = audio::load_sound_from_bytes(SONAR_SOUND).await.unwrap();
     let splash_sound = audio::load_sound_from_bytes(SPLASH_SOUND).await.unwrap();
     let missle_sound = audio::load_sound_from_bytes(MISSLE_SOUND).await.unwrap();
 
+    // Create Player 1 
     let mut player1 = Player::new();
-    player1.deck.build();
-    player1.deck.shuffle();
-    player1.draw_hand();  // Draw initial hand
 
+    // Create Player 2 (opponent)
     let mut opponent = Player::new();
-    opponent.deck.build();
-    opponent.deck.shuffle();
-    opponent.draw_hand();  // Draw initial hand
-
-    player1.place_ship(ShipType::Battleship, Orientation::Verticle);
-    player1.place_ship(ShipType::Submarine, Orientation::Verticle);
-    player1.place_ship(ShipType::Cruiser, Orientation::Horizontal);
-    player1.place_ship(ShipType::Dreadnaught, Orientation::Verticle);
-    player1.place_ship(ShipType::Destroyer, Orientation::Horizontal);
-
-    player1.boardgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
-    player1.boardgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
-    player1.boardgrid.set_cell_bg_color(BLACK);
-    player1.boardgrid.set_gap_color(GREEN);
-
-    player1.guessgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
-    player1.guessgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
-    player1.guessgrid.set_cell_bg_color(BLACK);
-    player1.guessgrid.set_gap_color(GREEN);
-
-    opponent.boardgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
-    opponent.boardgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
-    opponent.boardgrid.set_cell_bg_color(BLACK);
-    opponent.boardgrid.set_gap_color(GREEN);
-
-    opponent.guessgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
-    opponent.guessgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
-    opponent.guessgrid.set_cell_bg_color(BLACK);
-    opponent.guessgrid.set_gap_color(GREEN);
-
-    opponent.place_ship(ShipType::Battleship, Orientation::Verticle);
-    opponent.place_ship(ShipType::Submarine, Orientation::Verticle);
-    opponent.place_ship(ShipType::Cruiser, Orientation::Horizontal);
-    opponent.place_ship(ShipType::Dreadnaught, Orientation::Verticle);
-    opponent.place_ship(ShipType::Destroyer, Orientation::Horizontal);
 
     let mut player1_turn = true;
     let mut player_acted = false;
@@ -869,7 +857,7 @@ async fn main() {
             break;
         }
         
-        let mut temp_turncounter = (turncounter/2.0).floor();
+        let temp_turncounter = (turncounter/2.0).floor();
         
         draw_text(format!("Turn: {}", temp_turncounter).as_str(),75.0,45.0,30.0,WHITE);
         
