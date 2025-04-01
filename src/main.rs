@@ -729,6 +729,8 @@ async fn main() {
                             if hit {
                                 // Put a explosion sound effect
                             }
+                        }else{
+                            player1.hand.push(ActionType::Torpedo);
                         }
                     } else {
                         println!("You can't use that action since it isn't in your hand!");
@@ -742,6 +744,8 @@ async fn main() {
                             if hit {
                                 // Put a explosion sound effect
                             }
+                        }else{
+                            opponent.hand.push(ActionType::Torpedo);
                         }
                     } else {
                         println!("You can't use that action since it isn't in your hand!");
@@ -762,6 +766,8 @@ async fn main() {
                             player_acted = true;
                             if success {
                                 audio::play_sound_once(&reinforce_sound);
+                            } else {
+                                player1.hand.push(ActionType::Reinforce);
                             }
                         } else {
                             player1.hand.push(ActionType::Reinforce);
@@ -777,7 +783,11 @@ async fn main() {
                             player_acted = true;
                             if success {
                                 audio::play_sound_once(&reinforce_sound);
+                            } else {
+                                opponent.hand.push(ActionType::Reinforce);
                             }
+                        }else{
+                            opponent.hand.push(ActionType::Reinforce);
                         }
                     } else {
                         println!("You can't use that action since it isn't in your hand!");
@@ -796,6 +806,8 @@ async fn main() {
                             player1.radar_scan(&mut opponent, x, y);
                             player_acted = true;
                             audio::play_sound_once(&sonar_sound);
+                        }else{
+                            player1.hand.push(ActionType::RadarScan);
                         }
                     } else {
                         println!("You can't use that action since it isn't in your hand!");
@@ -806,6 +818,8 @@ async fn main() {
                             opponent.radar_scan(&mut player1, x, y);
                             player_acted = true;
                             audio::play_sound_once(&sonar_sound);
+                        }else{
+                            opponent.hand.push(ActionType::RadarScan);
                         }
                     } else {
                         println!("You can't use that action since it isn't in your hand!");
@@ -822,6 +836,8 @@ async fn main() {
                     if let Some((x, y)) = player1.get_clicked_cell_on_own_board() {
                         let started: bool = player1.start_patrol(x, y);
                         println!("{}", if started { "Select direction with arrow keys" } else { "No ship at that position" });
+                    }else{
+                        player1.hand.push(ActionType::Patrol);
                     }
                 } else {
                     println!("You can't use that action since it isn't in your hand!");
@@ -831,6 +847,8 @@ async fn main() {
                     if let Some((x, y)) = opponent.get_clicked_cell_on_own_board() {
                         let started: bool = opponent.start_patrol(x, y);
                         println!("{}", if started { "Select direction with arrow keys" } else { "No ship at that position" });
+                    }else{
+                        opponent.hand.push(ActionType::Patrol);
                     }
                 } else {
                     println!("You can't use that action since it isn't in your hand!");
