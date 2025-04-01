@@ -612,7 +612,7 @@ How does this work in the main loop
 ```
 
 #### Video of Functionality 
-
+[![IT Prototype 30 March](https://img.youtube.com/vi/NQqllY27vTk/0.jpg)](https://www.youtube.com/watch?v=NQqllY27vTk)
 #### Issues and Solutions 
 
 ### Prototype 4: Hand display and fully developed action systems
