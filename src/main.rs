@@ -763,6 +763,8 @@ async fn main() {
                             if success {
                                 audio::play_sound_once(&reinforce_sound);
                             }
+                        } else {
+                            player1.hand.push(ActionType::Reinforce);
                         }
                     } else {
                         println!("You can't use that action since it isn't in your hand!");
