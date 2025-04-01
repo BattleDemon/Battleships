@@ -6,7 +6,7 @@ use macroquad_grid_dex::Grid;
 
 // Constants
 const GRID_SIZE: usize = 10; 
-const HAND_SIZE: usize = 4;
+const HAND_SIZE: usize = 3;
 const DECK_SIZE: usize = 48;
 
 // Sound Effects Constants (Bytes)
@@ -882,9 +882,6 @@ async fn main() {
                 if let Some((dir_x, dir_y)) = dir {
                     let success = current_player.try_patrol_move(dir_x, dir_y);
                     println!("Patrol move {}", if success { "successful!" } else { "failed." });
-                    if !success {
-                        current_player.hand.push(ActionType::Patrol);
-                    }
                     player_acted = success;
                 } 
             }
