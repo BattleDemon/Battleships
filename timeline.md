@@ -49,19 +49,19 @@
 
 ### Day 9 March 28
 - Display hand on screen &#x2611;
-- allow clikc to select action 
+- allow clikc to select action &#x2611;
 
 ### Day 10 March 29
 - Visual improvments for actions maybe explosion for hit splash for miss
 - Keep a prototype (Ui and visuals)
 
 ### Day 11 March 30
-- Win loss detection
-- Display results when win/lose
+- Win loss detection &#x2611;
+- Display results when win/lose &#x2611; 
 
 ### Day 12 April 31
 - Improve UI
-- Display whose turn it is
+- Display whose turn it is &#x2611; 
 - Show remaining ships for each player
 
 ### Day 13 April 1
