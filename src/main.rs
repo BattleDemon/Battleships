@@ -444,12 +444,13 @@ impl Player {
             let has_hit = ship.positions.iter().any(|&(px, py)| {
                 self.board.cells[px][py] == Cells::Hit
             });
-
+    
             if has_hit {
                 println!("Cannot move a ship that has been hit!");
+                self.hand.push(ActionType::Patrol); // Return card to hand
                 return false;
             }
-
+    
             self.patrol_mode = true;
             self.patrol_ship = Some(ship_idx);
             self.patrol_frames = 30; // About 0.5 seconds at 60 FPS
@@ -460,6 +461,7 @@ impl Player {
             }
             true
         } else {
+            self.hand.push(ActionType::Patrol); // Return card to hand
             false
         }
     }
@@ -524,29 +526,34 @@ impl Player {
             }
 
             // Clean up patrol state
-            self.cancel_patrol();
+            self.cancel_patrol(false);
             true
         } else {
             false
         }
     }
 
-    fn cancel_patrol(&mut self) {
+    fn cancel_patrol(&mut self, return_to_hand: bool) {
         if let Some(ship_idx) = self.patrol_ship {
             // Remove highlight and reset to proper colors
             for &(x, y) in &self.ships[ship_idx].positions {
                 match self.board.cells[x][y] {
                     Cells::Occupied => self.boardgrid.color_cell(x, y, GREEN),
                     Cells::Reinforced => self.boardgrid.color_cell(x, y, DARKGREEN),
-                    Cells::Empty => self.boardgrid.color_cell(x, y, BLACK),  // Reset empty cells to black
+                    Cells::Empty => self.boardgrid.color_cell(x, y, BLACK),
                     _ => {}
                 }
             }
         }
+        
+        // Return Patrol card to hand if specified
+        if return_to_hand {
+            self.hand.push(ActionType::Patrol);
+        }
+        
         self.patrol_mode = false;
         self.patrol_ship = None;
         self.patrol_frames = 0;
-        self.hand.push(ActionType::Patrol);
     }
 
 
@@ -555,11 +562,11 @@ impl Player {
             self.patrol_frames -= 1;
             
             if self.patrol_frames == 0 {
-                self.cancel_patrol();
+                self.cancel_patrol(true); // Return to hand
+                println!("Patrol move timed out - card returned to hand");
             }
         }
     }
-
     fn draw_card(&mut self) -> Option<ActionType> {
         self.deck.deck_list.pop()
     }
@@ -833,27 +840,32 @@ async fn main() {
         }
 
         if is_key_pressed(KeyCode::P) && !player_acted {
+            println!("Press P to patrol");
             if player1_turn && !player1.patrol_mode {
                 if player1.use_card(ActionType::Patrol) {
                     if let Some((x, y)) = player1.get_clicked_cell_on_own_board() {
-                        let started: bool = player1.start_patrol(x, y);
-                        println!("{}", if started { "Select direction with arrow keys" } else { "No ship at that position" });
-                    }else{
+                        let started = player1.start_patrol(x, y);
+                        if !started {
+                            // start_patrol already returns the card if it fails
+                            println!("Couldn't start patrol - card returned to hand");
+                        }
+                    } else {
                         player1.hand.push(ActionType::Patrol);
+                        println!("No ship selected - card returned to hand");
                     }
-                } else {
-                    println!("You can't use that action since it isn't in your hand!");
                 }
             } else if !player1_turn && !opponent.patrol_mode {
                 if opponent.use_card(ActionType::Patrol) {
                     if let Some((x, y)) = opponent.get_clicked_cell_on_own_board() {
-                        let started: bool = opponent.start_patrol(x, y);
-                        println!("{}", if started { "Select direction with arrow keys" } else { "No ship at that position" });
-                    }else{
+                        let started = opponent.start_patrol(x, y);
+                        if !started {
+                            // start_patrol already returns the card if it fails
+                            println!("Couldn't start patrol - card returned to hand");
+                        }
+                    } else {
                         opponent.hand.push(ActionType::Patrol);
+                        println!("No ship selected - card returned to hand");
                     }
-                } else {
-                    println!("You can't use that action since it isn't in your hand!");
                 }
             }
         }
