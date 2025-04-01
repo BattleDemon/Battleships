@@ -244,6 +244,7 @@ impl Player {
         while x < GRID_SIZE {
             match opponent.board.cells[x][target_y] {
                 Cells::Reinforced => {
+                    self.guess_board.change_cell(x, target_y, Cells::Occupied, &mut self.guessgrid);
                     opponent.board.change_cell(x, target_y, Cells::Occupied, &mut opponent.boardgrid);
                     println!("Torpedo hit a reinforced cell! Protection removed.");
                     hit_something = true;
@@ -545,6 +546,7 @@ impl Player {
         self.patrol_mode = false;
         self.patrol_ship = None;
         self.patrol_frames = 0;
+        self.hand.push(ActionType::Patrol);
     }
 
 
@@ -880,8 +882,11 @@ async fn main() {
                 if let Some((dir_x, dir_y)) = dir {
                     let success = current_player.try_patrol_move(dir_x, dir_y);
                     println!("Patrol move {}", if success { "successful!" } else { "failed." });
+                    if !success {
+                        current_player.hand.push(ActionType::Patrol);
+                    }
                     player_acted = success;
-                }
+                } 
             }
         }
 
