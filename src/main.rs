@@ -6,7 +6,7 @@ use macroquad_grid_dex::Grid;
 
 // Constants
 const GRID_SIZE: usize = 10; 
-const HAND_SIZE: usize = 3;
+const HAND_SIZE: usize = 4;
 const DECK_SIZE: usize = 48;
 
 // Sound Effects Constants (Bytes)
