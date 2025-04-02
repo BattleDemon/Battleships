@@ -16,6 +16,8 @@
 
 ![screenshot](images/Screenshot_flowchart.png)
 
+### Pseudo Code
+
 ### Timeline 
 Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
 
