@@ -120,7 +120,39 @@ async fn main() {
                 }
 
                 if is_key_pressed(KeyCode::T) {
+                    if game_state == GameState::Player1 {
+                        if player1.use_card(ActionType::Torpedo) {
+                            audio::play_sound_once(&torpedo_sound);
 
+                            if let Some(target_x) = player1.get_torpedo_target_column(){
+                                let hit = player1.fire_torpedo(&mut player2, target_x);
+
+                                player_acted = true;
+
+                                println!("Torpedo {}", if hit { "hit!" } else { "missed." });
+                            } else {
+                                player1.hand.push(ActionType::Torpedo);
+                            }
+                        } else {
+                            println!("You can't use that action, it isn't in your hand.");
+                        }
+                    } else if game_state == GameState::Player2 {
+                        if player2.use_card(ActionType::Torpedo) {
+                            audio::play_sound_once(&torpedo_sound);
+
+                            if let Some(target_x) = player2.get_torpedo_target_column() {
+                                let hit = player2.fire_torpedo(target_x);
+
+                                player_acted = true;
+
+                                println!("Torpedo {}", if hit { "hit!" } else { "missed." });
+                            } else {
+                                player2.hand.push(Actiong::Torpedo);
+                            }
+                        } else {
+                            println!("You can't use that action, it isn't in your hand.");
+                        }
+                    }
                 }
 
                 if is_key_pressed(KeyCode::R) {
