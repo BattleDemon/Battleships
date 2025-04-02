@@ -616,8 +616,8 @@ How does this work in the main loop
 #### Issues and Solutions 
 
 ### Prototype 4: Hand display and fully developed action systems
-#### Code at April 3rd 
-To view all code at this point please see "PUT LINK TO PROTOTYPE 4"
+#### Code at April 2nd
+To view all code at this point please see https://github.com/BattleDemon/Battleships/blob/main/Prototypes/Prototype4.rs
 
 ```rs
 // Hand related Functions
