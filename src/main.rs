@@ -118,13 +118,6 @@ impl Board {
     }
 }
 
-// Ship functions
-impl Ship {
-    // Ship constructor
-    fn new() {
-    }
-}
-
 // Deck functions
 impl Deck {
     // Deck Constructor
@@ -174,7 +167,7 @@ impl Deck {
 impl Player {
     // Player Constructor
     fn new() -> Self {
-        let mut p =Player {
+        let mut p = Player {
             board: Board::new(),
             boardgrid: Grid::new(400.0, 400.0, 10, 10, 1.0),
             guess_board: Board::new(),
