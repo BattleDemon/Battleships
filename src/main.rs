@@ -87,6 +87,13 @@ struct Player {
     patrol_frames: usize,       // frames remaining to wait for input
 }
 
+#[derive(PartialEq)]
+enum GameState {
+    Player1,
+    Player2,
+    Else,
+}
+
 /*-------- Impl for Structs -------- */
 impl Board {
     // Board Constructor
@@ -660,6 +667,7 @@ async fn main() {
     let mut opponent: Player = Player::new();
 
     let mut player1_turn: bool = true;
+    let mut game_state: GameState = GameState::Player1;
     let mut player_acted: bool = false;
     let mut turncounter: f64 = 1.0;
     let mut player_won:i32 = 0;
@@ -667,19 +675,26 @@ async fn main() {
     loop {
         clear_background(BLACK);
 
-        if player1_turn {
+        if game_state == GameState::Player1 {
             player1.boardgrid.draw();
             player1.guessgrid.draw();
             player1.update_patrol();
-        } else {
+            draw_text("Player 1's turn", (screen_width()/2.0)-100.0, 45.0, 30.0, WHITE);
+            draw_hand_to_screen(&player1.hand, (screen_width()/2.0)-120.0, 500.0);
+        } else if game_state == GameState::Player2 {
             opponent.boardgrid.draw();
             opponent.guessgrid.draw();
             opponent.update_patrol();
+            draw_text("Player 2's turn", (screen_width()/2.0)-120.0, 45.0, 30.0, WHITE);
+            draw_hand_to_screen(&opponent.hand, (screen_width()/2.0)-100.0, 500.0);
+        } else {
+            draw_text("Press Space to change player",(screen_width()/2.0)-350.0,(screen_height()/2.0)-30.0,60.0,WHITE);
         }
+
 
         if is_mouse_button_pressed(MouseButton::Left) {
             if !player_acted {
-                if player1_turn {
+                if game_state == GameState::Player1 {
                     if player1.use_card(ActionType::Missle) {
                         if let Some((x, y)) = player1.get_clicked_cell() {
                             let hit = player1.fire_missile(&mut opponent, x, y);
@@ -722,7 +737,7 @@ async fn main() {
         if is_key_pressed(KeyCode::T) {
             if !player_acted {
                 audio::play_sound_once(&torpedo_sound);
-                if player1_turn {
+                if game_state == GameState::Player1 {
                     if player1.use_card(ActionType::Torpedo){
                         if let Some(target_x) = player1.get_torpedo_target_column() {
                             let hit: bool = player1.fire_torpedo(&mut opponent, target_x);
@@ -760,7 +775,7 @@ async fn main() {
         
         if is_key_pressed(KeyCode::R) {
             if !player_acted {
-                if player1_turn {
+                if game_state == GameState::Player1 {
                     if player1.use_card(ActionType::Reinforce) {
                         if let Some((x, y)) = player1.get_clicked_cell_on_own_board() {
                             let success: bool = player1.reinforce(x, y);
@@ -802,7 +817,7 @@ async fn main() {
 
         if is_key_pressed(KeyCode::S) {
             if !player_acted {
-                if player1_turn {
+                if game_state == GameState::Player1 {
                     if player1.use_card(ActionType::RadarScan) {
                         if let Some((x, y)) = player1.get_clicked_cell() {
                             player1.radar_scan(&mut opponent, x, y);
@@ -833,7 +848,7 @@ async fn main() {
         }
 
         if is_key_pressed(KeyCode::P) && !player_acted {
-            if player1_turn && !player1.patrol_mode {
+            if game_state == GameState::Player1 && !player1.patrol_mode {
                 if player1.use_card(ActionType::Patrol) {
                     if let Some((x, y)) = player1.get_clicked_cell_on_own_board() {
                         let started: bool = player1.start_patrol(x, y);
@@ -860,7 +875,7 @@ async fn main() {
         
         // Add arrow key handling (before the Space key check):
         if !player_acted {
-            let (current_player, current_opponent) = if player1_turn {
+            let (current_player, current_opponent) = if game_state == GameState::Player1 {
                 (&mut player1, &mut opponent)
             } else {
                 (&mut opponent, &mut player1)
@@ -891,29 +906,30 @@ async fn main() {
             if player_acted {
                 println!("Player changed");
                 println!(" ");
-                if player1_turn {
+                if game_state == GameState::Player1 {
                     let newcard = player1.draw_card().unwrap();
                     player1.hand.push(newcard);
                 } else {
                     let newcard = opponent.draw_card().unwrap();
                     opponent.hand.push(newcard);
                 }
-                player1_turn = !player1_turn;
+                game_state = GameState::Else;
                 player_acted = false;
                 turncounter += 1.0;
+            } else {
+                if game_state == GameState::Else {
+                    if player1_turn {
+                        game_state = GameState::Player2;
+                        player1_turn = !player1_turn;
+                    } else {
+                        game_state = GameState::Player1;
+                        player1_turn = !player1_turn;
+                    }
+                }
+
             }
         }
 
-
-        if !player1_turn {
-            draw_text("Player 2's turn", (screen_width()/2.0)-120.0, 45.0, 30.0, WHITE);
-            draw_hand_to_screen(&opponent.hand, (screen_width()/2.0)-100.0, 500.0);
-
-        }else{
-            draw_text("Player 1's turn", (screen_width()/2.0)-100.0, 45.0, 30.0, WHITE);
-            draw_hand_to_screen(&player1.hand, (screen_width()/2.0)-120.0, 500.0);
-
-        }
         
         if is_key_pressed(KeyCode::K){
             player1.ship_count = 0;
