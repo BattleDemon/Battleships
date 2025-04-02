@@ -2,31 +2,129 @@
 ## Preplanning
 ### What is Battleships
 
-  Battleships is a two player game played on four 10x10 grids, two each one horizontal for your ships and opponents guesses and the other for your guesses. It begins with each player placing their battleship then each player places ships until they have five each. The Game begins with a player guessing a Cordonate on the grid and anoucing it to their opponent, the opponent will respond with either a hit or a miss which current player will record on their verticle grid, the next player now has their turn. This is repeated until all ships are sunk which occurs when all of the positions it takes up have been hit. 
+ Battleships is a two-player game played on four 10x10 grids—two for each player. One grid is used to place their own ships, while the other is for tracking their opponent's guesses. The game begins with each player placing their battleships, followed by the placement of additional ships until both players have five in total. Players take turns guessing coordinates on their opponent's grid and announcing their guess. The opponent responds with either "hit" or "miss," which the current player records on their vertical grid. The turn then passes to the other player. This continues until all ships are sunk, which happens when every coordinate a ship occupies has been hit.
 
 ### The History of Battleships
 
-  Origionating from the early 1900s Battleships began as a game played with pen and paper. The first Published version of Battleships was in 1931 under the name "Salvo" by Starex Novelty co., still played with paper and pen but now with specifically printed pads to play on. Unlike today each player had as many shots as they did ships with some variations giving specific ships two shots. Once a player has anounced all shots the other would respond by saying how many shots hit and what was hit, without revealing which shot did which. Later in the 30s and 40s it was published again under other names such as Combat: The Battleship Game and Broadside: A Game of Naval Strategy. In 1967 Battleship was released by Milton Bradly and looked very similar to how it does today, now made of plastic containing small peices to signify ships, hits, misses aswell as the boards one horizontal to house your ships and another for your guesses. In the 80s and 90s new versions of the game and spin-offs were released and it was adapted into video games, anb in 2012 it was even made into a feature film.
+  Originating in the early 1900s, Battleships began as a game played with pen and paper. The first published version of the game appeared in 1931 under the name "Salvo" by Starex Novelty Co. It was still played with paper and pen, but now with specifically printed pads for the game. Unlike today, each player had as many shots as they had ships, with some variations allowing certain ships two shots. Once a player had announced all their shots, the opponent would respond by saying how many shots hit and what was hit, but without revealing which specific shot resulted in which outcome. In the late 1930s and 1940s, the game was re-released under different names, such as Combat: The Battleship Game and Broadside: A Game of Naval Strategy. In 1967, Milton Bradley released Battleship, which looked much like the version we know today. It was made of plastic and included small pieces to represent ships, hits, and misses, along with two boards—one horizontal for housing ships and another for tracking guesses. In the 1980s and 1990s, new versions and spin-offs of the game were released, and it was adapted into video games. In 2012, Battleship was even made into a feature film.
   
 ### My Twist
 
-  So what is my twist? Well instead of you just been able to fire at the enemy you will instead draw from the deck and be able to select what action you wish to do from your hand. These new actions will, shot two missles in a staight line from the side of the board until it hits something ("Torpedo"), move the ship 1 space in any direction (Patrol), extra hit point (Reinforce), reveal part of the enemies board (Radar Scan) and prevent the enemie from shotting next turn (air defence).
+ So, what's the twist? Instead of simply firing at the enemy, you'll now draw from a deck and choose an action from your hand. These new actions include: shooting one missile in a straight line from the X-axis you choose until it either leaves the board or hits something (Torpedo), moving a ship one space in any direction (Patrol), adding an extra hit point to a ship (Reinforce), and revealing part of the enemy's board (Radar Scan).
 
 ### Flowchart
 
 ![screenshot](images/Screenshot_flowchart.png)
+
+### Pseudo Code
+#### Core Game Loop Systems
+Game State Manegment
+```
+```
+
+Turn Switching 
+```
+```
+
+Win Checking
+```
+```
+
+Main Loop
+```
+```
+
+#### Player Action Systems
+Missle System
+```
+```
+
+Torpedo System
+```
+```
+
+Radar System
+```
+```
+
+Reinforce System
+```
+```
+
+Patrol System
+```
+Function start_patrol(x, y):
+    Find ship at position (x, y)
+    If ship found:
+        Check if ship is hit
+        If hit, return False
+        Set patrol mode and ship
+        Highlight ship's positions
+        Return True
+    Else:
+        Return False
+
+Function try_patrol_move(dir_x, dir_y):
+    If patrol is active:
+        Check if new positions are valid
+        If valid, update ship's positions
+        Clear old positions and mark new ones
+        Return True
+    Else:
+        Return False
+
+Function cancel_patrol():
+    If patrol is active:
+        Remove highlights and reset cell colors
+        Reset patrol state
+
+Function update_patrol():
+    If patrol is active and timer > 0:
+        Decrease timer
+        If timer reaches 0, cancel patrol
+
+```
+
+#### Struct Systems
+Deck Shuffle
+```
+```
+
+Hand System
+```
+```
+
+Ship Placement
+```
+```
+
+Ship Destruction
+```
+```
+
+Cell Manegement
+```
+```
+
+Board Rendering
+```
+```
+
+Mouse Input
+```
+```
 
 ### Timeline 
 Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
 
 ### If I get more time
 
-  If i finish my game before it is due I will attempt to add a very simple AI to the game which will be more than a random number generater. Another thing I could do is improve the graphics or making it more user friendly.
+  If I finish my game before it's due, I'll try to add a simple AI that goes beyond just a random number generator. Another improvement I could make is enhancing the graphics or making the game more user-friendly. 
 
 ## Prototyping 
 ### Prototype 1: Basic game loop 
 #### Code at March 24th 
-To view all code at this point please see https://github.com/BattleDemon/Battleships/blob/main/Prototypes/Prototype1.rs
+To view all code at this point please see https://github.com/BattleDemon/Battleships/blob/main/Prototypes/Prototype1.rs 
 
 Main Loop
 ```rs
@@ -78,12 +176,11 @@ Main Loop
 
         next_frame().await
     }
-}
 ```
 
 Change Cell function
 ```rs
-fn change_cell(&mut self, x:usize,y:usize,ctype:Cells,grid:&mut Grid) {
+    fn change_cell(&mut self, x:usize,y:usize,ctype:Cells,grid:&mut Grid) {
 
         if self.cells[x][y] != Cells::Hit {
             match ctype {
@@ -100,7 +197,7 @@ fn change_cell(&mut self, x:usize,y:usize,ctype:Cells,grid:&mut Grid) {
 
 Fire Missle and get clicked cell Functions
 ```rs
-fn fire_missile(&mut self, opponent: &mut Player , target_x: usize, target_y: usize) {
+    fn fire_missile(&mut self, opponent: &mut Player , target_x: usize, target_y: usize) {
         // create local mutable cell for both self and your opponent
         let cell = &mut self.guess_board.cells[target_x][target_y];
         let ocell = &mut opponent.board.cells[target_x][target_y];
@@ -117,7 +214,7 @@ fn fire_missile(&mut self, opponent: &mut Player , target_x: usize, target_y: us
         }
     }
 
-fn get_clicked_cell(&self) -> Option<(usize, usize)> {
+    fn get_clicked_cell(&self) -> Option<(usize, usize)> {
         let (mouse_x, mouse_y) = mouse_position();
         
         let grid_x_offset = 710.0;
@@ -140,6 +237,9 @@ fn get_clicked_cell(&self) -> Option<(usize, usize)> {
 #### Video of Functionality (link to youtube)
 [![IT Prototype 25 March](https://img.youtube.com/vi/NM8lwhZ-a-o/0.jpg)](https://www.youtube.com/watch?v=NM8lwhZ-a-o)
 #### Issues and Solutions 
+During this time, I ran into an issue with the library I was using (Macroquad Grid), which was meant to handle rendering and managing my on-screen game board. The problem was that it had been compiled with an older version of Rust, as well as an outdated version of its base library (Macroquad). Fortunately, I found the library's repository and was able to fork it. After some tweaking, all it needed was a recompile with the updated Rust version and a few minor syntax fixes thankfully, they were straightforward to resolve.
+
+Another challenge I faced was with mouse input on the guessing board, the clicks weren’t aligning properly with the visual grid. If you clicked on the right side of a cell, it would register a hit on the cell next to it instead. The fix itself was simple, but since I wasn’t sure exactly how many pixels it was off by, it took a bit of trial and error to get the alignment as close to perfect as possible.
 
 ### Prototype 2: Added Torpedo and Radar scan actions and random ship placement
 #### Code at March 27th 
@@ -147,7 +247,7 @@ To view all code at this point please see [https://github.com/BattleDemon/Battle
 
 Main Loop
 ```rs
-loop {
+    loop {
         clear_background(BLACK);
 
         if player1_turn == true {
@@ -227,7 +327,7 @@ loop {
 
 Torpedo Function
 ```rs
-fn get_torpedo_target_column(&self) -> Option<usize> {
+    fn get_torpedo_target_column(&self) -> Option<usize> {
         let (mouse_x, mouse_y) = mouse_position();
 
         let grid_x_offset = 700.0; // Grid offset for the guessboard
@@ -278,7 +378,7 @@ fn get_torpedo_target_column(&self) -> Option<usize> {
 
 Radarscan Function
 ```rs
-fn radar_scan(&mut self, opponent: &mut Player, target_x: usize, target_y: usize) {
+    fn radar_scan(&mut self, opponent: &mut Player, target_x: usize, target_y: usize) {
         let offsets = [(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)];
     
         for &(dx, dy) in &offsets {
@@ -300,7 +400,7 @@ fn radar_scan(&mut self, opponent: &mut Player, target_x: usize, target_y: usize
 
 Random Ship Placement
 ```rs
-fn place_ship(&mut self, ship_type: ShipType, orientation: Orientation) -> Option<Ship> {
+    fn place_ship(&mut self, ship_type: ShipType, orientation: Orientation) -> Option<Ship> {
         let mut rng = ::rand::rng(); // Corrected RNG call
         
         let ship_length = match ship_type {
@@ -377,10 +477,15 @@ fn place_ship(&mut self, ship_type: ShipType, orientation: Orientation) -> Optio
 #### Video of Functionality 
 [![IT Prototype 27 March](https://img.youtube.com/vi/BdwVXEb1Fnw/0.jpg)](https://www.youtube.com/watch?v=BdwVXEb1Fnw)
 #### Issues and Solutions 
+The first issue I encountered was that using the radar scan on cells at the edges of the grid caused the game to crash. This happened because my implementation led to an integer underflow when converting back to usize. On the opposite edge, the game crashed due to attempting to modify a grid cell that was out of bounds, something the Macroquad grid documentation warned could be an issue.
+
+Another problem was with the torpedo system, which continued moving upwards after hitting an already hit cell instead of stopping as intended. This was an easy fix, I simply added an if statement to check if the torpedo was passing through a previously hit cell rather than just stopping at the first occupied one.
+
+I also encountered an issue with random ship placement, where ships could be placed on top of each other. This was because the random placement algorithm selected the first random position rather than iterating through multiple attempts to find one that met the placement requirements. Expanding the conditions for valid placement resolved this issue.
 
 ### Prototype 3: Reinforce and Patrol
 #### Code at March 30th 
-To view all code at this point please see "PUT LINK TO PROTOTYPE 3"
+To view all code at this point please see https://github.com/BattleDemon/Battleships/blob/main/Prototypes/Prototype3.rs
 
 Getting Click input on your own board
 ```rs
@@ -590,34 +695,34 @@ How does this work in the main loop
             }
         }
 
-            if current_player.patrol_mode {
-                let dir = if is_key_pressed(KeyCode::Up) {
-                    Some((-1, 0))
-                } else if is_key_pressed(KeyCode::Down) {
-                    Some((1, 0))
-                } else if is_key_pressed(KeyCode::Left) {
-                    Some((0, -1))
-                } else if is_key_pressed(KeyCode::Right) {
-                    Some((0, 1))
-                } else {
-                    None
-                };
-        
-                if let Some((dir_x, dir_y)) = dir {
-                    let success = current_player.try_patrol_move(dir_x, dir_y);
-                    println!("Patrol move {}", if success { "successful!" } else { "failed." });
-                    player_acted = success;
-                }
+        if current_player.patrol_mode {
+            let dir = if is_key_pressed(KeyCode::Up) {
+                Some((-1, 0))
+            } else if is_key_pressed(KeyCode::Down) {
+                Some((1, 0))
+            } else if is_key_pressed(KeyCode::Left) {
+                Some((0, -1))
+            } else if is_key_pressed(KeyCode::Right) {
+                Some((0, 1))
+            } else {
+                None
+            };
+    
+            if let Some((dir_x, dir_y)) = dir {
+                let success = current_player.try_patrol_move(dir_x, dir_y);
+                println!("Patrol move {}", if success { "successful!" } else { "failed." });
+                player_acted = success;
             }
+        }
 ```
 
 #### Video of Functionality 
-
+[![IT Prototype 30 March](https://img.youtube.com/vi/NQqllY27vTk/0.jpg)](https://www.youtube.com/watch?v=NQqllY27vTk)
 #### Issues and Solutions 
 
 ### Prototype 4: Hand display and fully developed action systems
-#### Code at April 3rd 
-To view all code at this point please see "PUT LINK TO PROTOTYPE 4"
+#### Code at April 2nd
+To view all code at this point please see https://github.com/BattleDemon/Battleships/blob/main/Prototypes/Prototype4.rs
 
 ```rs
 // Hand related Functions
