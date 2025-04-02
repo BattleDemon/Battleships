@@ -17,7 +17,9 @@ const MISSLE_SOUND: &[u8] = include_bytes!("Sound/Sound Effect - Missile Launch.
 const SPLASH_SOUND: &[u8] = include_bytes!("Sound/Splash(new version).wav");
 const TORPEDO_SOUND: &[u8] = include_bytes!("Sound/Torpedo(new version).wav");
 
-#[macroquad::main("Battleship")]
+
+#[cfg_attr(feature = "twist", macroquad::main("Battleship Twisted"))]
+#[cfg_attr(not(feature = "twist"), macroquad::main("Battleship Classic"))]
 async fn main() {
     request_new_screen_size(1280.,720.);
 
@@ -112,7 +114,44 @@ async fn main() {
             }
         }
 
+        if is_key_pressed(KeyCode::Space) {
+            if player_acted {
+                println!("Player changed");
+                println!(" ");
 
+                #[cfg(feature = "twist")]{
+                    if game_state == GameState::Player1 {
+                        let newcard = player1.draw_card().unwrap();
+                        player1.hand.push(newcard);
+                    } else if game_state == GameState::Player2{
+                        let newcard = player2.draw_card().unwrap();
+                        player2.hand.push(newcard);
+                    }
+                }
+
+                game_state = GameState::Else;
+                player_acted = false;
+                turncounter += 1.0;
+            } else {
+                if game_state == GameState::Else {
+                    if player_turn = GameState::Player1  {
+                        game_state = GameState::Player2;
+                        player1_turn = GameState::Player2;
+                    } else if player_turn = GameState::Player2  {
+                        game_state = GameState::Player1;
+                        player1_turn = GameState::Player1;
+                    }
+                }
+            }
+        }
+
+        if player1.ship_count == 0 {
+            player_won = GameState::Player2;
+            break;
+        }else if player2.ship_count == 0 {
+            player_won = GameState::Player1;
+            break;
+        }
 
         let temp_turncounter = (turncounter/2.0).floor();
         draw_text(format!("Turn: {}", temp_turncounter).as_str(),75.0,45.0,30.0,WHITE);
@@ -125,11 +164,21 @@ async fn main() {
 
     loop{
         if player_won == Player1 {
-
+            clear_background(BLACK);
+            draw_text("Player 1 Won!!", (screen_width()/2.0)-200.0, screen_height()/2.0, 60.0, WHITE);
         }
 
         else if player_won == Player2 {
-            
+            clear_background(BLACK);
+            draw_text("Player 2 Won!!", (screen_width()/2.0)-200.0, screen_height()/2.0, 60.0, WHITE);
         }
+
+        if is_key_pressed(KeyCode::Space) {
+            break;
+        }
+
+        draw_text(format!("After {} turns",turncounter).as_str(),(screen_width()/2.0)-180.0,(screen_height()/2.0)+50.0,30.0,WHITE);
+        
+        next_frame().await;
     }
 }

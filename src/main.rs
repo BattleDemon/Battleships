@@ -994,7 +994,7 @@ async fn main() {
             }
         }
         
-        
+        // For Testing
         if is_key_pressed(KeyCode::K){
             player1.ship_count = 0;
         }
@@ -1002,6 +1002,7 @@ async fn main() {
             opponent.ship_count = 0;
         }
 
+        // Win check
         if player1.ship_count == 0 {
             player_won = -1;
             break;
@@ -1023,7 +1024,7 @@ async fn main() {
         if player_won == -1 {
             clear_background(BLACK);
             draw_text("Player 2 Won!!", (screen_width()/2.0)-200.0, screen_height()/2.0, 60.0, WHITE);
-            draw_text(format!("After {} turns",turncounter).as_str(),(screen_width()/2.0)-180.0,(screen_height()/2.0)+50.0,30.0,WHITE);
+            
         }
         else if player_won == 1 {
             clear_background(BLACK);
