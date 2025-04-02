@@ -156,11 +156,39 @@ async fn main() {
                 }
 
                 if is_key_pressed(KeyCode::R) {
+                    if game_state == GameState::Player1 {
+                        if player1.use_card(ActionType::Reinforce) {
+                            if let Some((x,y)) = player1.get_clicked_cell_on_own_board {
+                                let success = player1.reinforce(x,y);
 
+                                player_acted = true;
+
+                                println!("Reinforcement {}", if success { "successful!" } else { "failed." });
+                                if success { audio::play_sound_once(&reinforce_sound)}                             
+                            } else {
+                                player1.hand.push(ActionType::Reinforce);
+                            }
+                        } else {
+                            println!("You can't use that action, it isn't in your hand.");
+                        }
+                    } else if game_state = GameState::Player2 {
+                        if let Some((x,y)) = player2.get_clicked_cell_on_own_board {
+                            let success = player2.reinforce(x,y);
+
+                            player_acted = true;
+
+                            println!("Reinforcement {}", if success { "successful!" } else { "failed." });
+                            if success { audio::play_sound_once(&reinforce_sound)}                             
+                        } else {
+                            player2.hand.push(ActionType::Reinforce);
+                        }
+                    } else {
+                        println!("You can't use that action, it isn't in your hand.");
+                    }
                 }
 
                 if is_key_pressed(KeyCode::S) {
-
+                    
                 }
 
                 if is_key_pressed(KeyCode::P) {
