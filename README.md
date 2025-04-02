@@ -238,6 +238,9 @@ fn get_clicked_cell(&self) -> Option<(usize, usize)> {
 #### Video of Functionality (link to youtube)
 [![IT Prototype 25 March](https://img.youtube.com/vi/NM8lwhZ-a-o/0.jpg)](https://www.youtube.com/watch?v=NM8lwhZ-a-o)
 #### Issues and Solutions 
+During this time, I ran into an issue with the library I was using (Macroquad Grid), which was meant to handle rendering and managing my on-screen game board. The problem was that it had been compiled with an older version of Rust, as well as an outdated version of its base library (Macroquad). Fortunately, I found the library's repository and was able to fork it. After some tweaking, all it needed was a recompile with the updated Rust version and a few minor syntax fixes thankfully, they were straightforward to resolve.
+
+Another challenge I faced was with mouse input on the guessing board, the clicks weren’t aligning properly with the visual grid. If you clicked on the right side of a cell, it would register a hit on the cell next to it instead. The fix itself was simple, but since I wasn’t sure exactly how many pixels it was off by, it took a bit of trial and error to get the alignment as close to perfect as possible.
 
 ### Prototype 2: Added Torpedo and Radar scan actions and random ship placement
 #### Code at March 27th 
