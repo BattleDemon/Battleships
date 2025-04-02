@@ -380,7 +380,7 @@ fn place_ship(&mut self, ship_type: ShipType, orientation: Orientation) -> Optio
 
 ### Prototype 3: Reinforce and Patrol
 #### Code at March 30th 
-To view all code at this point please see "PUT LINK TO PROTOTYPE 3"
+To view all code at this point please see https://github.com/BattleDemon/Battleships/blob/main/Prototypes/Prototype3.rs
 
 Getting Click input on your own board
 ```rs
