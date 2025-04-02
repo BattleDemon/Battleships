@@ -124,7 +124,7 @@ Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
 ## Prototyping 
 ### Prototype 1: Basic game loop 
 #### Code at March 24th 
-To view all code at this point please see https://github.com/BattleDemon/Battleships/blob/main/Prototypes/Prototype1.rs
+To view all code at this point please see https://github.com/BattleDemon/Battleships/blob/main/Prototypes/Prototype1.rs 
 
 Main Loop
 ```rs
@@ -176,12 +176,11 @@ Main Loop
 
         next_frame().await
     }
-}
 ```
 
 Change Cell function
 ```rs
-fn change_cell(&mut self, x:usize,y:usize,ctype:Cells,grid:&mut Grid) {
+    fn change_cell(&mut self, x:usize,y:usize,ctype:Cells,grid:&mut Grid) {
 
         if self.cells[x][y] != Cells::Hit {
             match ctype {
@@ -198,7 +197,7 @@ fn change_cell(&mut self, x:usize,y:usize,ctype:Cells,grid:&mut Grid) {
 
 Fire Missle and get clicked cell Functions
 ```rs
-fn fire_missile(&mut self, opponent: &mut Player , target_x: usize, target_y: usize) {
+    fn fire_missile(&mut self, opponent: &mut Player , target_x: usize, target_y: usize) {
         // create local mutable cell for both self and your opponent
         let cell = &mut self.guess_board.cells[target_x][target_y];
         let ocell = &mut opponent.board.cells[target_x][target_y];
@@ -215,7 +214,7 @@ fn fire_missile(&mut self, opponent: &mut Player , target_x: usize, target_y: us
         }
     }
 
-fn get_clicked_cell(&self) -> Option<(usize, usize)> {
+    fn get_clicked_cell(&self) -> Option<(usize, usize)> {
         let (mouse_x, mouse_y) = mouse_position();
         
         let grid_x_offset = 710.0;
@@ -248,7 +247,7 @@ To view all code at this point please see [https://github.com/BattleDemon/Battle
 
 Main Loop
 ```rs
-loop {
+    loop {
         clear_background(BLACK);
 
         if player1_turn == true {
@@ -328,7 +327,7 @@ loop {
 
 Torpedo Function
 ```rs
-fn get_torpedo_target_column(&self) -> Option<usize> {
+    fn get_torpedo_target_column(&self) -> Option<usize> {
         let (mouse_x, mouse_y) = mouse_position();
 
         let grid_x_offset = 700.0; // Grid offset for the guessboard
@@ -379,7 +378,7 @@ fn get_torpedo_target_column(&self) -> Option<usize> {
 
 Radarscan Function
 ```rs
-fn radar_scan(&mut self, opponent: &mut Player, target_x: usize, target_y: usize) {
+    fn radar_scan(&mut self, opponent: &mut Player, target_x: usize, target_y: usize) {
         let offsets = [(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)];
     
         for &(dx, dy) in &offsets {
@@ -401,7 +400,7 @@ fn radar_scan(&mut self, opponent: &mut Player, target_x: usize, target_y: usize
 
 Random Ship Placement
 ```rs
-fn place_ship(&mut self, ship_type: ShipType, orientation: Orientation) -> Option<Ship> {
+    fn place_ship(&mut self, ship_type: ShipType, orientation: Orientation) -> Option<Ship> {
         let mut rng = ::rand::rng(); // Corrected RNG call
         
         let ship_length = match ship_type {
@@ -478,6 +477,11 @@ fn place_ship(&mut self, ship_type: ShipType, orientation: Orientation) -> Optio
 #### Video of Functionality 
 [![IT Prototype 27 March](https://img.youtube.com/vi/BdwVXEb1Fnw/0.jpg)](https://www.youtube.com/watch?v=BdwVXEb1Fnw)
 #### Issues and Solutions 
+The first issue I encountered was that using the radar scan on cells at the edges of the grid caused the game to crash. This happened because my implementation led to an integer underflow when converting back to usize. On the opposite edge, the game crashed due to attempting to modify a grid cell that was out of bounds, something the Macroquad grid documentation warned could be an issue.
+
+Another problem was with the torpedo system, which continued moving upwards after hitting an already hit cell instead of stopping as intended. This was an easy fix, I simply added an if statement to check if the torpedo was passing through a previously hit cell rather than just stopping at the first occupied one.
+
+I also encountered an issue with random ship placement, where ships could be placed on top of each other. This was because the random placement algorithm selected the first random position rather than iterating through multiple attempts to find one that met the placement requirements. Expanding the conditions for valid placement resolved this issue.
 
 ### Prototype 3: Reinforce and Patrol
 #### Code at March 30th 
@@ -691,25 +695,25 @@ How does this work in the main loop
             }
         }
 
-            if current_player.patrol_mode {
-                let dir = if is_key_pressed(KeyCode::Up) {
-                    Some((-1, 0))
-                } else if is_key_pressed(KeyCode::Down) {
-                    Some((1, 0))
-                } else if is_key_pressed(KeyCode::Left) {
-                    Some((0, -1))
-                } else if is_key_pressed(KeyCode::Right) {
-                    Some((0, 1))
-                } else {
-                    None
-                };
-        
-                if let Some((dir_x, dir_y)) = dir {
-                    let success = current_player.try_patrol_move(dir_x, dir_y);
-                    println!("Patrol move {}", if success { "successful!" } else { "failed." });
-                    player_acted = success;
-                }
+        if current_player.patrol_mode {
+            let dir = if is_key_pressed(KeyCode::Up) {
+                Some((-1, 0))
+            } else if is_key_pressed(KeyCode::Down) {
+                Some((1, 0))
+            } else if is_key_pressed(KeyCode::Left) {
+                Some((0, -1))
+            } else if is_key_pressed(KeyCode::Right) {
+                Some((0, 1))
+            } else {
+                None
+            };
+    
+            if let Some((dir_x, dir_y)) = dir {
+                let success = current_player.try_patrol_move(dir_x, dir_y);
+                println!("Patrol move {}", if success { "successful!" } else { "failed." });
+                player_acted = success;
             }
+        }
 ```
 
 #### Video of Functionality 
