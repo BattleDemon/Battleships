@@ -84,7 +84,39 @@ async fn main() {
             if !player_acted {
 
                 if is_mouse_button_pressed(MouseButton::Left) {
+                    if game_state == GameState::Player1 {
+                        if player1.use_card(ActionType::Missle) {
+                            if let Some((x,y)) = player1.get_clicked_cell() {
+                                let hit = player1.fire_missile(&mut player2, x, y);
 
+                                player_acted = true;
+
+                                println!("Missle {}", if hit { "hit!"} else { "missed."});
+                                if hit {audio::play_sound_once(&missle_sound)} else {audio::play_sound_once(&splash_sound)};  
+
+                            } else {
+                                player1.hand.push(ActionType::Missile);
+                            }
+                        } else {
+                        println!("You can't use that action, it isn't in your hand.");
+                        }
+                    } else if game_state == GameState::Player2 {
+                        if player2.use_card(ActionType::Missile) {
+                            if let Some((x,y)) = player2.get_clicked_cell() {
+                                let hit = player2.fire_missile(&mut player2, x, y);
+
+                                player_acted = true;
+
+                                println!("Missle {}", if hit { "hit!"} else { "missed."});
+                                if hit {audio::play_sound_once(&missle_sound)} else {audio::play_sound_once(&splash_sound)};  
+
+                            } else {
+                                player2.hand.push(ActionType::Missile);
+                            }
+                        } else {
+                            println!("You can't use that action, it isn't in your hand.");
+                        }
+                    }
                 }
 
                 if is_key_pressed(KeyCode::T) {
@@ -103,6 +135,8 @@ async fn main() {
 
                 }
 
+            } else {
+                println!("You already used your action this turn!");
             }
         } 
 
