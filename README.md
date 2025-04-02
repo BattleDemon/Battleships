@@ -2,28 +2,124 @@
 ## Preplanning
 ### What is Battleships
 
-  Battleships is a two player game played on four 10x10 grids, two each one horizontal for your ships and opponents guesses and the other for your guesses. It begins with each player placing their battleship then each player places ships until they have five each. The Game begins with a player guessing a Cordonate on the grid and anoucing it to their opponent, the opponent will respond with either a hit or a miss which current player will record on their verticle grid, the next player now has their turn. This is repeated until all ships are sunk which occurs when all of the positions it takes up have been hit. 
+ Battleships is a two-player game played on four 10x10 grids—two for each player. One grid is used to place their own ships, while the other is for tracking their opponent's guesses. The game begins with each player placing their battleships, followed by the placement of additional ships until both players have five in total. Players take turns guessing coordinates on their opponent's grid and announcing their guess. The opponent responds with either "hit" or "miss," which the current player records on their vertical grid. The turn then passes to the other player. This continues until all ships are sunk, which happens when every coordinate a ship occupies has been hit.
 
 ### The History of Battleships
 
-  Origionating from the early 1900s Battleships began as a game played with pen and paper. The first Published version of Battleships was in 1931 under the name "Salvo" by Starex Novelty co., still played with paper and pen but now with specifically printed pads to play on. Unlike today each player had as many shots as they did ships with some variations giving specific ships two shots. Once a player has anounced all shots the other would respond by saying how many shots hit and what was hit, without revealing which shot did which. Later in the 30s and 40s it was published again under other names such as Combat: The Battleship Game and Broadside: A Game of Naval Strategy. In 1967 Battleship was released by Milton Bradly and looked very similar to how it does today, now made of plastic containing small peices to signify ships, hits, misses aswell as the boards one horizontal to house your ships and another for your guesses. In the 80s and 90s new versions of the game and spin-offs were released and it was adapted into video games, anb in 2012 it was even made into a feature film.
+  Originating in the early 1900s, Battleships began as a game played with pen and paper. The first published version of the game appeared in 1931 under the name "Salvo" by Starex Novelty Co. It was still played with paper and pen, but now with specifically printed pads for the game. Unlike today, each player had as many shots as they had ships, with some variations allowing certain ships two shots. Once a player had announced all their shots, the opponent would respond by saying how many shots hit and what was hit, but without revealing which specific shot resulted in which outcome. In the late 1930s and 1940s, the game was re-released under different names, such as Combat: The Battleship Game and Broadside: A Game of Naval Strategy. In 1967, Milton Bradley released Battleship, which looked much like the version we know today. It was made of plastic and included small pieces to represent ships, hits, and misses, along with two boards—one horizontal for housing ships and another for tracking guesses. In the 1980s and 1990s, new versions and spin-offs of the game were released, and it was adapted into video games. In 2012, Battleship was even made into a feature film.
   
 ### My Twist
 
-  So what is my twist? Well instead of you just been able to fire at the enemy you will instead draw from the deck and be able to select what action you wish to do from your hand. These new actions will, shot two missles in a staight line from the side of the board until it hits something ("Torpedo"), move the ship 1 space in any direction (Patrol), extra hit point (Reinforce), reveal part of the enemies board (Radar Scan) and prevent the enemie from shotting next turn (air defence).
+ So, what's the twist? Instead of simply firing at the enemy, you'll now draw from a deck and choose an action from your hand. These new actions include: shooting one missile in a straight line from the X-axis you choose until it either leaves the board or hits something (Torpedo), moving a ship one space in any direction (Patrol), adding an extra hit point to a ship (Reinforce), and revealing part of the enemy's board (Radar Scan).
 
 ### Flowchart
 
 ![screenshot](images/Screenshot_flowchart.png)
 
 ### Pseudo Code
+#### Core Game Loop Systems
+Game State Manegment
+```
+```
+
+Turn Switching 
+```
+```
+
+Win Checking
+```
+```
+
+Main Loop
+```
+```
+
+#### Player Action Systems
+Missle System
+```
+```
+
+Torpedo System
+```
+```
+
+Radar System
+```
+```
+
+Reinforce System
+```
+```
+
+Patrol System
+```
+Function start_patrol(x, y):
+    Find ship at position (x, y)
+    If ship found:
+        Check if ship is hit
+        If hit, return False
+        Set patrol mode and ship
+        Highlight ship's positions
+        Return True
+    Else:
+        Return False
+
+Function try_patrol_move(dir_x, dir_y):
+    If patrol is active:
+        Check if new positions are valid
+        If valid, update ship's positions
+        Clear old positions and mark new ones
+        Return True
+    Else:
+        Return False
+
+Function cancel_patrol():
+    If patrol is active:
+        Remove highlights and reset cell colors
+        Reset patrol state
+
+Function update_patrol():
+    If patrol is active and timer > 0:
+        Decrease timer
+        If timer reaches 0, cancel patrol
+
+```
+
+#### Struct Systems
+Deck Shuffle
+```
+```
+
+Hand System
+```
+```
+
+Ship Placement
+```
+```
+
+Ship Destruction
+```
+```
+
+Cell Manegement
+```
+```
+
+Board Rendering
+```
+```
+
+Mouse Input
+```
+```
 
 ### Timeline 
 Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
 
 ### If I get more time
 
-  If i finish my game before it is due I will attempt to add a very simple AI to the game which will be more than a random number generater. Another thing I could do is improve the graphics or making it more user friendly.
+  If I finish my game before it's due, I'll try to add a simple AI that goes beyond just a random number generator. Another improvement I could make is enhancing the graphics or making the game more user-friendly. 
 
 ## Prototyping 
 ### Prototype 1: Basic game loop 
