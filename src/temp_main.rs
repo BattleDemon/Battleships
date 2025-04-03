@@ -7,10 +7,10 @@ use macroquad::{audio, prelude::*};
 extern crate macroquad_grid_dex;
 use macroquad_grid_dex::Grid;
 
-#[cfg(feature = "twist")]
+#[cfg(feature = "twist")] 
 use twist::*;
 
-// Sound Effects Constants (Bytes)
+// Sound Effects Constants (Bytes needed for succesful compile)
 const REINFORCE_SOUND: &[u8] = include_bytes!("Sound/Reinforce(new version).wav");
 const SONAR_SOUND: &[u8] = include_bytes!("Sound/Sonar(new version).wav");
 const MISSLE_SOUND: &[u8] = include_bytes!("Sound/Sound Effect - Missile Launch.wav");
@@ -255,7 +255,7 @@ async fn main() {
                 println!("You have already used your action this turn!");
             }
 
-            
+
 
         } 
 
