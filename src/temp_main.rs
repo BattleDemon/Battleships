@@ -251,18 +251,63 @@ async fn main() {
                     }            
                 }
 
-            } else {
-                println!("You have already used your action this turn!");
+            } 
+
+            if !player_acted {
+                let (current_player, current_opponent) = if game_state == GameState::Player1 {
+                    (&mut player1, &mut player2)
+                } else {
+                    (&mut player2, &mut player1)
+                };
+
+                if current_player.patrol_mode {
+                    let dir = if is_key_pressed(KeyCode::Up) {
+                        Some((-1, 0))
+                    } else if is_key_pressed(KeyCode::Down) {
+                        Some((1,0))
+                    } else if is_key_pressed(KeyCode::Left) {
+                        Some((0, -1))
+                    } else if is_key_pressed(KeyCode::Right) {
+                        Some((0, 1))
+                    } else {
+                        None
+                    };
+
+                    if let Some((dir_x, dir_y)) = dir {
+                        let success = current_player.try_patrol_move(dir_x, dir_y);
+                        println!("Patrol move {}", if success { "successful!" } else { "failed."});
+                        player_acted = success;
+                    }
+                }
             }
-
-
-
         } 
 
         #[cfg(not(feature = "twist"))]{
             if !player_acted {
                 if is_mouse_button_pressed(MouseButton::Left) {
+                    if game_state == GameState::Player1 {
+                        if let Some((x,y)) = player1.get_clicked_cell() {
+                            let hit = player1.fire_missile(&mut player2, x, y);
 
+                            player_acted = true;
+
+                            println!("Missile {}", if hit { "hit!" } else { "missed." });
+                            if hit { audio::play_sound_once(&missle_sound)} else { audio::play_sound_once(&splash_sound)};
+                        } else {
+                            player1.hand.push(ActionType::Missle);
+                        }
+                    } else if game_state == GameState::Player1 {
+                        if let Some((x,y)) = player2.get_clicked_cell() {
+                            let hit = player2.fire_missile(&mut player1, x, y);
+
+                            player_acted = true;
+
+                            println!("Missile {}", if hit { "hit!" } else { "missed." });
+                            if hit { audio::play_sound_once(&missle_sound)} else { audio::play_sound_once(&splash_sound)};
+                        } else {
+                            player2.hand.push(ActionType::Missle);
+                        }
+                    }
                 }
             }
         }
@@ -290,6 +335,7 @@ async fn main() {
                     if player_turn = GameState::Player1  {
                         game_state = GameState::Player2;
                         player1_turn = GameState::Player2;
+                        
                     } else if player_turn = GameState::Player2  {
                         game_state = GameState::Player1;
                         player1_turn = GameState::Player1;

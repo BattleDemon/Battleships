@@ -1,9 +1,9 @@
 use macroquad::prelude::*;
-use rand::prelude::*;
+use ::rand::prelude::*;
 extern crate macroquad_grid_dex;
 use macroquad_grid_dex::Grid;
 
-const GRID_SIZE: usize = 10;
+pub const GRID_SIZE: usize = 10;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum Cells {
@@ -11,6 +11,7 @@ pub enum Cells {
     Occupied,
     Hit,
     Miss,
+    Reinforced,
 }
 
 pub struct Board {
@@ -24,7 +25,7 @@ pub enum Orientation {
 }
 
 #[derive(Clone)]
-enum ShipType {
+pub enum ShipType {
     Battleship,  // Ship size 4
     Cruiser,     // Ship size 3
     Submarine,   // Ship size 3
@@ -33,14 +34,14 @@ enum ShipType {
 }
 
 #[derive(Clone)]
-struct Ship {
-    ship_type: ShipType,       // Tracks the type of ship
-    positions: Vec<(usize, usize)>, // Coordinates ship occupies
-    orientation: Orientation,  // Orientation of the ship used for ship generation
+pub struct Ship {
+    pub ship_type: ShipType,       // Tracks the type of ship
+    pub positions: Vec<(usize, usize)>, // Coordinates ship occupies
+    pub orientation: Orientation,  // Orientation of the ship used for ship generation
 }
 
 #[derive(PartialEq)]
-enum GameState {
+pub enum GameState {
     Player1,
     Player2,
     Else,
@@ -71,6 +72,7 @@ impl Board {
                 Cells::Occupied => grid.color_cell(x, y, GREEN),
                 Cells::Hit => grid.color_cell(x, y, RED),
                 Cells::Miss => grid.color_cell(x, y, GRAY),
+                Cells::Reinforced => grid.color_cell(x,y,DARKGREEN),
             }
             self.cells[x][y] = ctype;
         }  

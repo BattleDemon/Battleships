@@ -1,11 +1,13 @@
 use super::base::*;
+use ::rand::prelude::{SliceRandom, IndexedRandom};
 use macroquad::{audio, prelude::*};
 extern crate macroquad_grid_dex;
 use macroquad_grid_dex::Grid;
 
-const HAND_SIZE: usize = 3;
-const DECK_SIZE: usize = 48;
+pub const HAND_SIZE: usize = 3;
+pub const DECK_SIZE: usize = 48;
 
+#[derive(Clone, Copy,PartialEq)]
 pub enum ActionType {
     Missle,     // Missle is the base battle ships fire ability
     Torpedo,    // Torpedo fires from a point on the x axis then shots upwards along the y axis
@@ -92,30 +94,30 @@ impl TwistPlayer {
         return p;
     }
 
-    pub fn fire_torpedo(&mut self, opponent: &mut Player, target_y: usize) -> bool {
-        let mut x = GRID_SIZE - 1;
+    pub fn fire_torpedo(&mut self, opponent: &mut TwistPlayer, target_y: usize) -> bool {
+        let mut x = crate::base::GRID_SIZE - 1;
         let mut hit_something = false;
     
         while x < GRID_SIZE {
-            match opponent.board.cells[x][target_y] {
+            match opponent.base.board.cells[x][target_y] {
                 Cells::Reinforced => {
-                    self.guess_board.change_cell(x, target_y, Cells::Occupied, &mut self.guessgrid);
-                    opponent.board.change_cell(x, target_y, Cells::Occupied, &mut opponent.boardgrid);
+                    self.base.guess_board.change_cell(x, target_y, Cells::Occupied, &mut self.base.guessgrid);
+                    opponent.base.board.change_cell(x, target_y, Cells::Occupied, &mut opponent.base.boardgrid);
                     println!("Torpedo hit a reinforced cell! Protection removed.");
                     hit_something = true;
                     break;
                 }
                 Cells::Occupied => {
-                    self.guess_board.change_cell(x, target_y, Cells::Hit, &mut self.guessgrid);
-                    opponent.board.change_cell(x, target_y, Cells::Hit, &mut opponent.boardgrid);
+                    self.base.guess_board.change_cell(x, target_y, Cells::Hit, &mut self.base.guessgrid);
+                    opponent.base.board.change_cell(x, target_y, Cells::Hit, &mut opponent.base.boardgrid);
                     println!("Torpedo hit!");
                     hit_something = true;
                     
                     // Check if this hit destroyed a ship
-                    if let Some(ship_idx) = opponent.find_ship_at(x, target_y) {
-                        if opponent.is_ship_destroyed(ship_idx) {
+                    if let Some(ship_idx) = opponent.base.find_ship_at(x, target_y) {
+                        if opponent.base.is_ship_destroyed(ship_idx) {
                             println!("Ship completely destroyed by torpedo!");
-                            opponent.update_ship_count();
+                            opponent.base.update_ship_count();
                         }
                     }
                     break;
@@ -125,8 +127,8 @@ impl TwistPlayer {
                     break;
                 }
                 _ => {
-                    self.guess_board.change_cell(x, target_y, Cells::Miss, &mut self.guessgrid);
-                    opponent.board.change_cell(x, target_y, Cells::Miss, &mut opponent.boardgrid);
+                    self.base.guess_board.change_cell(x, target_y, Cells::Miss, &mut self.base.guessgrid);
+                    opponent.base.board.change_cell(x, target_y, Cells::Miss, &mut opponent.base.boardgrid);
                     println!("Torpedo missed!");
                 }
             }
@@ -164,20 +166,20 @@ impl TwistPlayer {
             if nx >= 0 && nx < GRID_SIZE as isize && ny >= 0 && ny < GRID_SIZE as isize {
                 let ux = nx as usize;
                 let uy = ny as usize;
-                let cell = opponent.board.cells[ux][uy];
+                let cell = opponent.base.board.cells[ux][uy];
     
-                self.guess_board.change_cell(ux, uy, cell, &mut self.guessgrid);
+                self.base.guess_board.change_cell(ux, uy, cell, &mut self.base.guessgrid);
             }
         }
         println!("Radar scan complete!");
     }
 
     pub fn reinforce(&mut self, target_x: usize, target_y: usize) -> bool {
-        let current_state = self.board.cells[target_x][target_y];
+        let current_state = self.base.board.cells[target_x][target_y];
         
         match current_state {
             Cells::Occupied => {
-                self.board.change_cell(target_x, target_y, Cells::Reinforced, &mut self.boardgrid);
+                self.base.board.change_cell(target_x, target_y, Cells::Reinforced, &mut self.base.boardgrid);
                 println!("Cell at ({}, {}) reinforced!", target_x, target_y);
                 true
             }
@@ -210,12 +212,12 @@ impl TwistPlayer {
 
     pub fn start_patrol(&mut self, x: usize, y: usize) -> bool {
         // Find the ship at this position
-        if let Some(ship_idx) = self.ships.iter().position(|ship| ship.positions.contains(&(x, y))) {
-            let ship = &self.ships[ship_idx];
+        if let Some(ship_idx) = self.base.ships.iter().position(|ship| ship.positions.contains(&(x, y))) {
+            let ship = &self.base.ships[ship_idx];
             
             // Check if any part of the ship is hit
             let has_hit = ship.positions.iter().any(|&(px, py)| {
-                self.board.cells[px][py] == Cells::Hit
+                self.base.board.cells[px][py] == Cells::Hit
             });
     
             if has_hit {
@@ -229,8 +231,8 @@ impl TwistPlayer {
             self.patrol_frames = 30; // About 0.5 seconds at 60 FPS
             
             // Highlight ship
-            for &(px, py) in &self.ships[ship_idx].positions {
-                self.boardgrid.color_cell(px, py, YELLOW);
+            for &(px, py) in &self.base.ships[ship_idx].positions {
+                self.base.boardgrid.color_cell(px, py, YELLOW);
             }
             true
         } else {
@@ -241,12 +243,12 @@ impl TwistPlayer {
 
     pub fn try_patrol_move(&mut self, dir_x: isize, dir_y: isize) -> bool {
         if let Some(ship_idx) = self.patrol_ship {
-            let ship = &mut self.ships[ship_idx];
+            let ship = &mut self.base.ships[ship_idx];
 
             // Track which positions were reinforced
             let mut reinforced_positions = Vec::new();
             for &(x, y) in &ship.positions {
-                if self.board.cells[x][y] == Cells::Reinforced {
+                if self.base.board.cells[x][y] == Cells::Reinforced {
                     reinforced_positions.push((x, y));
                 }
             }
@@ -263,8 +265,8 @@ impl TwistPlayer {
                 }
 
                 // Check if new position is already occupied (by another ship)
-                if self.board.cells[new_x][new_y] == Cells::Occupied || 
-                   self.board.cells[new_x][new_y] == Cells::Reinforced {
+                if self.base.board.cells[new_x][new_y] == Cells::Occupied || 
+                   self.base.board.cells[new_x][new_y] == Cells::Reinforced {
                     // Check if this is part of our own ship
                     if !ship.positions.contains(&(new_x, new_y)) {
                         return false;
@@ -276,8 +278,8 @@ impl TwistPlayer {
 
             // Clear old positions - change back to BLACK (default)
             for &(x, y) in &ship.positions {
-                self.boardgrid.color_cell(x, y, BLACK);  // Set to black instead of changing cell type
-                self.board.cells[x][y] = Cells::Empty;   // Still mark as empty in the backend
+                self.base.boardgrid.color_cell(x, y, BLACK);  // Set to black instead of changing cell type
+                self.base.board.cells[x][y] = Cells::Empty;   // Still mark as empty in the backend
             }
 
             // Update ship positions
@@ -292,9 +294,9 @@ impl TwistPlayer {
                 ));
                 
                 if was_reinforced {
-                    self.board.change_cell(x, y, Cells::Reinforced, &mut self.boardgrid);
+                    self.base.board.change_cell(x, y, Cells::Reinforced, &mut self.base.boardgrid);
                 } else {
-                    self.board.change_cell(x, y, Cells::Occupied, &mut self.boardgrid);
+                    self.base.board.change_cell(x, y, Cells::Occupied, &mut self.base.boardgrid);
                 }
             }
 
@@ -309,11 +311,11 @@ impl TwistPlayer {
     pub fn cancel_patrol(&mut self, return_to_hand: bool) {
         if let Some(ship_idx) = self.patrol_ship {
             // Remove highlight and reset to proper colors
-            for &(x, y) in &self.ships[ship_idx].positions {
-                match self.board.cells[x][y] {
-                    Cells::Occupied => self.boardgrid.color_cell(x, y, GREEN),
-                    Cells::Reinforced => self.boardgrid.color_cell(x, y, DARKGREEN),
-                    Cells::Empty => self.boardgrid.color_cell(x, y, BLACK),
+            for &(x, y) in &self.base.ships[ship_idx].positions {
+                match self.base.board.cells[x][y] {
+                    Cells::Occupied => self.base.boardgrid.color_cell(x, y, GREEN),
+                    Cells::Reinforced => self.base.boardgrid.color_cell(x, y, DARKGREEN),
+                    Cells::Empty => self.base.boardgrid.color_cell(x, y, BLACK),
                     _ => {}
                 }
             }
