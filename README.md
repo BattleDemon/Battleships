@@ -158,6 +158,7 @@ Fire Missle and get clicked cell Functions
 ```
 #### Video of Functionality (link to youtube)
 [![IT Prototype 25 March](https://img.youtube.com/vi/NM8lwhZ-a-o/0.jpg)](https://www.youtube.com/watch?v=NM8lwhZ-a-o)
+
 You can play this prototype by going to battleships/prototypes_exes then run 'battleshipsV0.1.exe'
 #### Issues and Solutions 
 During this time, I ran into an issue with the library I was using (Macroquad Grid), which was meant to handle rendering and managing my on-screen game board. The problem was that it had been compiled with an older version of Rust, as well as an outdated version of its base library (Macroquad). Fortunately, I found the library's repository and was able to fork it. After some tweaking, all it needed was a recompile with the updated Rust version and a few minor syntax fixes thankfully, they were straightforward to resolve.
@@ -399,6 +400,7 @@ Random Ship Placement
 
 #### Video of Functionality 
 [![IT Prototype 27 March](https://img.youtube.com/vi/BdwVXEb1Fnw/0.jpg)](https://www.youtube.com/watch?v=BdwVXEb1Fnw)
+
 You can play this prototype by going to battleships/prototypes_exes then run 'battleshipsV0.2.exe'
 #### Issues and Solutions 
 The first issue I encountered was that using the radar scan on cells at the edges of the grid caused the game to crash. This happened because my implementation led to an integer underflow when converting back to usize. On the opposite edge, the game crashed due to attempting to modify a grid cell that was out of bounds, something the Macroquad grid documentation warned could be an issue.
@@ -642,6 +644,7 @@ How does this work in the main loop
 
 #### Video of Functionality 
 [![IT Prototype 30 March](https://img.youtube.com/vi/NQqllY27vTk/0.jpg)](https://www.youtube.com/watch?v=NQqllY27vTk)
+
 You can play this prototype by going to battleships/prototypes_exes then run 'battleshipsV0.3.exe'
 #### Issues and Solutions 
 
