@@ -1,4 +1,24 @@
 # Battleship 
+## How to Play
+### Controls
+- **Classic Mode**: Click to fire missiles.  
+- **Twisted Mode** (`cargo run --features twist`):  
+  - `T`: Fire Torpedo (vertical strike)  
+  - `R`: Reinforce a ship cell  
+  - `S`: Radar Scan (reveal 5 cells)  
+  - `P`: Start Patrol (move ships with arrow keys)  
+- `Space`: End turn  
+- `H`: Toggle help screen  
+
+### How to Run
+1. Open the terminal in this folder.
+2. To run the base game use 'cargo run' 
+3. To run the twisted version of the game use 'cargo run --features'
+4. Alternatively you could navigate to the Battleships/Release folder 
+5. Launch the .exe for the version you want to play
+    - battleshipsV1.0.exe for the base game 
+    - battleshipsTwistedV1.0.exe for the twisted game
+
 ## Preplanning
 ### What is Battleships
 
