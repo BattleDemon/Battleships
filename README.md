@@ -756,6 +756,20 @@ To view all code at this point please see /Battleships/blob/main/Prototypes/Prot
 
 #### Issues and Solution
 
+### Final version: Seperate files and toggleable twist system
+#### Code at Submission
+
+To view code at submission please see the below files in battleships/src
+- `base.rs`: Core logic for boards, ships, and classic gameplay.  
+- `twist.rs`: Action card system, patrol mechanics, and extended player logic.  
+- `main.rs`: Game loop, UI rendering, and feature toggling with `cfg` macros. 
+
+
+#### Video of Functionality
+
+#### Issue and Solutions
+
+
 ## Reflecting 
 ### How is the overall desing 
 
