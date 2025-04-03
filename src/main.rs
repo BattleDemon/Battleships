@@ -337,9 +337,21 @@ async fn main() {
                 #[cfg(feature = "twist")]{
                     if game_state == GameState::Player1 {
                         let newcard = player1.draw_card().unwrap();
+
+                        if newcard == None {
+                            player1.draw_hand();
+                            let newcard = player1.draw_card().unwrap();
+                        }
+
                         player1.hand.push(newcard);
                     } else if game_state == GameState::Player2{
                         let newcard = player2.draw_card().unwrap();
+
+                        if newcard == None {
+                            player2.draw_hand();
+                            let newcard = player2.draw_card().unwrap();
+                        }
+                        
                         player2.hand.push(newcard);
                     }
                 }

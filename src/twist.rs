@@ -419,13 +419,16 @@ impl TwistPlayer {
     }
 
     /// Draws cards until hand contains HAND_SIZE cards.
-    /// Handles empty deck gracefully (no infinite loops).
     pub fn draw_hand(&mut self) {
         while self.hand.len() < HAND_SIZE {
             if let Some(card) = self.draw_card() {
                 self.hand.push(card);
             } else {
-                break; // No more cards in deck
+                self.deck = Deck::new();
+
+                self.deck.build();
+                self.deck.shuffle();
+                self.draw_hand();
             }
         }
     }
