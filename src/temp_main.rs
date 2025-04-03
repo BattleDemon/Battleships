@@ -37,6 +37,8 @@ async fn main() {
     {
         let mut player1: TwistPlayer = TwistPlayer::new(player1);
         let mut player2: TwistPlayer = TwistPlayer::new(player2);
+    
+        let no_action_error = "You can't use that action, it isn't in your hand.";
     }
 
     let mut player_turn: GameState = GameState::Player1;
@@ -98,7 +100,7 @@ async fn main() {
                                 player1.hand.push(ActionType::Missile);
                             }
                         } else {
-                        println!("You can't use that action, it isn't in your hand.");
+                        println!(no_action_error);
                         }
                     } else if game_state == GameState::Player2 {
                         if player2.use_card(ActionType::Missile) {
@@ -114,7 +116,7 @@ async fn main() {
                                 player2.hand.push(ActionType::Missile);
                             }
                         } else {
-                            println!("You can't use that action, it isn't in your hand.");
+                            println!(no_action_error);
                         }
                     }
                 }
@@ -134,7 +136,7 @@ async fn main() {
                                 player1.hand.push(ActionType::Torpedo);
                             }
                         } else {
-                            println!("You can't use that action, it isn't in your hand.");
+                            println!(no_action_error);
                         }
                     } else if game_state == GameState::Player2 {
                         if player2.use_card(ActionType::Torpedo) {
@@ -150,7 +152,7 @@ async fn main() {
                                 player2.hand.push(Actiong::Torpedo);
                             }
                         } else {
-                            println!("You can't use that action, it isn't in your hand.");
+                            println!(no_action_error);
                         }
                     }
                 }
@@ -169,7 +171,7 @@ async fn main() {
                                 player1.hand.push(ActionType::Reinforce);
                             }
                         } else {
-                            println!("You can't use that action, it isn't in your hand.");
+                            println!(no_action_error);
                         }
                     } else if game_state = GameState::Player2 {
                         if let Some((x,y)) = player2.get_clicked_cell_on_own_board {
@@ -183,12 +185,40 @@ async fn main() {
                             player2.hand.push(ActionType::Reinforce);
                         }
                     } else {
-                        println!("You can't use that action, it isn't in your hand.");
+                        println!(no_action_error);
                     }
                 }
 
                 if is_key_pressed(KeyCode::S) {
-                    
+                    if game_state == GameState::Player1 {
+                        if player1.usecard(ActionType::RadarScan) {
+                            if let Some((x,y)) = player1.get_clicked_cell() {
+                                player1.radar_scan(&mut player2,x,y);
+
+                                player_acted = true;
+
+                                audio::play_sound_once(&sonar_sound);
+                            } else {
+                                player1.hand.push(ActionType::RadarScan);
+                            }
+                        } else {
+                            println!(no_action_error);
+                        }
+                    } else if game_state == GameState::Player2 {
+                        if player2.usecard(ActionType::RadarScan) {
+                            if let Some((x,y)) = player2.get_clicked_cell() {
+                                player2.radar_scan(&mut player2,x,y);
+
+                                player_acted = true;
+
+                                audio::play_sound_once(&sonar_sound);
+                            } else {
+                                player2.hand.push(ActionType::RadarScan);
+                            }
+                        } else {
+                            println!(no_action_error);
+                        }
+                    }
                 }
 
                 if is_key_pressed(KeyCode::P) {
@@ -196,7 +226,7 @@ async fn main() {
                 }
 
             } else {
-                println!("You already used your action this turn!");
+                println!();
             }
         } 
 
