@@ -222,12 +222,41 @@ async fn main() {
                 }
 
                 if is_key_pressed(KeyCode::P) {
+                    if game_state == GameState::Player1 && !player1.patrol_mode {
+                        if player1.use_card(ActionType::Patrol) {
+                            if let Some((x,y)) = player1.get_clicked_cell_on_own_board(){
+                                let started = player1.start_patrol(x,y);
 
+                                if !started {println!("Couldn't start patrol")}
+                            } else {
+                                player1.hand.push(ActionType::Patrol);
+                                println!("No ship selected");
+                            }
+                        } else {
+                            println!(no_action_error);
+                        }
+                    } else if game_state == GameState::Player2 && !player2.patrol_mode {
+                        if player2.use_card(ActionType::Patrol) {
+                            if let Some((x,y)) = player2.get_clicked_cell_on_own_board {
+                                let started = player2.start_patrol(x,y);
+
+                                if !started {println!("Couldn't start patrol")}
+                            } else {
+                                player2.hand.push(ActionType::Patrol);
+                                println!("No ship selected");                     
+                            }
+                        } else {
+                            println!(no_action_error);
+                        }
+                    }            
                 }
 
             } else {
-                println!();
+                println!("You have already used your action this turn!");
             }
+
+            
+
         } 
 
         #[cfg(not(feature = "twist"))]{
