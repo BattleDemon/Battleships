@@ -1,15 +1,14 @@
 use super::base::*;
-use ::rand::prelude::{SliceRandom, IndexedRandom};
-use macroquad::{audio, prelude::*};
+use ::rand::prelude::SliceRandom;
+use macroquad:: prelude::*;
 extern crate macroquad_grid_dex;
-use macroquad_grid_dex::Grid;
 
 pub const HAND_SIZE: usize = 3;
 pub const DECK_SIZE: usize = 48;
 
 #[derive(Clone, Copy,PartialEq)]
 pub enum ActionType {
-    Missle,     // Missle is the base battle ships fire ability
+    Missile,     // Missle is the base battle ships fire ability
     Torpedo,    // Torpedo fires from a point on the x axis then shots upwards along the y axis
     Patrol,     // Allows the player to move a ship
     RadarScan,  // Reveals what is on the selected position and adjacent cells
@@ -44,7 +43,7 @@ impl Deck {
         
         // Add Missile cards (first 16 cards)
         for _ in 0..16 {
-            self.deck_list.push(ActionType::Missle);
+            self.deck_list.push(ActionType::Missile);
         }
         
         // Add Torpedo cards (next 9 cards)
@@ -367,11 +366,11 @@ impl TwistPlayer {
     }
 }
 
-fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
+pub fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
     for (i, card) in hand.iter().enumerate() {
         let card_x = x + (i as f32 * 70.0);
         let color = match card {
-            ActionType::Missle => RED,
+            ActionType::Missile => RED,
             ActionType::Torpedo => BLUE,
             ActionType::Patrol => YELLOW,
             ActionType::RadarScan => PURPLE,
@@ -381,7 +380,7 @@ fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
         draw_rectangle(card_x, y, 70.0, 100.0, color);
         draw_text(
             match card {
-                ActionType::Missle => "Missile",
+                ActionType::Missile => "Missile",
                 ActionType::Torpedo => "Torpedo",
                 ActionType::Patrol => "Patrol",
                 ActionType::RadarScan => "Radar",
