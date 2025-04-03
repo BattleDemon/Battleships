@@ -2,10 +2,8 @@ mod base;
 mod twist;
 
 use base::*;
-use ::rand::prelude::{SliceRandom, IndexedRandom};
 use macroquad::{audio, prelude::*};
 extern crate macroquad_grid_dex;
-use macroquad_grid_dex::Grid;
 
 #[cfg(feature = "twist")] 
 use twist::*;
@@ -30,11 +28,17 @@ async fn main() {
     let splash_sound: audio::Sound = audio::load_sound_from_bytes(SPLASH_SOUND).await.unwrap();
     let missle_sound: audio::Sound = audio::load_sound_from_bytes(MISSLE_SOUND).await.unwrap();
 
-    let mut player1: BasePlayer = BasePlayer::new();
-    let mut player2: BasePlayer = BasePlayer::new();
+    #[cfg(not(feature = "twist"))]
+    {
+        let mut player1: BasePlayer = BasePlayer::new();
+        let mut player2: BasePlayer = BasePlayer::new();
+    }
 
     #[cfg(feature = "twist")]
     {
+        let mut player1: BasePlayer = BasePlayer::new();
+        let mut player2: BasePlayer = BasePlayer::new();
+
         let mut player1: TwistPlayer = TwistPlayer::new(player1);
         let mut player2: TwistPlayer = TwistPlayer::new(player2);
     
@@ -54,25 +58,38 @@ async fn main() {
         clear_background(BLACK);
 
         if game_state == GameState::Player1 {
-            player1.boardgrid.draw();
-            player1.guessgrid.draw();
 
+            #[cfg(not(feature = "twist"))] 
+            {
+                player1.boardgrid.draw();
+                player1.guessgrid.draw();
+            }
             draw_text("Player 1's turn", (screen_width()/2.0)-100.0, 45.0, 30.0, WHITE);
         
             #[cfg(feature = "twist")] 
             {
+                player1.base.boardgrid.draw();
+                player1.base.guessgrid.draw();
+
                 player1.update_patrol();
                 draw_hand_to_screen(&player1.hand, (screen_width()/2.0)-120.0, 500.0);
             }
         }
         else if game_state == GameState::Player2 {
-            player2.boardgrid.draw();
-            player2.guessgrid.draw();
+
+            #[cfg(not(feature = "twist"))] 
+            {
+                player2.boardgrid.draw();
+                player2.guessgrid.draw();
+            }
 
             draw_text("Player 2's turn", (screen_width()/2.0)-100.0, 45.0, 30.0, WHITE);
 
             #[cfg(feature = "twist")] 
             {
+                player2.base.boardgrid.draw();
+                player2.base.guessgrid.draw();
+
                 player2.update_patrol();
                 draw_hand_to_screen(&player2.hand, (screen_width()/2.0)-120.0, 500.0);
             }
@@ -100,7 +117,7 @@ async fn main() {
                                 player1.hand.push(ActionType::Missile);
                             }
                         } else {
-                        println!(no_action_error);
+                        println!("{}",no_action_error);
                         }
                     } else if game_state == GameState::Player2 {
                         if player2.use_card(ActionType::Missile) {
@@ -116,7 +133,7 @@ async fn main() {
                                 player2.hand.push(ActionType::Missile);
                             }
                         } else {
-                            println!(no_action_error);
+                            println!("{}",no_action_error);
                         }
                     }
                 }
@@ -136,7 +153,7 @@ async fn main() {
                                 player1.hand.push(ActionType::Torpedo);
                             }
                         } else {
-                            println!(no_action_error);
+                            println!("{}",no_action_error);
                         }
                     } else if game_state == GameState::Player2 {
                         if player2.use_card(ActionType::Torpedo) {
@@ -152,7 +169,7 @@ async fn main() {
                                 player2.hand.push(Actiong::Torpedo);
                             }
                         } else {
-                            println!(no_action_error);
+                            println!("{}",no_action_error);
                         }
                     }
                 }
@@ -171,7 +188,7 @@ async fn main() {
                                 player1.hand.push(ActionType::Reinforce);
                             }
                         } else {
-                            println!(no_action_error);
+                            println!("{}",no_action_error);
                         }
                     } else if game_state = GameState::Player2 {
                         if let Some((x,y)) = player2.get_clicked_cell_on_own_board {
@@ -185,7 +202,7 @@ async fn main() {
                             player2.hand.push(ActionType::Reinforce);
                         }
                     } else {
-                        println!(no_action_error);
+                        println!("{}",no_action_error);
                     }
                 }
 
@@ -202,7 +219,7 @@ async fn main() {
                                 player1.hand.push(ActionType::RadarScan);
                             }
                         } else {
-                            println!(no_action_error);
+                            println!("{}",no_action_error);
                         }
                     } else if game_state == GameState::Player2 {
                         if player2.usecard(ActionType::RadarScan) {
@@ -216,7 +233,7 @@ async fn main() {
                                 player2.hand.push(ActionType::RadarScan);
                             }
                         } else {
-                            println!(no_action_error);
+                            println!("{}",no_action_error);
                         }
                     }
                 }
@@ -233,7 +250,7 @@ async fn main() {
                                 println!("No ship selected");
                             }
                         } else {
-                            println!(no_action_error);
+                            println!("{}",no_action_error);
                         }
                     } else if game_state == GameState::Player2 && !player2.patrol_mode {
                         if player2.use_card(ActionType::Patrol) {
@@ -246,7 +263,7 @@ async fn main() {
                                 println!("No ship selected");                     
                             }
                         } else {
-                            println!(no_action_error);
+                            println!("{}",no_action_error);
                         }
                     }            
                 }
@@ -339,13 +356,24 @@ async fn main() {
                 }
             }
         }
+        #[cfg(feature = "twist")]{
+            if player1.base.ship_count == 0 {
+                player_won = GameState::Player2;
+                break;
+            }else if player2.base.ship_count == 0 {
+                player_won = GameState::Player1;
+                break;
+            }
+        }
 
-        if player1.ship_count == 0 {
-            player_won = GameState::Player2;
-            break;
-        }else if player2.ship_count == 0 {
-            player_won = GameState::Player1;
-            break;
+        #[cfg(not(feature = "twist"))]{
+            if player1.ship_count == 0 {
+                player_won = GameState::Player2;
+                break;
+            }else if player2.ship_count == 0 {
+                player_won = GameState::Player1;
+                break;
+            }
         }
 
         let temp_turncounter = (turncounter/2.0).floor();
