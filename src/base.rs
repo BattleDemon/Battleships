@@ -2,7 +2,7 @@
 //! Handles board states, ship placement, and basic attack mechanics.
 
 /* ------ Import Used Libraries ------ */
- // Graphics library
+// Graphics library
 use macroquad::prelude::*;
 // Random library
 use ::rand::prelude::*;
@@ -11,16 +11,16 @@ extern crate macroquad_grid_dex;
 use macroquad_grid_dex::Grid;
 
 /*------ Constants ------ */
-pub const GRID_SIZE: usize = 10; // Defines how many cells make up a grid
+pub const GRID_SIZE: usize = 10;    // Defines how many cells make up a grid
 
 /*------ Enums and Structs ------ */
 /// Represents possible states of a grid cell.
 #[derive(Copy, Clone, PartialEq)] // Copy - Enables bitwise copying of the type, doesn't move ownership. Clone - Creates a deep copy of the value, can proform complex copying. PartialEq - Allows comparison of this type.
 pub enum Cells {
-    Empty, // Unknow or empty cell
-    Occupied, // Cell containing part of a ship
-    Hit, // Cell of a successful hit
-    Miss, // Cell of a failed hit
+    Empty,      // Unknow or empty cell
+    Occupied,   // Cell containing part of a ship
+    Hit,        // Cell of a successful hit
+    Miss,       // Cell of a failed hit
     Reinforced, // Cell has extra protection (used in Twist mode, but you can't add to enums after making them so i had to add it here.)
 }
 
@@ -49,9 +49,9 @@ pub enum ShipType {
 /// Represents a ship on the board.
 #[derive(Clone)] // Clone - Creates a deep copy of the value, can proform complex copying.
 pub struct Ship {
-    pub ship_type: ShipType,       // Tracks the type of ship and determines length
+    pub ship_type: ShipType,            // Tracks the type of ship and determines length
     pub positions: Vec<(usize, usize)>, // Grid coordinates the ship occupies
-    pub orientation: Orientation,  // Orientation of the ship used for ship generation
+    pub orientation: Orientation,       // Orientation of the ship used for ship generation
 }
 
 /// Tracks which player's turn it is.
@@ -64,13 +64,13 @@ pub enum GameState {
 
 /// Core player structure 
 pub struct BasePlayer {
-    pub board: Board, // Players own board to see where the opponent guesses and where your ships are.
+    pub board: Board,    // Players own board to see where the opponent guesses and where your ships are.
     pub boardgrid: Grid, // Visual for the board.
 
     pub guess_board: Board, // Track of opponent's board and your guesses
-    pub guessgrid: Grid, // Visual of guesses
+    pub guessgrid: Grid,    // Visual of guesses
 
-    pub ships: Vec<Ship>, // Collection of placed ships
+    pub ships: Vec<Ship>,  // Collection of placed ships
     pub ship_count: usize, // Remaining undestroyed ships
 }
 
