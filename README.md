@@ -135,7 +135,7 @@ Mouse Input
 ```
 
 ### Timeline 
-Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
+Please see /Battleships/blob/main/timeline.md
 
 ### If I get more time
 
@@ -144,7 +144,7 @@ Please see https://github.com/BattleDemon/Battleships/blob/main/timeline.md
 ## Prototyping 
 ### Prototype 1: Basic game loop 
 #### Code at March 24th 
-To view all code at this point please see https://github.com/BattleDemon/Battleships/blob/main/Prototypes/Prototype1.rs 
+To view all code at this point please see /Battleships/blob/main/Prototypes/Prototype1.rs 
 
 Main Loop
 ```rs
@@ -263,7 +263,7 @@ Another challenge I faced was with mouse input on the guessing board, the clicks
 
 ### Prototype 2: Added Torpedo and Radar scan actions and random ship placement
 #### Code at March 27th 
-To view all code at this point please see [https://github.com/BattleDemon/Battleships/blob/main/Prototypes/Prototype2.rs](https://github.com/BattleDemon/Battleships/blob/main/Prototypes/Prototype2.rs)
+To view all code at this point please see [/Battleships/blob/main/Prototypes/Prototype2.rs](/Battleships/blob/main/Prototypes/Prototype2.rs)
 
 Main Loop
 ```rs
@@ -505,7 +505,7 @@ I also encountered an issue with random ship placement, where ships could be pla
 
 ### Prototype 3: Reinforce and Patrol
 #### Code at March 30th 
-To view all code at this point please see https://github.com/BattleDemon/Battleships/blob/main/Prototypes/Prototype3.rs
+To view all code at this point please see /Battleships/blob/main/Prototypes/Prototype3.rs
 
 Getting Click input on your own board
 ```rs
@@ -742,7 +742,7 @@ How does this work in the main loop
 
 ### Prototype 4: Hand display and fully developed action systems
 #### Code at April 2nd
-To view all code at this point please see https://github.com/BattleDemon/Battleships/blob/main/Prototypes/Prototype4.rs
+To view all code at this point please see /Battleships/blob/main/Prototypes/Prototype4.rs
 
 ```rs
 // Hand related Functions
