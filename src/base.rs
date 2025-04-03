@@ -1,30 +1,43 @@
+//! Core game logic for Battleship Classic mode.
+//! Handles board states, ship placement, and basic attack mechanics.
+
+/* ------ Import Used Libraries ------ */
+ // Graphics library
 use macroquad::prelude::*;
+// Random library
 use ::rand::prelude::*;
-extern crate macroquad_grid_dex;
+// A module I recompiled and made small fixes to, but did not write. Used for grid graphics and logic.
+extern crate macroquad_grid_dex; 
 use macroquad_grid_dex::Grid;
 
-pub const GRID_SIZE: usize = 10;
+/*------ Constants ------ */
+pub const GRID_SIZE: usize = 10; // Defines how many cells make up a grid
 
-#[derive(Copy, Clone, PartialEq)]
+/*------ Enums and Structs ------ */
+/// Represents possible states of a grid cell.
+#[derive(Copy, Clone, PartialEq)] // Copy - Enables bitwise copying of the type, doesn't move ownership. Clone - Creates a deep copy of the value, can proform complex copying. PartialEq - Allows comparison of this type.
 pub enum Cells {
-    Empty,
-    Occupied,
-    Hit,
-    Miss,
-    Reinforced,
+    Empty, // Unknow or empty cell
+    Occupied, // Cell containing part of a ship
+    Hit, // Cell of a successful hit
+    Miss, // Cell of a failed hit
+    Reinforced, // Cell has extra protection (used in Twist mode, but you can't add to enums after making them so i had to add it here.)
 }
 
+/// Game board containing cell's and their states
 pub struct Board {
-    pub cells: [[Cells; GRID_SIZE]; GRID_SIZE]
+    pub cells: [[Cells; GRID_SIZE]; GRID_SIZE] 
 }
 
-#[derive(Clone)]
+/// Orientation for ship placement.
+#[derive(Clone)] // Clone - Creates a deep copy of the value, can proform complex copying.
 pub enum Orientation {
     Horizontal, // The ship is horizontal 
-    Verticle,   // The ship is vertical 
+    Verticle,   // The ship is verticle 
 }
 
-#[derive(Clone)]
+/// Types of ships and their respective lengths.
+#[derive(Clone)] // Clone - Creates a deep copy of the value, can proform complex copying.
 pub enum ShipType {
     Battleship,  // Ship size 4
     Cruiser,     // Ship size 3
@@ -33,38 +46,44 @@ pub enum ShipType {
     Dreadnaught, // Ship size 5
 }
 
-#[derive(Clone)]
+/// Represents a ship on the board.
+#[derive(Clone)] // Clone - Creates a deep copy of the value, can proform complex copying.
 pub struct Ship {
-    pub ship_type: ShipType,       // Tracks the type of ship
-    pub positions: Vec<(usize, usize)>, // Coordinates ship occupies
+    pub ship_type: ShipType,       // Tracks the type of ship and determines length
+    pub positions: Vec<(usize, usize)>, // Grid coordinates the ship occupies
     pub orientation: Orientation,  // Orientation of the ship used for ship generation
 }
 
-#[derive(PartialEq)]
+/// Tracks which player's turn it is.
+#[derive(PartialEq)] // PartialEq - Allows comparison of this type.
 pub enum GameState {
     Player1,
     Player2,
-    Else,
+    Else, // Transition state between turns, intended to allow for passing of the device to the next player.
 }
 
+/// Core player structure 
 pub struct BasePlayer {
-    pub board: Board,
-    pub boardgrid: Grid,
+    pub board: Board, // Players own board to see where the opponent guesses and where your ships are.
+    pub boardgrid: Grid, // Visual for the board.
 
-    pub guess_board: Board,
-    pub guessgrid: Grid,
+    pub guess_board: Board, // Track of opponent's board and your guesses
+    pub guessgrid: Grid, // Visual of guesses
 
-    pub ships: Vec<Ship>,
-    pub ship_count: usize,
+    pub ships: Vec<Ship>, // Collection of placed ships
+    pub ship_count: usize, // Remaining undestroyed ships
 }
 
+/* ------ Struct Implementations ------ */
+/// Board Implementations
 impl Board {
+    /// Constructor function
     pub fn new() -> Self {
         Board {  
             cells: [[Cells::Empty; GRID_SIZE]; GRID_SIZE],
         }
     }
-
+    /// Function to change cell based off of the provided celltype and grid position
     pub fn change_cell(&mut self, x: usize, y: usize, ctype: Cells, grid: &mut Grid) { 
         if self.cells[x][y] != Cells::Hit {
             match ctype {
@@ -79,7 +98,9 @@ impl Board {
     }
 }
 
+/// Implementation for the base player handles all shared player functions
 impl BasePlayer {
+    /// Player constructor
     pub fn new() -> Self {
         let mut p = BasePlayer {
             board: Board::new(),
@@ -92,17 +113,18 @@ impl BasePlayer {
             ship_count: 5,
         };
 
-        p.place_ship(ShipType::Battleship, Orientation::Verticle);
+        //Place ships 
+        p.place_ship(ShipType::Battleship, Orientation::Verticle); 
         p.place_ship(ShipType::Submarine, Orientation::Verticle);
         p.place_ship(ShipType::Cruiser, Orientation::Horizontal);
         p.place_ship(ShipType::Dreadnaught, Orientation::Verticle);
         p.place_ship(ShipType::Destroyer, Orientation::Horizontal);
-
+        // Change grid offset and cell colour for your board
         p.boardgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
         p.boardgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
         p.boardgrid.set_cell_bg_color(BLACK);
         p.boardgrid.set_gap_color(GREEN);
-
+        // Change grid offset and cell colour for the guess board
         p.guessgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
         p.guessgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
         p.guessgrid.set_cell_bg_color(BLACK);
@@ -111,8 +133,10 @@ impl BasePlayer {
         return p;
     }
 
+    /// Base attack / guess from the IRL game
+    /// Returns true if attack hits a ship.
     pub fn fire_missile(&mut self, opponent: &mut BasePlayer, target_x: usize, target_y: usize) -> bool {
-        let ocell = &mut opponent.board.cells[target_x][target_y];
+        let ocell = &mut opponent.board.cells[target_x][target_y]; // Create a local refrence to the cell
         
         match *ocell {
             Cells::Occupied => {
@@ -138,6 +162,8 @@ impl BasePlayer {
         }
     }
 
+    /// Converts mouse position to grid coordinates on guess board.
+    /// Returns Some((x,y)) if the mouse is within the grid.
     pub fn get_clicked_cell(&self) -> Option<(usize, usize)> {
         let (mouse_x, mouse_y) = mouse_position();
         let grid_x_offset = 700.0;
@@ -155,6 +181,8 @@ impl BasePlayer {
         None
     }
 
+    /// Attemps to place a ship randomly on the board.
+    /// Trues up to 100 times to find a valid placement.
     pub fn place_ship(&mut self, ship_type: ShipType, orientation: Orientation) -> Option<Ship> {
         let mut rng = ::rand::rng();
         let ship_length = match ship_type {
@@ -220,19 +248,19 @@ impl BasePlayer {
         None
     }
 
-    // Returns the index of the ship at the given coordinates, if any
+    /// Returns the index of the ship at the given coordinates, if any
     pub fn find_ship_at(&self, x: usize, y: usize) -> Option<usize> {
         self.ships.iter()
             .position(|ship| ship.positions.contains(&(x, y)))
     }
 
-    // Checks if a specific ship is completely destroyed
+    /// Checks if a specific ship is completely destroyed
     pub fn is_ship_destroyed(&self, ship_idx: usize) -> bool {
         self.ships[ship_idx].positions.iter()
             .all(|&(x, y)| self.board.cells[x][y] == Cells::Hit)
     }
 
-    // Updates the ship count based on which ships are still alive
+    /// Updates the ship count based on which ships are still alive
     pub fn update_ship_count(&mut self) {
         self.ship_count = self.ships.iter()
             .filter(|ship| {
