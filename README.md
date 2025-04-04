@@ -1,10 +1,43 @@
 # Battleship 
 ## Table of Contents
-- [How to Play](#HTP)
-    - [Controls](#HTP1)
-    - [How to Run](#HTP2)
-## How to Play {#HTP}
-### Controls {#HTP1}
+- [How to Play](#how-to-play)
+    - [Controls](#controls)
+    - [How to Run](#how-to-run)
+- [Preplanning](#preplanning)
+    - [What is Battleships](#what-is-battleships)
+    - [The History of Battleships](#the-history-of-battleships)
+    - [My twist](#my-twist)
+    - [Flowchart](#flowchart)
+    - [Timeline](#timeline)
+    - [If i get more time](#if-i-get-more-time)
+- [Prototyping](#prototyping)
+    - [Prototype 1: Basic Game Loop](#prototype-1-basic-game-loop)
+        - [Code at March 24th](#code-at-march-24th)
+        - [Video Of Functionality (link to youtube)](#video-of-functionality-link-to-youtube)
+        - [Issues and Solutions](#issues-and-solutions)
+    - [Prototype 2: Added Torpedo and Radar Scan Actions and random ship placement](#prototype-2-added-torpedo-and-radar-scan-actions-and-random-ship-placement)
+        - [Code at March 27th](#code-at-march-27th)
+        - [Video Of Functionality](#video-of-functionality)
+        - [Issues and Solutions](#issues-and-solutions-1)
+    - [Prototype 3: Reinforce and Patrol](#prototype-3-reinforce-and-patrol)
+        - [Code at March 30th](#code-at-march-30th)
+        - [Video of Functionality](#video-of-functionality-1)
+        - [Issues and Solutions](#issues-and-solutions-2)
+    - [Prototype 4: Hand display and fully developed action systems](#prototype-4-hand-display-and-fully-developed-action-systems)
+        - [Code at April 2nd](#code-at-april-2nd)
+        - [Video of Functionality](#video-of-functionality-2)
+        - [Issue and Solutions](#issues-and-solution)
+    - [Final version: Seperate files and toggleable twist system](#final-version-seperate-files-and-toggleable-twist-system)
+        - [Code at Submission](#code-at-submission)
+        - [Video of Functionality](#video-of-functionality-3)
+        - [Issue and Solutions](#issue-and-solutions)
+- [Reflection](#reflecting)
+    - [How is the overall desing](#how-is-the-overall-desing)
+    - [What Changes could i make](#what-changes-could-i-make)
+    - [What issues did I encounter](#what-issues-did-i-encounter)
+    
+## How to Play 
+### Controls
 - **Classic Mode**: Click to fire missiles.  
 - **Twisted Mode** (`cargo run --features twist`):  
   - `T`: Fire Torpedo (vertical strike)  
@@ -14,7 +47,7 @@
 - `Space`: End turn  
 - `H`: Toggle help screen  
 
-### How to Run {#HTP2}
+### How to Run
 1. Open the terminal in this folder.
 2. To run the base game use 'cargo run' 
 3. To run the twisted version of the game use 'cargo run --features'
@@ -23,33 +56,33 @@
     - battleshipsV1.0.exe for the base game 
     - battleshipsTwistedV1.0.exe for the twisted game
 
-## Preplanning {#PrP}
-### What is Battleships {#PrP1}
+## Preplanning 
+### What is Battleships
 
  Battleships is a two-player game played on four 10x10 grids—two for each player. One grid is used to place their own ships, while the other is for tracking their opponent's guesses. The game begins with each player placing their battleships, followed by the placement of additional ships until both players have five in total. Players take turns guessing coordinates on their opponent's grid and announcing their guess. The opponent responds with either "hit" or "miss," which the current player records on their vertical grid. The turn then passes to the other player. This continues until all ships are sunk, which happens when every coordinate a ship occupies has been hit.
 
-### The History of Battleships {#PrP2}
+### The History of Battleships
 
   Originating in the early 1900s, Battleships began as a game played with pen and paper. The first published version of the game appeared in 1931 under the name "Salvo" by Starex Novelty Co. It was still played with paper and pen, but now with specifically printed pads for the game. Unlike today, each player had as many shots as they had ships, with some variations allowing certain ships two shots. Once a player had announced all their shots, the opponent would respond by saying how many shots hit and what was hit, but without revealing which specific shot resulted in which outcome. In the late 1930s and 1940s, the game was re-released under different names, such as Combat: The Battleship Game and Broadside: A Game of Naval Strategy. In 1967, Milton Bradley released Battleship, which looked much like the version we know today. It was made of plastic and included small pieces to represent ships, hits, and misses, along with two boards—one horizontal for housing ships and another for tracking guesses. In the 1980s and 1990s, new versions and spin-offs of the game were released, and it was adapted into video games. In 2012, Battleship was even made into a feature film.
   
-### My Twist {#PrP3}
+### My Twist
 
  So, what's the twist? Instead of simply firing at the enemy, you'll now draw from a deck and choose an action from your hand. These new actions include: shooting one missile in a straight line from the X-axis you choose until it either leaves the board or hits something (Torpedo), moving a ship one space in any direction (Patrol), adding an extra hit point to a ship (Reinforce), and revealing part of the enemy's board (Radar Scan).
 
-### Flowchart {#PrP4}
+### Flowchart
 
 ![screenshot](images/Screenshot_flowchart.png)
 
-### Timeline {#PrP5}
+### Timeline
 Please see [/Battleships/blob/main/timeline.md](/Battleships/blob/main/timeline.md)
 
-### If I get more time {#PrP6}
+### If I get more time
 
   If I finish my game before it's due, I'll try to add a simple AI that goes beyond just a random number generator. Another improvement I could make is enhancing the graphics or making the game more user-friendly. 
 
-## Prototyping {#PRO}
-### Prototype 1: Basic game loop {#PRO1}
-#### Code at March 24th {#PRO11}
+## Prototyping 
+### Prototype 1: Basic game loop
+#### Code at March 24th 
 To view all code at this point please see [/Battleships/blob/main/Prototypes/Prototype1.rs](/Battleships/blob/main/Prototypes/Prototype1.rs)
 
 Main Loop
@@ -160,18 +193,18 @@ Fire Missle and get clicked cell Functions
         None
     }
 ```
-#### Video of Functionality (link to youtube) {#PRO12}
+#### Video of Functionality (link to youtube) 
 [![IT Prototype 25 March](https://img.youtube.com/vi/NM8lwhZ-a-o/0.jpg)](https://www.youtube.com/watch?v=NM8lwhZ-a-o)
 
 You can play this prototype by going to battleships/prototypes_exes then run 'battleshipsV0.1.exe'
 
-#### Issues and Solutions {#PRO13}
+#### Issues and Solutions 
 During this time, I ran into an issue with the library I was using (Macroquad Grid), which was meant to handle rendering and managing my on-screen game board. The problem was that it had been compiled with an older version of Rust, as well as an outdated version of its base library (Macroquad). Fortunately, I found the library's repository and was able to fork it. After some tweaking, all it needed was a recompile with the updated Rust version and a few minor syntax fixes thankfully, they were straightforward to resolve.
 
 Another challenge I faced was with mouse input on the guessing board, the clicks weren’t aligning properly with the visual grid. If you clicked on the right side of a cell, it would register a hit on the cell next to it instead. The fix itself was simple, but since I wasn’t sure exactly how many pixels it was off by, it took a bit of trial and error to get the alignment as close to perfect as possible.
 
-### Prototype 2: Added Torpedo and Radar scan actions and random ship placement {#PRO2}
-#### Code at March 27th {#PRO21}
+### Prototype 2: Added Torpedo and Radar scan actions and random ship placement
+#### Code at March 27th 
 To view all code at this point please see [/Battleships/blob/main/Prototypes/Prototype2.rs](/Battleships/blob/main/Prototypes/Prototype2.rs)
 
 Main Loop
@@ -403,20 +436,20 @@ Random Ship Placement
     }
 ```
 
-#### Video of Functionality {#PRO22}
+#### Video of Functionality 
 [![IT Prototype 27 March](https://img.youtube.com/vi/BdwVXEb1Fnw/0.jpg)](https://www.youtube.com/watch?v=BdwVXEb1Fnw)
 
 You can play this prototype by going to battleships/prototypes_exes then run 'battleshipsV0.2.exe'
 
-#### Issues and Solutions {#PRO23}
+#### Issues and Solutions 
 The first issue I encountered was that using the radar scan on cells at the edges of the grid caused the game to crash. This happened because my implementation led to an integer underflow when converting back to usize. On the opposite edge, the game crashed due to attempting to modify a grid cell that was out of bounds, something the Macroquad grid documentation warned could be an issue.
 
 Another problem was with the torpedo system, which continued moving upwards after hitting an already hit cell instead of stopping as intended. This was an easy fix, I simply added an if statement to check if the torpedo was passing through a previously hit cell rather than just stopping at the first occupied one.
 
 I also encountered an issue with random ship placement, where ships could be placed on top of each other. This was because the random placement algorithm selected the first random position rather than iterating through multiple attempts to find one that met the placement requirements. Expanding the conditions for valid placement resolved this issue.
 
-### Prototype 3: Reinforce and Patrol {#PRO3}
-#### Code at March 30th {#PRO31}
+### Prototype 3: Reinforce and Patrol
+#### Code at March 30th 
 To view all code at this point please see [/Battleships/blob/main/Prototypes/Prototype3.rs](/Battleships/blob/main/Prototypes/Prototype3.rs)
 
 Getting Click input on your own board
@@ -648,18 +681,18 @@ How does this work in the main loop
         }
 ```
 
-#### Video of Functionality {#PRO32}
+#### Video of Functionality 
 [![IT Prototype 30 March](https://img.youtube.com/vi/NQqllY27vTk/0.jpg)](https://www.youtube.com/watch?v=NQqllY27vTk)
 
 You can play this prototype by going to battleships/prototypes_exes then run 'battleshipsV0.3.exe'
-#### Issues and Solutions {#PRO33}
+#### Issues and Solutions 
 
 When implementing the Reinforce cell state, it would sometimes incorrectly downgrade a reinforced cell to hit instead of to occupied while the visual feedback didn't aling with this. This was because the change_cell function didn't properly handle the Reinforced case and the color would map incorrectly. The fix was to just add a explicit check for Cells::Reinforced and updating the change_cell to properly map DARKGREEN.
 
 During patrol mode, ships would sometimes move to invalid positions and overlap with ships. This was because the Try_patrol_move function didn't properly validate the new positions before updating the ships location. Adding strict bounds checking and collision detection before moving fixed this issue.
 
-### Prototype 4: Hand display and fully developed action systems {#PRO4}
-#### Code at April 2nd {#PRO41}
+### Prototype 4: Hand display and fully developed action systems
+#### Code at April 2nd 
 To view all code at this point please see [/Battleships/blob/main/Prototypes/Prototype4.rs](/Battleships/blob/main/Prototypes/Prototype4.rs)
 
 ```rs
@@ -768,18 +801,18 @@ fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
 }
 ```
 
-#### Video of Functionality  {#PRO42}
+#### Video of Functionality  
 
 You can play this prototype by going to battleships/prototypes_exes then run 'battleshipsV0.4.exe'
 
-#### Issues and Solution {#PRO43}
+#### Issues and Solution 
 
 The game would crash when an attemping to draw a card from an empty deck. This happens because the draw_card method didn't handle the case where deck_list was empty causing a panic when calling pop() on an emprty vector. The fix was to just modify the draw_card to return an Option<ActionType> and added checks in draw_hand to stop drawing when the deck is empty. 
 
 When using the patrol action but not completing the move before the timer runs out it would return the patrol card to your hand and give you en extra card when the timer finished. This was a simple fix, you just modify the cancel_patrol function to return a value instead of before when it didn't then give back the card based of on that.
 
-### Final version: Seperate files and toggleable twist system {#PRO5}
-#### Code at Submission {#PRO51}
+### Final version: Seperate files and toggleable twist system
+#### Code at Submission 
 
 To view final code please see the below files in battleships/src
 - `base.rs`: Core logic for boards, ships, and classic gameplay.  
@@ -1039,26 +1072,26 @@ Base Functionality and loop
         }
 ```
 
-#### Video of Functionality {#PRO52}
+#### Video of Functionality 
 
 
 
 To play follow the instructions in [How to run](#HTP2)
 
-#### Issue and Solutions {#PRO53}
+#### Issue and Solutions 
 
 Between Prototype4 and now I transfered all the functions enums and structs over to their respective files, this process was involved a lot of trial and error, and took about a day of debugging to make a compileable programm. Some of these issue included making sure everything that needs to be public was public, in the twist section every refrence to base player variabled and methods was twistplayer.base.var/func instead of just twistplayer.var/func. 
 
-## Reflecting {#REF}
-### How is the overall desing {#REF1}
+## Reflecting 
+### How is the overall desing
 
-### What Changes could I make {#REF2}
+### What Changes could I make
 
-### What issues did I encounter {#REF3}
+### What issues did I encounter
 
-### How were these issues solved {#REF4}
+### How were these issues solved
 
-### What would I do if I were to do this again {#REF5}
+### What would I do if I were to do this again
 
-### What have I learnt {#REF6}
+### What have I learnt
 
