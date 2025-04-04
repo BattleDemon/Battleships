@@ -9,10 +9,13 @@ extern crate macroquad_grid_dex;
 use twist::*;
 
 // Sound Effects Constants (Bytes needed for succesful compile)
+#[cfg(feature = "twist")] 
 const REINFORCE_SOUND: &[u8] = include_bytes!("Sound/Reinforce(new version).wav");
+#[cfg(feature = "twist")] 
 const SONAR_SOUND: &[u8] = include_bytes!("Sound/Sonar(new version).wav");
 const MISSLE_SOUND: &[u8] = include_bytes!("Sound/Sound Effect - Missile Launch.wav");
 const SPLASH_SOUND: &[u8] = include_bytes!("Sound/Splash(new version).wav");
+#[cfg(feature = "twist")] 
 const TORPEDO_SOUND: &[u8] = include_bytes!("Sound/Torpedo(new version).wav");
 
 // Change the title of the game window based of of the compile specifications
@@ -22,8 +25,11 @@ async fn main() {
     request_new_screen_size(1280.,720.);
 
     // Load sound effects from data
+    #[cfg(feature = "twist")] 
     let reinforce_sound: audio::Sound = audio::load_sound_from_bytes(REINFORCE_SOUND).await.unwrap();
+    #[cfg(feature = "twist")] 
     let torpedo_sound: audio::Sound = audio::load_sound_from_bytes(TORPEDO_SOUND).await.unwrap();
+    #[cfg(feature = "twist")] 
     let sonar_sound: audio::Sound = audio::load_sound_from_bytes(SONAR_SOUND).await.unwrap();
     let splash_sound: audio::Sound = audio::load_sound_from_bytes(SPLASH_SOUND).await.unwrap();
     let missile_sound: audio::Sound = audio::load_sound_from_bytes(MISSLE_SOUND).await.unwrap();
@@ -56,7 +62,7 @@ async fn main() {
 
     let mut turncounter: f64 = 1.0;
 
-    let mut player_won: GameState = GameState::Else;
+    let player_won: GameState;
 
     loop {
         clear_background(BLACK);

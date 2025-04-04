@@ -1,4 +1,4 @@
-[package]
+[package]https://support.discord.com/
 name = "battleships"
 version = "0.1.0"
 edition = "2021"
@@ -10,3 +10,5 @@ macroquad_grid_dex = { path = "../macroquad_gridc" }
 
 [features]
 twist = []
+
+RUSTFLAGS="$RUSTFLAGS -A dead_code" 

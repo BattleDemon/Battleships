@@ -52,8 +52,8 @@
 - allow clikc to select action &#x2611;
 
 ### Day 10 March 29
-- Visual improvments for actions maybe explosion for hit splash for miss
-- Keep a prototype (Ui and visuals)
+- Visual improvments for actions maybe explosion for hit splash for miss &#x2611;
+- Keep a prototype (Ui and visuals) &#x2611;
 
 ### Day 11 March 30
 - Win loss detection &#x2611;
@@ -62,28 +62,28 @@
 ### Day 12 April 31
 - Improve UI
 - Display whose turn it is &#x2611; 
-- Show remaining ships for each player
+- Show remaining ships for each player &#x2611;
 
 ### Day 13 April 1
-- Ensure actions work correct
-- Fix any issues
+- Ensure actions work correct &#x2611;
+- Fix any issues &#x2611;
 
 ## Week 3 - Playtest, Final touches and extra features 
 
 ### Day 14 April 2
-- Improve UI
-- Text and layout
-- keep a prototype (systems all working but need to do balancing)
+- Improve UI &#x2611; 
+- Text and layout &#x2611;
+- keep a prototype (systems all working but need to do balancing) &#x2611;
 
 ### Day 15 April 3
-- Playtest deck sizes
-- Adjust balance
+- Playtest deck sizes &#x2611;
+- Adjust balance &#x2611;
 
 ### Day 16 April 4
-- Playtest for smooth gameplay
-- fix any bugs
+- Playtest for smooth gameplay &#x2611; 
+- fix any bugs &#x2611; 
 
 ### Day 17 April 5
-- Final Tests
-- Ensure smooth gameplay
-- Prepare for submission
+- Final Tests &#x2611;
+- Ensure smooth gameplay &#x2611;
+- Prepare for submission &#x2611;

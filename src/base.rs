@@ -51,7 +51,7 @@ pub enum ShipType {
 #[derive(Clone)] // Clone - Creates a deep copy of the value, can proform complex copying.
 pub struct Ship {
     pub ship_type: ShipType,            // Tracks the type of ship and determines length
-    pub positions: Vec<(usize, usize)>, // Grid coordinates the ship occupies
+    pub positions: Vec<(usize, usize)>, // Grid coordinates the ship 
     pub orientation: Orientation,       // Orientation of the ship used for ship generation
 }
 
