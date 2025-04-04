@@ -10,7 +10,7 @@
 - `Space`: End turn  
 - `H`: Toggle help screen  
 
-### How to Run
+### How to Run {#htr}
 1. Open the terminal in this folder.
 2. To run the base game use 'cargo run' 
 3. To run the twisted version of the game use 'cargo run --features'
@@ -37,7 +37,7 @@
 ![screenshot](images/Screenshot_flowchart.png)
 
 ### Timeline 
-Please see /Battleships/blob/main/timeline.md
+Please see [/Battleships/blob/main/timeline.md](/Battleships/blob/main/timeline.md)
 
 ### If I get more time
 
@@ -46,7 +46,7 @@ Please see /Battleships/blob/main/timeline.md
 ## Prototyping 
 ### Prototype 1: Basic game loop 
 #### Code at March 24th 
-To view all code at this point please see /Battleships/blob/main/Prototypes/Prototype1.rs 
+To view all code at this point please see [/Battleships/blob/main/Prototypes/Prototype1.rs](/Battleships/blob/main/Prototypes/Prototype1.rs)
 
 Main Loop
 ```rs
@@ -402,6 +402,7 @@ Random Ship Placement
 [![IT Prototype 27 March](https://img.youtube.com/vi/BdwVXEb1Fnw/0.jpg)](https://www.youtube.com/watch?v=BdwVXEb1Fnw)
 
 You can play this prototype by going to battleships/prototypes_exes then run 'battleshipsV0.2.exe'
+
 #### Issues and Solutions 
 The first issue I encountered was that using the radar scan on cells at the edges of the grid caused the game to crash. This happened because my implementation led to an integer underflow when converting back to usize. On the opposite edge, the game crashed due to attempting to modify a grid cell that was out of bounds, something the Macroquad grid documentation warned could be an issue.
 
@@ -411,7 +412,7 @@ I also encountered an issue with random ship placement, where ships could be pla
 
 ### Prototype 3: Reinforce and Patrol
 #### Code at March 30th 
-To view all code at this point please see /Battleships/blob/main/Prototypes/Prototype3.rs
+To view all code at this point please see [/Battleships/blob/main/Prototypes/Prototype3.rs](/Battleships/blob/main/Prototypes/Prototype3.rs)
 
 Getting Click input on your own board
 ```rs
@@ -648,22 +649,129 @@ How does this work in the main loop
 You can play this prototype by going to battleships/prototypes_exes then run 'battleshipsV0.3.exe'
 #### Issues and Solutions 
 
+When implementing the Reinforce cell state, it would sometimes incorrectly downgrade a reinforced cell to hit instead of to occupied while the visual feedback didn't aling with this. This was because the change_cell function didn't properly handle the Reinforced case and the color would map incorrectly. The fix was to just add a explicit check for Cells::Reinforced and updating the change_cell to properly map DARKGREEN.
+
+During patrol mode, ships would sometimes move to invalid positions and overlap with ships. This was because the Try_patrol_move function didn't properly validate the new positions before updating the ships location. Adding strict bounds checking and collision detection before moving fixed this issue.
+
 ### Prototype 4: Hand display and fully developed action systems
 #### Code at April 2nd
-To view all code at this point please see /Battleships/blob/main/Prototypes/Prototype4.rs
+To view all code at this point please see [/Battleships/blob/main/Prototypes/Prototype4.rs](/Battleships/blob/main/Prototypes/Prototype4.rs)
 
 ```rs
-// Hand related Functions
+// Deck functions
+impl Deck {
+    // Deck Constructor
+    fn new() -> Self {
+        Deck {
+            deck_list: Vec::with_capacity(DECK_SIZE),
+        }
+    }
+
+    fn build(&mut self) {
+        // Clear any existing cards
+        self.deck_list.clear();
+        
+        // Add Missile cards (first 16 cards)
+        for _ in 0..16 {
+            self.deck_list.push(ActionType::Missle);
+        }
+        
+        // Add Torpedo cards (next 9 cards)
+        for _ in 0..9 {
+            self.deck_list.push(ActionType::Torpedo);
+        }
+        
+        // Add Patrol cards (next 8 cards)
+        for _ in 0..8 {
+            self.deck_list.push(ActionType::Patrol);
+        }
+        
+        // Add Reinforce cards (next 7 cards)
+        for _ in 0..7 {
+            self.deck_list.push(ActionType::Reinforce);
+        }
+        
+        // Add RadarScan cards (last 8 cards)
+        for _ in 0..8 {
+            self.deck_list.push(ActionType::RadarScan);
+        }
+    }
+
+    fn shuffle(&mut self) {
+        let mut rng = ::rand::rng();
+        self.deck_list.shuffle(&mut rng);
+    }
+}
 ```
 
 ```rs
-// How do actions work with the hand system
+// In Player impl
+    fn draw_card(&mut self) -> Option<ActionType> {
+        self.deck.deck_list.pop()
+    }
+
+    fn draw_hand(&mut self) {
+        while self.hand.len() < HAND_SIZE {
+            if let Some(card) = self.draw_card() {
+                self.hand.push(card);
+            } else {
+                break; // No more cards in deck
+            }
+        }
+    }
+
+    fn has_card(&self, action_type: ActionType) -> bool {
+        self.hand.contains(&action_type)
+    }
+
+    fn use_card(&mut self, action_type: ActionType) -> bool {
+        if let Some(pos) = self.hand.iter().position(|&x| x == action_type) {
+            self.hand.remove(pos);
+            true
+        } else {
+            false
+        }
+    }
+
+// Outside Player
+fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
+    for (i, card) in hand.iter().enumerate() {
+        let card_x = x + (i as f32 * 70.0);
+        let color = match card {
+            ActionType::Missle => RED,
+            ActionType::Torpedo => BLUE,
+            ActionType::Patrol => YELLOW,
+            ActionType::RadarScan => PURPLE,
+            ActionType::Reinforce => GREEN,
+        };
+        
+        draw_rectangle(card_x, y, 70.0, 100.0, color);
+        draw_text(
+            match card {
+                ActionType::Missle => "Missile",
+                ActionType::Torpedo => "Torpedo",
+                ActionType::Patrol => "Patrol",
+                ActionType::RadarScan => "Radar",
+                ActionType::Reinforce => "Reinforce",
+            },
+            card_x + 2.0,
+            y + 40.0,
+            20.0,
+            BLACK,
+        );
+    }
+}
 ```
 
 #### Video of Functionality 
 
 You can play this prototype by going to battleships/prototypes_exes then run 'battleshipsV0.4.exe'
+
 #### Issues and Solution
+
+The game would crash when an attemping to draw a card from an empty deck. This happens because the draw_card method didn't handle the case where deck_list was empty causing a panic when calling pop() on an emprty vector. The fix was to just modify the draw_card to return an Option<ActionType> and added checks in draw_hand to stop drawing when the deck is empty. 
+
+When using the patrol action but not completing the move before the timer runs out it would return the patrol card to your hand and give you en extra card when the timer finished. This was a simple fix, you just modify the cancel_patrol function to return a value instead of before when it didn't then give back the card based of on that.
 
 ### Final version: Seperate files and toggleable twist system
 #### Code at Submission
@@ -673,8 +781,264 @@ To view final code please see the below files in battleships/src
 - `twist.rs`: Action card system, patrol mechanics, and extended player logic.  
 - `main.rs`: Game loop, UI rendering, and feature toggling with `cfg` macros. 
 
+```rs
+// How functionality is split
+#[cfg(feature = "twist")] // makes the code under it only run when you compile with this feature
+
+#[cfg(not(feature = "twist"))] // Inversly this only runs the code when it is compiled without the twist feature
+
+// Eg
+#[cfg(feature = "twist")] 
+use twist::*;
+// Only imports twist module when the feature twist is enabled
+
+#[cfg_attr(not(feature = "twist"), macroquad::main("Battleship Classic"))]
+// Changes the title of the program when the twist feature is not enabled
+
+// You can also do
+#[cfg(feature = "twist")] {
+    // Every thing in here will only run if the feature is enabled
+}
+```
+
+```rs 
+// Twist functionality / loop
+#[cfg(feature = "twist")] 
+        {
+            if !player_acted {
+
+                if is_mouse_button_pressed(MouseButton::Left) {
+                    if game_state == GameState::Player1 {
+                        if player1.use_card(ActionType::Missile) {
+                            if let Some((x,y)) = player1.base.get_clicked_cell() {
+                                let hit = player1.base.fire_missile(&mut player2.base, x, y);
+
+                                player_acted = true;
+
+                                println!("Missile {}", if hit { "hit!"} else { "missed."});
+                                if hit {audio::play_sound_once(&missile_sound)} else {audio::play_sound_once(&splash_sound)};  
+
+                            } else {
+                                player1.hand.push(ActionType::Missile);
+                            }
+                        } else {
+                        println!("{}",NO_ACTION_ERROR);
+                        }
+                    } else if game_state == GameState::Player2 {
+                        if player2.use_card(ActionType::Missile) {
+                            if let Some((x,y)) = player2.base.get_clicked_cell() {
+                                let hit = player2.base.fire_missile(&mut player1.base, x, y);
+
+                                player_acted = true;
+
+                                println!("Missile {}", if hit { "hit!"} else { "missed."});
+                                if hit {audio::play_sound_once(&missile_sound)} else {audio::play_sound_once(&splash_sound)};  
+
+                            } else {
+                                player2.hand.push(ActionType::Missile);
+                            }
+                        } else {
+                            println!("{}",NO_ACTION_ERROR);
+                        }
+                    }
+                }
+
+                if is_key_pressed(KeyCode::T) {
+                    if game_state == GameState::Player1 {
+                        if player1.use_card(ActionType::Torpedo) {
+                            audio::play_sound_once(&torpedo_sound);
+
+                            if let Some(target_x) = player1.get_torpedo_target_column(){
+                                let hit = player1.fire_torpedo(&mut player2, target_x);
+
+                                player_acted = true;
+
+                                println!("Torpedo {}", if hit { "hit!" } else { "missed." });
+                            } else {
+                                player1.hand.push(ActionType::Torpedo);
+                            }
+                        } else {
+                            println!("{}",NO_ACTION_ERROR);
+                        }
+                    } else if game_state == GameState::Player2 {
+                        if player2.use_card(ActionType::Torpedo) {
+                            audio::play_sound_once(&torpedo_sound);
+
+                            if let Some(target_x) = player2.get_torpedo_target_column() {
+                                let hit = player2.fire_torpedo(&mut player1, target_x);
+
+                                player_acted = true;
+
+                                println!("Torpedo {}", if hit { "hit!" } else { "missed." });
+                            } else {
+                                player2.hand.push(ActionType::Torpedo);
+                            }
+                        } else {
+                            println!("{}",NO_ACTION_ERROR);
+                        }
+                    }
+                }
+
+                if is_key_pressed(KeyCode::R) {
+                    if game_state == GameState::Player1 {
+                        if player1.use_card(ActionType::Reinforce) {
+                            if let Some((x,y)) = player1.get_clicked_cell_on_own_board() {
+                                let success = player1.reinforce(x,y);
+
+                                player_acted = true;
+
+                                println!("Reinforcement {}", if success { "successful!" } else { "failed." });
+                                if success { audio::play_sound_once(&reinforce_sound)}                             
+                            } else {
+                                player1.hand.push(ActionType::Reinforce);
+                            }
+                        } else {
+                            println!("{}",NO_ACTION_ERROR);
+                        }
+                    } else if game_state == GameState::Player2 {
+                        if let Some((x,y)) = player2.get_clicked_cell_on_own_board() {
+                            let success = player2.reinforce(x,y);
+
+                            player_acted = true;
+
+                            println!("Reinforcement {}", if success { "successful!" } else { "failed." });
+                            if success { audio::play_sound_once(&reinforce_sound)}                             
+                        } else {
+                            player2.hand.push(ActionType::Reinforce);
+                        }
+                    } else {
+                        println!("{}",NO_ACTION_ERROR);
+                    }
+                }
+
+                if is_key_pressed(KeyCode::S) {
+                    if game_state == GameState::Player1 {
+                        if player1.use_card(ActionType::RadarScan) {
+                            if let Some((x,y)) = player1.base.get_clicked_cell() {
+                                player1.radar_scan(&mut player2,x,y);
+
+                                player_acted = true;
+
+                                audio::play_sound_once(&sonar_sound);
+                            } else {
+                                player1.hand.push(ActionType::RadarScan);
+                            }
+                        } else {
+                            println!("{}",NO_ACTION_ERROR);
+                        }
+                    } else if game_state == GameState::Player2 {
+                        if player2.use_card(ActionType::RadarScan) {
+                            if let Some((x,y)) = player2.base.get_clicked_cell() {
+                                player2.radar_scan(&mut player1,x,y);
+
+                                player_acted = true;
+
+                                audio::play_sound_once(&sonar_sound);
+                            } else {
+                                player2.hand.push(ActionType::RadarScan);
+                            }
+                        } else {
+                            println!("{}",NO_ACTION_ERROR);
+                        }
+                    }
+                }
+
+                if is_key_pressed(KeyCode::P) {
+                    if game_state == GameState::Player1 && !player1.patrol_mode {
+                        if player1.use_card(ActionType::Patrol) {
+                            if let Some((x,y)) = player1.get_clicked_cell_on_own_board(){
+                                let started = player1.start_patrol(x,y);
+
+                                if !started {println!("Couldn't start patrol")}
+                            } else {
+                                player1.hand.push(ActionType::Patrol);
+                                println!("No ship selected");
+                            }
+                        } else {
+                            println!("{}",NO_ACTION_ERROR);
+                        }
+                    } else if game_state == GameState::Player2 && !player2.patrol_mode {
+                        if player2.use_card(ActionType::Patrol) {
+                            if let Some((x,y)) = player2.get_clicked_cell_on_own_board() {
+                                let started = player2.start_patrol(x,y);
+
+                                if !started {println!("Couldn't start patrol")}
+                            } else {
+                                player2.hand.push(ActionType::Patrol);
+                                println!("No ship selected");                     
+                            }
+                        } else {
+                            println!("{}",NO_ACTION_ERROR);
+                        }
+                    }            
+                }
+
+            } 
+
+            if !player_acted {
+                let (current_player, current_opponent) = if game_state == GameState::Player1 {
+                    (&mut player1, &mut player2)
+                } else {
+                    (&mut player2, &mut player1)
+                };
+
+                if current_player.patrol_mode {
+                    let dir = if is_key_pressed(KeyCode::Up) {
+                        Some((-1, 0))
+                    } else if is_key_pressed(KeyCode::Down) {
+                        Some((1,0))
+                    } else if is_key_pressed(KeyCode::Left) {
+                        Some((0, -1))
+                    } else if is_key_pressed(KeyCode::Right) {
+                        Some((0, 1))
+                    } else {
+                        None
+                    };
+
+                    if let Some((dir_x, dir_y)) = dir {
+                        let success = current_player.try_patrol_move(dir_x, dir_y);
+                        println!("Patrol move {}", if success { "successful!" } else { "failed."});
+                        player_acted = success;
+                    }
+                }
+            }
+        } 
+```
+
+```rs
+// base game functionality / loop
+#[cfg(not(feature = "twist"))]{
+            if !player_acted {
+                if is_mouse_button_pressed(MouseButton::Left) {
+                    if game_state == GameState::Player1 {
+                        if let Some((x,y)) = player1.get_clicked_cell() {
+                            let hit = player1.fire_missile(&mut player2, x, y);
+
+                            player_acted = true;
+
+                            println!("Missile {}", if hit { "hit!" } else { "missed." });
+                            if hit { audio::play_sound_once(&missile_sound)} else { audio::play_sound_once(&splash_sound)};
+                        } 
+                    } else if game_state == GameState::Player2 {
+                        if let Some((x,y)) = player2.get_clicked_cell() {
+                            let hit = player2.fire_missile(&mut player1, x, y);
+
+                            player_acted = true;
+
+                            println!("Missile {}", if hit { "hit!" } else { "missed." });
+                            if hit { audio::play_sound_once(&missile_sound)} else { audio::play_sound_once(&splash_sound)};
+                        }
+                    }
+                }
+            }
+        }
+```
 
 #### Video of Functionality
+
+
+
+To play follow the instructions in [How to run](#htr)
 
 #### Issue and Solutions
 
