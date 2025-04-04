@@ -9,6 +9,7 @@ use ::rand::prelude::SliceRandom;
 // Graphics library
 use macroquad:: prelude::*;
 // A module I recompiled and made small fixes to, but did not write. Used for grid graphics and logic.
+// Origional code avaliable here: https://github.com/TheDinner22/macroquad_grid
 extern crate macroquad_grid_dex;
 
 /*------ Constants ------ */
