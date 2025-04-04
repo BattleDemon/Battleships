@@ -1042,6 +1042,7 @@ To play follow the instructions in [How to run](#htr)
 
 #### Issue and Solutions
 
+Between Prototype4 and now I transfered all the functions enums and structs over to their respective files, this process was involved a lot of trial and error, and took about a day of debugging to make a compileable programm. Some of these issue included making sure everything that needs to be public was public, in the twist section every refrence to base player variabled and methods was twistplayer.base.var/func instead of just twistplayer.var/func. 
 
 ## Reflecting 
 ### How is the overall desing 
