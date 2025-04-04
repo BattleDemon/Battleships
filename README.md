@@ -196,10 +196,10 @@ Fire Missle and get clicked cell Functions
 #### Video of Functionality (link to youtube) 
 [![IT Prototype 25 March](https://img.youtube.com/vi/NM8lwhZ-a-o/0.jpg)](https://www.youtube.com/watch?v=NM8lwhZ-a-o)
 
-You can play this prototype by going to battleships/prototypes_exes then run 'battleshipsV0.1.exe'
+You can play this prototype by going to battleships/prototypes_exes then run `battleshipsV0.1.exe`
 
 #### Issues and Solutions 
-During this time, I ran into an issue with the library I was using (Macroquad Grid), which was meant to handle rendering and managing my on-screen game board. The problem was that it had been compiled with an older version of Rust, as well as an outdated version of its base library (Macroquad). Fortunately, I found the library's repository and was able to fork it. After some tweaking, all it needed was a recompile with the updated Rust version and a few minor syntax fixes thankfully, they were straightforward to resolve.
+During this time, I ran into an issue with the library I was using `Macroquad Grid`, which was meant to handle rendering and managing my on-screen game board. The problem was that it had been compiled with an older version of Rust, as well as an outdated version of its base library `Macroquad`. Fortunately, I found the library's repository and was able to fork it. After some tweaking, all it needed was a recompile with the updated Rust version and a few minor syntax fixes thankfully, they were straightforward to resolve.
 
 Another challenge I faced was with mouse input on the guessing board, the clicks weren’t aligning properly with the visual grid. If you clicked on the right side of a cell, it would register a hit on the cell next to it instead. The fix itself was simple, but since I wasn’t sure exactly how many pixels it was off by, it took a bit of trial and error to get the alignment as close to perfect as possible.
 
@@ -439,10 +439,10 @@ Random Ship Placement
 #### Video of Functionality 
 [![IT Prototype 27 March](https://img.youtube.com/vi/BdwVXEb1Fnw/0.jpg)](https://www.youtube.com/watch?v=BdwVXEb1Fnw)
 
-You can play this prototype by going to battleships/prototypes_exes then run 'battleshipsV0.2.exe'
+You can play this prototype by going to battleships/prototypes_exes then run `battleshipsV0.2.exe`
 
 #### Issues and Solutions 
-The first issue I encountered was that using the radar scan on cells at the edges of the grid caused the game to crash. This happened because my implementation led to an integer underflow when converting back to usize. On the opposite edge, the game crashed due to attempting to modify a grid cell that was out of bounds, something the Macroquad grid documentation warned could be an issue.
+The first issue I encountered was that using the radar scan on cells at the edges of the grid caused the game to crash. This happened because my implementation led to an integer underflow when converting back to usize. On the opposite edge, the game crashed due to attempting to modify a grid cell that was out of bounds, something the `Macroquad grid` documentation warned could be an issue.
 
 Another problem was with the torpedo system, which continued moving upwards after hitting an already hit cell instead of stopping as intended. This was an easy fix, I simply added an if statement to check if the torpedo was passing through a previously hit cell rather than just stopping at the first occupied one.
 
@@ -684,12 +684,12 @@ How does this work in the main loop
 #### Video of Functionality 
 [![IT Prototype 30 March](https://img.youtube.com/vi/NQqllY27vTk/0.jpg)](https://www.youtube.com/watch?v=NQqllY27vTk)
 
-You can play this prototype by going to battleships/prototypes_exes then run 'battleshipsV0.3.exe'
+You can play this prototype by going to battleships/prototypes_exes then run `battleshipsV0.3.exe`
 #### Issues and Solutions 
 
-When implementing the Reinforce cell state, it would sometimes incorrectly downgrade a reinforced cell to hit instead of to occupied while the visual feedback didn't aling with this. This was because the change_cell function didn't properly handle the Reinforced case and the color would map incorrectly. The fix was to just add a explicit check for Cells::Reinforced and updating the change_cell to properly map DARKGREEN.
+When implementing the Reinforce cell state, it would sometimes incorrectly downgrade a reinforced cell to hit instead of to occupied while the visual feedback didn't aling with this. This was because the change_cell function didn't properly handle the Reinforced case and the color would map incorrectly. The fix was to just add a explicit check for `Cells::Reinforced` and updating the `change_cell` to properly map `DARKGREEN`.
 
-During patrol mode, ships would sometimes move to invalid positions and overlap with ships. This was because the Try_patrol_move function didn't properly validate the new positions before updating the ships location. Adding strict bounds checking and collision detection before moving fixed this issue.
+During patrol mode, ships would sometimes move to invalid positions and overlap with ships. This was because the `Try_patrol_move` function didn't properly validate the new positions before updating the ships location. Adding strict bounds checking and collision detection before moving fixed this issue.
 
 ### Prototype 4: Hand display and fully developed action systems
 #### Code at April 2nd 
@@ -803,18 +803,18 @@ fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
 
 #### Video of Functionality  
 
-You can play this prototype by going to battleships/prototypes_exes then run 'battleshipsV0.4.exe'
+You can play this prototype by going to battleships/prototypes_exes then run `battleshipsV0.4.exe`
 
 #### Issues and Solution 
 
-The game would crash when an attemping to draw a card from an empty deck. This happens because the draw_card method didn't handle the case where deck_list was empty causing a panic when calling pop() on an emprty vector. The fix was to just modify the draw_card to return an Option<ActionType> and added checks in draw_hand to stop drawing when the deck is empty. 
+The game would crash when an attemping to draw a card from an empty deck. This happens because the `draw_card` method didn't handle the case where `deck_list` was empty causing a panic when calling `pop()` on an emprty vector. The fix was to just modify the `draw_card` to return an `Option<ActionType>` and added checks in `draw_hand` to stop drawing when the deck is empty. 
 
-When using the patrol action but not completing the move before the timer runs out it would return the patrol card to your hand and give you en extra card when the timer finished. This was a simple fix, you just modify the cancel_patrol function to return a value instead of before when it didn't then give back the card based of on that.
+When using the patrol action but not completing the move before the timer runs out it would return the patrol card to your hand and give you en extra card when the timer finished. This was a simple fix, you just modify the `cancel_patrol` function to return a value instead of before when it didn't then give back the card based of on that.
 
 ### Final version: Seperate files and toggleable twist system
 #### Code at Submission 
 
-To view final code please see the below files in battleships/src
+To view final code please see the below files in `battleships/src`
 - `base.rs`: Core logic for boards, ships, and classic gameplay.  
 - `twist.rs`: Action card system, patrol mechanics, and extended player logic.  
 - `main.rs`: Game loop, UI rendering, and feature toggling with `cfg` macros. 
@@ -1080,7 +1080,7 @@ To play follow the instructions in [How to run](#HTP2)
 
 #### Issue and Solutions 
 
-Between Prototype4 and now I transfered all the functions enums and structs over to their respective files, this process was involved a lot of trial and error, and took about a day of debugging to make a compileable programm. Some of these issue included making sure everything that needs to be public was public, in the twist section every refrence to base player variabled and methods was twistplayer.base.var/func instead of just twistplayer.var/func. 
+Between `Prototype4` and now I transfered all the functions enums and structs over to their respective files, this process was involved a lot of trial and error, and took about a day of debugging to make a compileable programm. Some of these issue included making sure everything that needs to be public was public, in the twist section every refrence to base player variabled and methods was `twistplayer.base.var/func` instead of just `twistplayer.var/func`. 
 
 ## Reflecting 
 ### How is the overall desing
