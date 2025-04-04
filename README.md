@@ -31,10 +31,11 @@
         - [Code at Submission](#code-at-submission)
         - [Video of Functionality](#video-of-functionality-3)
         - [Issue and Solutions](#issue-and-solutions)
-- [Reflection](#reflecting)
+- [Reflection](#reflection)
     - [How is the overall desing](#how-is-the-overall-desing)
     - [What Changes could i make](#what-changes-could-i-make)
     - [What issues did I encounter](#what-issues-did-i-encounter)
+    - [Player Feedback](#player-feedback)
     
 ## How to Play 
 ### Controls
@@ -74,7 +75,7 @@
 ![screenshot](images/Screenshot_flowchart.png)
 
 ### Timeline
-Please see [/Battleships/blob/main/timeline.md](/Battleships/blob/main/timeline.md)
+Please see [timeline.md](timeline.md)
 
 ### If I get more time
 
@@ -83,7 +84,7 @@ Please see [/Battleships/blob/main/timeline.md](/Battleships/blob/main/timeline.
 ## Prototyping 
 ### Prototype 1: Basic game loop
 #### Code at March 24th 
-To view all code at this point please see [/Battleships/blob/main/Prototypes/Prototype1.rs](/Battleships/blob/main/Prototypes/Prototype1.rs)
+To view all code at this point please see [Prototypes/Prototype1.rs](Prototypes/Prototype1.rs)
 
 Main Loop
 ```rs
@@ -205,7 +206,7 @@ Another challenge I faced was with mouse input on the guessing board, the clicks
 
 ### Prototype 2: Added Torpedo and Radar scan actions and random ship placement
 #### Code at March 27th 
-To view all code at this point please see [/Battleships/blob/main/Prototypes/Prototype2.rs](/Battleships/blob/main/Prototypes/Prototype2.rs)
+To view all code at this point please see [Prototypes/Prototype2.rs](Prototypes/Prototype2.rs)
 
 Main Loop
 ```rs
@@ -450,7 +451,7 @@ I also encountered an issue with random ship placement, where ships could be pla
 
 ### Prototype 3: Reinforce and Patrol
 #### Code at March 30th 
-To view all code at this point please see [/Battleships/blob/main/Prototypes/Prototype3.rs](/Battleships/blob/main/Prototypes/Prototype3.rs)
+To view all code at this point please see [Prototypes/Prototype3.rs](Prototypes/Prototype3.rs)
 
 Getting Click input on your own board
 ```rs
@@ -693,7 +694,7 @@ During patrol mode, ships would sometimes move to invalid positions and overlap 
 
 ### Prototype 4: Hand display and fully developed action systems
 #### Code at April 2nd 
-To view all code at this point please see [/Battleships/blob/main/Prototypes/Prototype4.rs](/Battleships/blob/main/Prototypes/Prototype4.rs)
+To view all code at this point please see [Prototypes/Prototype4.rs](Prototypes/Prototype4.rs)
 
 ```rs
 // Deck functions
@@ -802,6 +803,8 @@ fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
 ```
 
 #### Video of Functionality  
+
+[![IT Prototype 2 April](https://img.youtube.com/vi/t9gRkWBTLv4/0.jpg)](https://www.youtube.com/watch?v=t9gRkWBTLv4)
 
 You can play this prototype by going to battleships/prototypes_exes then run `battleshipsV0.4.exe`
 
@@ -1074,24 +1077,47 @@ Base Functionality and loop
 
 #### Video of Functionality 
 
+[![IT Prototype final version](https://img.youtube.com/vi/DLUWaWqjja4/0.jpg)](https://www.youtube.com/watch?v=DLUWaWqjja4)
 
-
-To play follow the instructions in [How to run](#HTP2)
+To play follow the instructions in [How to run](#how-to-run)
 
 #### Issue and Solutions 
 
 Between `Prototype4` and now I transfered all the functions enums and structs over to their respective files, this process was involved a lot of trial and error, and took about a day of debugging to make a compileable programm. Some of these issue included making sure everything that needs to be public was public, in the twist section every refrence to base player variabled and methods was `twistplayer.base.var/func` instead of just `twistplayer.var/func`. 
 
-## Reflecting 
+## Reflection
 ### How is the overall desing
+Modular desing
+
+Visual
+
+Mechanical
 
 ### What Changes could I make
+Card Balance
+
+Ai Opponent
+
+More Feedback
 
 ### What issues did I encounter
+Dependency Errors
+
+Grid Coordinates Mismatched
+
+Quarrels with a new language
 
 ### How were these issues solved
+Debugging 
+
+Testing 
+
+Updating 
 
 ### What would I do if I were to do this again
 
 ### What have I learnt
+Rust
+
+### Player Feedback
 
