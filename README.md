@@ -821,7 +821,7 @@ When using the patrol action but not completing the move before the timer runs o
 ### Finished planned features: Seperate files and toggleable twist system
 #### Code at 4th April 
 
-To view finished code please see the below files in `battleships/src`
+To view finished code please see the below files in `battleships/prototypes/prototype5`
 - `base.rs`: Core logic for boards, ships, and classic gameplay.  
 - `twist.rs`: Action card system, patrol mechanics, and extended player logic.  
 - `main.rs`: Game loop, UI rendering, and feature toggling with `cfg` macros. 
