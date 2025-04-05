@@ -1,14 +1,12 @@
-[package]https://support.discord.com/
+[package]
 name = "battleships"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-macroquad = {version = "0.4.13", features = ["audio"]}
+macroquad = { version = "0.4.13", features = ["audio"] }
 rand = "0.9.0"
 macroquad_grid_dex = { path = "../macroquad_gridc" }
 
 [features]
 twist = []
-
-RUSTFLAGS="$RUSTFLAGS -A dead_code" 

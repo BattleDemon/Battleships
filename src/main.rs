@@ -126,7 +126,7 @@ async fn main() {
         }
 
         // Set current player and opponent
-        let (current_player, current_opponent) = if game_state == GameState::Player1 {
+        let (mut current_player, mut current_opponent) = if game_state == GameState::Player1 {
             (&mut player1, &mut player2)
         } else {
             (&mut player2, &mut player1)
@@ -218,7 +218,7 @@ async fn main() {
                             current_player.radar_scan(&mut current_opponent,x,y);
 
                             player_acted = true;
-                            
+
                             // Audio feedback
                             audio::play_sound_once(&sonar_sound);
                         } else {
