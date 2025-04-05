@@ -282,7 +282,7 @@ pub fn draw_help_menu() {
 
     // Common / shared Controls
     draw_text("[Common Controls]", 150.0, 150.0, 30.0, YELLOW);
-    draw_text("- Left Click: Select/Fire (context sensitive)", 170.0, 190.0, 25.0, WHITE);
+    draw_text("- Left Click: Fire a missile", 170.0, 190.0, 25.0, WHITE);
     draw_text("- Space: Confirm action/End turn", 170.0, 220.0, 25.0, WHITE);
     
     // Classic Mode
@@ -293,7 +293,7 @@ pub fn draw_help_menu() {
     draw_text("[Twist Mode]", 150.0, 360.0, 30.0, PURPLE);
     draw_text("- T: Torpedo (vertical strike)", 170.0, 400.0, 25.0, WHITE);
     draw_text("- R: Reinforce ship cell", 170.0, 430.0, 25.0, WHITE);
-    draw_text("- S: Radar Scan (reveal 5 cells)", 170.0, 460.0, 25.0, WHITE);
+    draw_text("- S: Radar Scan (reveals the selected cell and those adjacent)", 170.0, 460.0, 25.0, WHITE);
     draw_text("- P: Patrol (move ships)", 170.0, 490.0, 25.0, WHITE);
     draw_text("  - After pressing P: Use arrow keys to move", 190.0, 520.0, 25.0, WHITE);
     
