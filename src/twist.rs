@@ -492,21 +492,23 @@ pub fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
     }
 }
 
-/* 
-enum AIDifficulty {
+
+pub enum AIDifficulty {
     Easy,
     Medium,
     Hard,
 }
 
-struct BattleshipAI {
-    difficulty: AIDifficulty,
-    memory: Vec<(usize, usize)>,
+pub struct BattleshipAI {
+    pub difficulty: AIDifficulty,
+    pub memory: Vec<(usize, usize)>,
+    pub player: TwistPlayer,
+
 }
 
 impl BattleshipAI {
 
-    fn make_move(&mut self, opponent:&mut TwistPlayer) {
+    pub fn make_move(&mut self, opponent:&mut TwistPlayer) {
         match self.difficulty {
             AIDifficulty::Easy => self.random_attack(opponent),
             AIDifficulty::Medium => self.strategic_attack(opponent),
@@ -514,62 +516,76 @@ impl BattleshipAI {
         }
     }
 
-    fn random_attack(&mut self, opponent: &mut TwistPlayer) {
+    pub fn random_attack(&mut self, opponent: &mut TwistPlayer) {
         let mut rng = ::rand::rng();
         let x = rng.random_range(0..GRID_SIZE);
         let y = rng.random_range(0..GRID_SIZE);
         
         if !self.memory.contains(&(x, y)) {
             self.memory.push((x, y));
-            // fire missle
+            self.player.base.fire_missile(&mut opponent.base, x, y);
         }
     }
 
-    fn strategic_attack(&mut self, opponent: &mut TwistPlayer) {
+    pub fn strategic_attack(&mut self, opponent: &mut TwistPlayer) {
+        let mut rng = ::rand::rng();
+        let last_hit = self.memory.last()
+        .and_then(|&(x,y)| Some((x,y))).unwrap_or_else(|| (
+            rng.random_range(0..GRID_SIZE),
+            rng.random_range(0..GRID_SIZE)
+        ));
 
+        self.attack_near(last_hit.0,last_hit.1,opponent);
     }
 
-    fn card_based_attack(&mut self, opponent: &mut TwistPlayer) {
-
+    pub fn card_based_attack(&mut self, opponent: &mut TwistPlayer) {
+        if self.player.use_card(ActionType::Torpedo) {
+            self.use_torpedo(opponent)
+        } else if self.player.use_card(ActionType::RadarScan) {
+            self.use_radar(opponent);
+        } else {
+            self.strategic_attack(opponent);
+        }
     }
 
-    fn use_torpedo(&mut self, opponent: &mut TwistPlayer) {
+    pub fn use_torpedo(&mut self, opponent: &mut TwistPlayer) {
         let mut rng = ::rand::rng();
         let col = rng.random_range(0..GRID_SIZE);
         
-        opponent.use_card(ActionType::Torpedo);
-        opponent.fire_torpedo(col);
+        self.player.use_card(ActionType::Torpedo);
+        self.player.fire_torpedo(opponent,col);
     }
 
-    fn use_radar(&mut self, opponent: &mut TwistPlayer) {
+    pub fn use_radar(&mut self, opponent: &mut TwistPlayer) {
         let mut rng = ::rand::rng();
         let x = rng.random_range(0..GRID_SIZE);
         let y = rng.random_range(0..GRID_SIZE);
         
-        opponent.use_card(ActionType::RadarScan);
-        opponent.radar_scan(x, y);
+        self.player.use_card(ActionType::RadarScan);
+        self.player.radar_scan(opponent,x,y);
     }
 
-    fn attack_near(&mut self, x: usize, y: usize, opponent: &mut TwistPlayer) {
+    pub fn attack_near(&mut self, x: usize, y: usize, opponent: &mut TwistPlayer) {
         // Check adjacent cells
         let targets = [
-            (x.wrapping_sub(1), y),
-            (x + 1, y),
-            (x, y.wrapping_sub(1)),
-            (x, y + 1)
+            (x.saturating_sub(1), y),  // Safer than wrapping_sub
+            (x + 1, y).min((GRID_SIZE-1,GRID_SIZE-1)),
+            (x, y.saturating_sub(1)),
+            (x, y + 1).min((GRID_SIZE-1, GRID_SIZE-1))
         ];
 
         for &(tx, ty) in &targets {
-            if tx < GRID_SIZE && ty < GRID_SIZE 
-                && !self.memory.contains(&(tx, ty))
-            {
+            if !self.memory.contains(&(tx, ty)) {
                 self.memory.push((tx, ty));
-                opponent.base.fire_missile(tx, ty);
-                self.last_hit = Some((tx, ty));
+                self.player.base.fire_missile(
+                    &mut opponent.base,
+                    tx,
+                    ty
+                );
                 return;
             }
         }
         self.random_attack(opponent);
     }
 }
-    */
+    

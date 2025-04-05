@@ -12,3 +12,4 @@ bincode = "1.3.3"
 
 [features]
 twist = []
+ai = []

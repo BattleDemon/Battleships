@@ -13,9 +13,13 @@ use macroquad::{audio, prelude::*};
 // Origional code avaliable here: https://github.com/TheDinner22/macroquad_grid
 extern crate macroquad_grid_dex;
 
+use twist::TwistPlayer;
 // Conditionaly uses the twist module
 #[cfg(feature = "twist")] 
-use twist::*;
+use twist::{TwistPlayer,ActionType,draw_hand_to_screen};
+
+#[cfg(feature = "ai")]
+use twist::{BattleshipAI, AIDifficulty};
 
 /*------ Constants ------ */
 // Sound Effects Constants (Bytes needed for succesful compile)
@@ -85,10 +89,17 @@ async fn main() {
         TwistPlayer::new(base)
     };
 
-    #[cfg(feature = "twist")]
+    #[cfg(all(feature = "twist" , not(feature = "ai")))]
     let mut player2: TwistPlayer = {
         let base = BasePlayer::new();
         TwistPlayer::new(base)
+    };
+
+    #[cfg(all(feature = "twist", feature = "ai"))]
+    let mut player2 = BattleshipAI {
+        difficulty: AIDifficulty::Medium,
+        memory: Vec::new(),
+        player: TwistPlayer::new(BasePlayer::new()),
     };
 
     #[cfg(not(feature = "twist"))] 
