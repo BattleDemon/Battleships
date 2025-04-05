@@ -13,7 +13,7 @@ use macroquad:: prelude::*;
 extern crate macroquad_grid_dex;
 
 /*------ Constants ------ */
-/// Size of the hand
+/// The number of action cards a player holds at any time.
 pub const HAND_SIZE: usize = 3; 
 /// Total number of cards in the deck (Missile/Torpedo/Patrol/Reinforce/RadarScan).
 pub const DECK_SIZE: usize = 48;
@@ -50,7 +50,8 @@ pub struct TwistPlayer {
 /* ------ Struct Implementations ------ */
 // Implementation for Deck struct 
 impl Deck {
-    /// Deck constructor for an empty deck.
+    /// Creates a new, empty deck with preallocated capacity for all cards.
+    /// Use `build()` afterwards to populate it with cards.
     pub fn new() -> Self {
         Deck {
             deck_list: Vec::with_capacity(DECK_SIZE),
@@ -93,7 +94,7 @@ impl Deck {
         }
     }
 
-    /// Randomises card order using rusts shuffle func
+    /// Shuffles the deck using Rust’s built-in RNG for randomizing the order.
     pub fn shuffle(&mut self) {
         let mut rng = ::rand::rng();
         self.deck_list.shuffle(&mut rng);
@@ -114,8 +115,11 @@ impl TwistPlayer {
             deck: Deck::new(),
             hand: Vec::new(),
 
+            // Whether the player is currently selecting a patrol move
             patrol_mode: false,
+            // Index of the currently selected ship for movement, if any
             patrol_ship: None,
+            // Countdown timer (in frames) before patrol mode times out (30 frames ≈ 0.5s)
             patrol_frames: 0,
         };
 
@@ -402,6 +406,7 @@ impl TwistPlayer {
     /// - Automatically cancels patrol if timer expires
     /// - Returns patrol card to hand on timeout
     pub fn update_patrol(&mut self) {
+        // Count down the patrol timer, disable patrol mode when it reaches 0
         if self.patrol_mode && self.patrol_frames > 0 {
             self.patrol_frames -= 1;
             
@@ -419,7 +424,8 @@ impl TwistPlayer {
         self.deck.deck_list.pop()
     }
 
-    /// Draws cards until hand contains HAND_SIZE cards.
+    /// Ensures the player’s hand is filled to `HAND_SIZE`.
+    /// If the deck runs out, it rebuilds and reshuffles automatically.
     pub fn draw_hand(&mut self) {
         while self.hand.len() < HAND_SIZE {
             if let Some(card) = self.draw_card() {
@@ -434,15 +440,18 @@ impl TwistPlayer {
         }
     }
 
-    /// Attempts to use a specified action card from the player's hand.
-    /// - `action_type`: The card to play (e.g., ActionType::Torpedo)
-    /// - Returns `true` if card was found and removed from hand
-    /// - Returns `false` if card isn't available (prevents invalid actions)
+    /// Uses the specified action card if available in hand.
+    /// - Removes the card from hand if found.
+    /// - Prevents playing unavailable cards.
+    /// Returns `true` if the card was used successfully, `false` otherwise.
     pub fn use_card(&mut self, action_type: ActionType) -> bool {
+        // If the card is in the player's hand, play it:
         if let Some(pos) = self.hand.iter().position(|&x| x == action_type) {
+            // Removes it from hand then returns true
             self.hand.remove(pos);
             true
         } else {
+            // Returns false if the player doesn't have the card
             false
         }
     }
