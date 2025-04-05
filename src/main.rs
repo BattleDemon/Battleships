@@ -21,10 +21,14 @@ use twist::*;
 // Sound Effects Constants (Bytes needed for succesful compile)
 #[cfg(feature = "twist")] 
 const REINFORCE_SOUND: &[u8] = include_bytes!("Sound/Reinforce(new version).wav");
+
 #[cfg(feature = "twist")] 
 const SONAR_SOUND: &[u8] = include_bytes!("Sound/Sonar(new version).wav");
+
 const MISSLE_SOUND: &[u8] = include_bytes!("Sound/Sound Effect - Missile Launch.wav");
+
 const SPLASH_SOUND: &[u8] = include_bytes!("Sound/Splash(new version).wav");
+
 #[cfg(feature = "twist")] 
 const TORPEDO_SOUND: &[u8] = include_bytes!("Sound/Torpedo(new version).wav");
 
@@ -82,49 +86,6 @@ async fn main() {
     loop {
         clear_background(BLACK); // Clears screen to black
 
-        /* --- UI Drawing --- */
-        if game_state == GameState::Player1 {
-            // Player 1 UI
-            #[cfg(not(feature = "twist"))] 
-            {
-                player1.boardgrid.draw();
-                player1.guessgrid.draw();
-            }
-            draw_text("Player 1's turn", (screen_width()/2.0)-100.0, 45.0, 30.0, WHITE);
-        
-            #[cfg(feature = "twist")] 
-            {
-                player1.base.boardgrid.draw();
-                player1.base.guessgrid.draw();
-
-                player1.update_patrol();
-                draw_hand_to_screen(&player1.hand, (screen_width()/2.0)-120.0, 500.0);
-            }
-        }
-        else if game_state == GameState::Player2 {
-            // Player 2 UI
-            #[cfg(not(feature = "twist"))] 
-            {
-                player2.boardgrid.draw();
-                player2.guessgrid.draw();
-            }
-
-            draw_text("Player 2's turn", (screen_width()/2.0)-100.0, 45.0, 30.0, WHITE);
-
-            #[cfg(feature = "twist")] 
-            {
-                player2.base.boardgrid.draw();
-                player2.base.guessgrid.draw();
-
-                player2.update_patrol();
-                draw_hand_to_screen(&player2.hand, (screen_width()/2.0)-120.0, 500.0);
-            }
-        }
-        else {
-            // Inbetween UI
-            draw_text("Press Space to change player",(screen_width()/2.0)-350.0,(screen_height()/2.0)-30.0,60.0,WHITE);
-        }
-
         // Set current player and opponent
         let (mut current_player, mut current_opponent) = if game_state == GameState::Player1 {
             (&mut player1, &mut player2)
@@ -132,11 +93,36 @@ async fn main() {
             (&mut player2, &mut player1)
         };
 
+        /* --- UI Drawing --- */
+        if game_state == GameState::Else {
+            // Inbetween UI
+            draw_text("Press Space to change player",(screen_width()/2.0)-350.0,(screen_height()/2.0)-30.0,60.0,WHITE);
+        }
+        else {
+            // Player UI
+            #[cfg(not(feature = "twist"))] 
+            {
+                current_player.boardgrid.draw();
+                current_player.guessgrid.draw();
+            }
+
+            draw_text("Player 1's turn", (screen_width()/2.0)-100.0, 45.0, 30.0, WHITE);
+        
+            #[cfg(feature = "twist")] 
+            {
+                current_player.base.boardgrid.draw();
+                current_player.base.guessgrid.draw();
+
+                current_player.update_patrol();
+                draw_hand_to_screen(&current_player.hand, (screen_width()/2.0)-120.0, 500.0);
+            }
+        }
+
         /* --- Input for the Twisted Version --- */
         #[cfg(feature = "twist")] 
         {
             // Stops if the player has acted
-            if !player_acted { 
+            if !player_acted && game_state != GameState::Else{ 
 
                 /* --- Missile Action --- */
                 if is_mouse_button_pressed(MouseButton::Left) {
@@ -277,49 +263,64 @@ async fn main() {
             }
         } 
 
+        /*--- Classic Mode input --- */
+        // Classic base mode input handleing
         #[cfg(not(feature = "twist"))]{
-            if !player_acted {
+            if !player_acted && game_state != GameState::Else{
+                // Gets the grid pos of where the mouse was when it was clicked
                 if is_mouse_button_pressed(MouseButton::Left) {
                     if let Some((x,y)) = current_player.get_clicked_cell() {
                         let hit = current_player.fire_missile(&mut current_opponent, x, y);
+
                         player_acted = true;
+
                         println!("Missile {}", if hit { "hit!" } else { "missed." });
                         if hit { audio::play_sound_once(&missile_sound)} else { audio::play_sound_once(&splash_sound)};
                     }
                 }
             }
         }
-
+	
+        /*--- Change Turn --- */
         if is_key_pressed(KeyCode::Space) {
+            // Switch to inbetween screen if the player has acted
             if player_acted {
                 println!("Player changed"); 
                 println!(" ");
-
+                
+                // Draws cards 
                 #[cfg(feature = "twist")]{
-                    if current_player.deck.deck_list.len() == 0 {
+                    if current_player.deck.deck_list.is_empty() {
                         current_player.draw_hand();
                     }
                     let newcard = current_player.draw_card().unwrap();
-                    player1.hand.push(newcard);
+                    current_player.hand.push(newcard);
                 }
-
-                game_state = GameState::Else;
+        
+                // Reset player_acted here
                 player_acted = false;
+                game_state = GameState::Else;
                 turncounter += 1.0;
             } else {
+                // Switch to next turn
                 if game_state == GameState::Else {
-                    if player_turn == GameState::Player1  {
+                    // Switch turns and reset state
+                    if player_turn == GameState::Player1 {
                         game_state = GameState::Player2;
                         player_turn = GameState::Player2;
-                        
-                    } else if player_turn == GameState::Player2  {
+                    } else {
                         game_state = GameState::Player1;
                         player_turn = GameState::Player1;
                     }
+                    // Ensure player_acted is reset for the new turn
+                    player_acted = false;
                 }
             }
         }
+
+        /*--- Win Check --- */
         #[cfg(feature = "twist")]{
+            // Win check for twist (just added a .base)
             if player1.base.ship_count == 0 {
                 player_won = GameState::Player2;
                 break;
@@ -330,6 +331,7 @@ async fn main() {
         }
 
         #[cfg(not(feature = "twist"))]{
+            // Win check for base
             if player1.ship_count == 0 {
                 player_won = GameState::Player2;
                 break;
@@ -339,30 +341,48 @@ async fn main() {
             }
         }
 
+        // Allows early exit of game
+        if is_key_pressed(KeyCode::Escape) {
+            break;
+        }
+
+        // Displays turn UI
         let temp_turncounter = (turncounter/2.0).floor();
         draw_text(format!("Turn: {}", temp_turncounter).as_str(),75.0,45.0,30.0,WHITE);
 
+        // Updates view
         next_frame().await;
     }
 
+    // Halve turns to get the true number
     turncounter = turncounter/2.;
-    turncounter = turncounter.floor();
+    turncounter = turncounter.floor(); // Round down
 
+    // loop to display winner message and wait for exit
     loop{
+
+        clear_background(BLACK);
+
+        // Checks if Player 1 has won and displays win message
         if player_won == GameState::Player1 {
-            clear_background(BLACK);
             draw_text("Player 1 Won!!", (screen_width()/2.0)-200.0, screen_height()/2.0, 60.0, WHITE);
         }
 
+        // Checks if Player 2 has won and display win message
         else if player_won == GameState::Player2 {
-            clear_background(BLACK);
             draw_text("Player 2 Won!!", (screen_width()/2.0)-200.0, screen_height()/2.0, 60.0, WHITE);
         }
 
+        // Wait for space key or escape to be pressed the exit the game
         if is_key_pressed(KeyCode::Space) {
             break;
         }
 
+        if is_key_pressed(KeyCode::Escape) {
+            break;
+        }
+
+        // Displays how many turns it took to win
         draw_text(format!("After {} turns",turncounter).as_str(),(screen_width()/2.0)-180.0,(screen_height()/2.0)+50.0,30.0,WHITE);
         
         next_frame().await;

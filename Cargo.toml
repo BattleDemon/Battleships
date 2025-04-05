@@ -10,3 +10,5 @@ macroquad_grid_dex = { path = "../macroquad_gridc" }
 
 [features]
 twist = []
+
+RUSTFLAGS="$RUSTFLAGS -A dead_code"
