@@ -146,7 +146,9 @@ async fn main() {
                         if let Some((x,y)) = current_player.base.get_clicked_cell() {
                             // If you hit or not
                             let hit = current_player.base.fire_missile(&mut current_opponent.base, x, y);
+
                             player_acted = true;
+
                             // player feedback
                             println!("Missile {}", if hit { "hit!"} else { "missed."});
                             if hit {audio::play_sound_once(&missile_sound)} else {audio::play_sound_once(&splash_sound)};  
@@ -165,11 +167,14 @@ async fn main() {
                     if current_player.use_card(ActionType::Torpedo) {
                         // Audio feedback
                         audio::play_sound_once(&torpedo_sound);
+
                         // Gets the grid pos of where the mouse was when 't' was pressed
                         if let Some(target_x) = current_player.get_torpedo_target_column(){
                             // If you hit or not
                             let hit = current_player.fire_torpedo(&mut current_opponent, target_x);
+
                             player_acted = true;
+
                             // Text feedback
                             println!("Torpedo {}", if hit { "hit!" } else { "missed." });
                         } else {
@@ -189,7 +194,9 @@ async fn main() {
                         if let Some((x,y)) = current_player.get_clicked_cell_on_own_board() {
                             // If the cell was reinforced
                             let success = current_player.reinforce(x,y);
+
                             player_acted = true;
+
                             // Player feedback
                             println!("Reinforcement {}", if success { "successful!" } else { "failed." });
                             if success { audio::play_sound_once(&reinforce_sound)}                             
@@ -209,7 +216,9 @@ async fn main() {
                         // Gets the grid pos of where the mouse was when 's' was pressed
                         if let Some((x,y)) = current_player.base.get_clicked_cell() {
                             current_player.radar_scan(&mut current_opponent,x,y);
+
                             player_acted = true;
+                            
                             // Audio feedback
                             audio::play_sound_once(&sonar_sound);
                         } else {
