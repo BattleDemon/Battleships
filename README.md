@@ -844,185 +844,129 @@ use twist::*;
 
 Twist Functionality and loop
 ```rs 
-#[cfg(feature = "twist")] 
+/* --- Input for the Twisted Version --- */
+        #[cfg(feature = "twist")] 
         {
-            if !player_acted {
+            // Stops if the player has acted
+            if !player_acted { 
 
+                /* --- Missile Action --- */
                 if is_mouse_button_pressed(MouseButton::Left) {
-                    if game_state == GameState::Player1 {
-                        if player1.use_card(ActionType::Missile) {
-                            if let Some((x,y)) = player1.base.get_clicked_cell() {
-                                let hit = player1.base.fire_missile(&mut player2.base, x, y);
-
-                                player_acted = true;
-
-                                println!("Missile {}", if hit { "hit!"} else { "missed."});
-                                if hit {audio::play_sound_once(&missile_sound)} else {audio::play_sound_once(&splash_sound)};  
-
-                            } else {
-                                player1.hand.push(ActionType::Missile);
-                            }
-                        } else {
-                        println!("{}",NO_ACTION_ERROR);
-                        }
-                    } else if game_state == GameState::Player2 {
-                        if player2.use_card(ActionType::Missile) {
-                            if let Some((x,y)) = player2.base.get_clicked_cell() {
-                                let hit = player2.base.fire_missile(&mut player1.base, x, y);
-
-                                player_acted = true;
-
-                                println!("Missile {}", if hit { "hit!"} else { "missed."});
-                                if hit {audio::play_sound_once(&missile_sound)} else {audio::play_sound_once(&splash_sound)};  
-
-                            } else {
-                                player2.hand.push(ActionType::Missile);
-                            }
-                        } else {
-                            println!("{}",NO_ACTION_ERROR);
-                        }
-                    }
-                }
-
-                if is_key_pressed(KeyCode::T) {
-                    if game_state == GameState::Player1 {
-                        if player1.use_card(ActionType::Torpedo) {
-                            audio::play_sound_once(&torpedo_sound);
-
-                            if let Some(target_x) = player1.get_torpedo_target_column(){
-                                let hit = player1.fire_torpedo(&mut player2, target_x);
-
-                                player_acted = true;
-
-                                println!("Torpedo {}", if hit { "hit!" } else { "missed." });
-                            } else {
-                                player1.hand.push(ActionType::Torpedo);
-                            }
-                        } else {
-                            println!("{}",NO_ACTION_ERROR);
-                        }
-                    } else if game_state == GameState::Player2 {
-                        if player2.use_card(ActionType::Torpedo) {
-                            audio::play_sound_once(&torpedo_sound);
-
-                            if let Some(target_x) = player2.get_torpedo_target_column() {
-                                let hit = player2.fire_torpedo(&mut player1, target_x);
-
-                                player_acted = true;
-
-                                println!("Torpedo {}", if hit { "hit!" } else { "missed." });
-                            } else {
-                                player2.hand.push(ActionType::Torpedo);
-                            }
-                        } else {
-                            println!("{}",NO_ACTION_ERROR);
-                        }
-                    }
-                }
-
-                if is_key_pressed(KeyCode::R) {
-                    if game_state == GameState::Player1 {
-                        if player1.use_card(ActionType::Reinforce) {
-                            if let Some((x,y)) = player1.get_clicked_cell_on_own_board() {
-                                let success = player1.reinforce(x,y);
-
-                                player_acted = true;
-
-                                println!("Reinforcement {}", if success { "successful!" } else { "failed." });
-                                if success { audio::play_sound_once(&reinforce_sound)}                             
-                            } else {
-                                player1.hand.push(ActionType::Reinforce);
-                            }
-                        } else {
-                            println!("{}",NO_ACTION_ERROR);
-                        }
-                    } else if game_state == GameState::Player2 {
-                        if let Some((x,y)) = player2.get_clicked_cell_on_own_board() {
-                            let success = player2.reinforce(x,y);
+                    // If the current player has the card 
+                    if current_player.use_card(ActionType::Missile) {
+                        // Gets the grid pos of where the mouse was when clicked
+                        if let Some((x,y)) = current_player.base.get_clicked_cell() {
+                            // If you hit or not
+                            let hit = current_player.base.fire_missile(&mut current_opponent.base, x, y);
 
                             player_acted = true;
 
-                            println!("Reinforcement {}", if success { "successful!" } else { "failed." });
-                            if success { audio::play_sound_once(&reinforce_sound)}                             
+                            // player feedback
+                            println!("Missile {}", if hit { "hit!"} else { "missed."});
+                            if hit {audio::play_sound_once(&missile_sound)} else {audio::play_sound_once(&splash_sound)};  
                         } else {
-                            player2.hand.push(ActionType::Reinforce);
+                            // If didn't click on a grid return the missile to hand
+                            current_player.hand.push(ActionType::Missile);
                         }
                     } else {
+                        // If the player didn't have the action
                         println!("{}",NO_ACTION_ERROR);
                     }
                 }
 
-                if is_key_pressed(KeyCode::S) {
-                    if game_state == GameState::Player1 {
-                        if player1.use_card(ActionType::RadarScan) {
-                            if let Some((x,y)) = player1.base.get_clicked_cell() {
-                                player1.radar_scan(&mut player2,x,y);
+                /* --- Torpedo Action --- */
+                if is_key_pressed(KeyCode::T) {
+                    if current_player.use_card(ActionType::Torpedo) {
+                        // Audio feedback
+                        audio::play_sound_once(&torpedo_sound);
 
-                                player_acted = true;
+                        // Gets the grid pos of where the mouse was when 't' was pressed
+                        if let Some(target_x) = current_player.get_torpedo_target_column(){
+                            // If you hit or not
+                            let hit = current_player.fire_torpedo(&mut current_opponent, target_x);
 
-                                audio::play_sound_once(&sonar_sound);
-                            } else {
-                                player1.hand.push(ActionType::RadarScan);
-                            }
+                            player_acted = true;
+
+                            // Text feedback
+                            println!("Torpedo {}", if hit { "hit!" } else { "missed." });
                         } else {
-                            println!("{}",NO_ACTION_ERROR);
+                            // If didn't click on a grid return the torpedo to hand
+                            current_player.hand.push(ActionType::Torpedo);
                         }
-                    } else if game_state == GameState::Player2 {
-                        if player2.use_card(ActionType::RadarScan) {
-                            if let Some((x,y)) = player2.base.get_clicked_cell() {
-                                player2.radar_scan(&mut player1,x,y);
-
-                                player_acted = true;
-
-                                audio::play_sound_once(&sonar_sound);
-                            } else {
-                                player2.hand.push(ActionType::RadarScan);
-                            }
-                        } else {
-                            println!("{}",NO_ACTION_ERROR);
-                        }
+                    } else {
+                        // If the player didn't have the action
+                        println!("{}",NO_ACTION_ERROR);
                     }
                 }
 
+                /*--- Reinforce Action --- */
+                if is_key_pressed(KeyCode::R) {
+                    if current_player.use_card(ActionType::Reinforce) {
+                        // Gets the grid pos of where the mouse was when 'r' was pressed
+                        if let Some((x,y)) = current_player.get_clicked_cell_on_own_board() {
+                            // If the cell was reinforced
+                            let success = current_player.reinforce(x,y);
+
+                            player_acted = true;
+
+                            // Player feedback
+                            println!("Reinforcement {}", if success { "successful!" } else { "failed." });
+                            if success { audio::play_sound_once(&reinforce_sound)}                             
+                        } else {
+                            // If didn't click on an occupied cell return the reinforce card to hand
+                            current_player.hand.push(ActionType::Reinforce);
+                        }
+                    } else {
+                        // If the player didn't have the action
+                        println!("{}",NO_ACTION_ERROR);
+                    }
+                }
+
+                /* --- Radar Scan Action ---*/
+                if is_key_pressed(KeyCode::S) {
+                    if current_player.use_card(ActionType::RadarScan) {
+                        // Gets the grid pos of where the mouse was when 's' was pressed
+                        if let Some((x,y)) = current_player.base.get_clicked_cell() {
+                            current_player.radar_scan(&mut current_opponent,x,y);
+
+                            player_acted = true;
+
+                            // Audio feedback
+                            audio::play_sound_once(&sonar_sound);
+                        } else {
+                            // If didn't click on board return radar scan to hand
+                            current_player.hand.push(ActionType::RadarScan);
+                        }
+                    } else {
+                        // If the player didn't have the action
+                        println!("{}",NO_ACTION_ERROR);
+                    }
+                }
+
+                /*--- Patrol Action --- */
                 if is_key_pressed(KeyCode::P) {
-                    if game_state == GameState::Player1 && !player1.patrol_mode {
-                        if player1.use_card(ActionType::Patrol) {
-                            if let Some((x,y)) = player1.get_clicked_cell_on_own_board(){
-                                let started = player1.start_patrol(x,y);
+                    if !current_player.patrol_mode {
+                        if current_player.use_card(ActionType::Patrol) {
+                            // Gets the grid pos of where the mouse was when 'p' was pressed
+                            if let Some((x,y)) = current_player.get_clicked_cell_on_own_board(){
+                                let started = current_player.start_patrol(x,y);
 
                                 if !started {println!("Couldn't start patrol")}
                             } else {
-                                player1.hand.push(ActionType::Patrol);
+                                // If didn't click on board return patrol to hand
+                                current_player.hand.push(ActionType::Patrol);
                                 println!("No ship selected");
                             }
                         } else {
+                            // If the player didn't have the action
                             println!("{}",NO_ACTION_ERROR);
                         }
-                    } else if game_state == GameState::Player2 && !player2.patrol_mode {
-                        if player2.use_card(ActionType::Patrol) {
-                            if let Some((x,y)) = player2.get_clicked_cell_on_own_board() {
-                                let started = player2.start_patrol(x,y);
-
-                                if !started {println!("Couldn't start patrol")}
-                            } else {
-                                player2.hand.push(ActionType::Patrol);
-                                println!("No ship selected");                     
-                            }
-                        } else {
-                            println!("{}",NO_ACTION_ERROR);
-                        }
-                    }            
+                    } 
                 }
-
             } 
 
+            /* --- Patrol Moving --- */
             if !player_acted {
-                let (current_player, current_opponent) = if game_state == GameState::Player1 {
-                    (&mut player1, &mut player2)
-                } else {
-                    (&mut player2, &mut player1)
-                };
-
                 if current_player.patrol_mode {
                     let dir = if is_key_pressed(KeyCode::Up) {
                         Some((-1, 0))
@@ -1051,24 +995,13 @@ Base Functionality and loop
 #[cfg(not(feature = "twist"))]{
             if !player_acted {
                 if is_mouse_button_pressed(MouseButton::Left) {
-                    if game_state == GameState::Player1 {
-                        if let Some((x,y)) = player1.get_clicked_cell() {
-                            let hit = player1.fire_missile(&mut player2, x, y);
+                    if let Some((x,y)) = current_player.get_clicked_cell() {
+                        let hit = current_player.fire_missile(&mut current_opponent, x, y);
 
-                            player_acted = true;
-
-                            println!("Missile {}", if hit { "hit!" } else { "missed." });
-                            if hit { audio::play_sound_once(&missile_sound)} else { audio::play_sound_once(&splash_sound)};
-                        } 
-                    } else if game_state == GameState::Player2 {
-                        if let Some((x,y)) = player2.get_clicked_cell() {
-                            let hit = player2.fire_missile(&mut player1, x, y);
-
-                            player_acted = true;
-
-                            println!("Missile {}", if hit { "hit!" } else { "missed." });
-                            if hit { audio::play_sound_once(&missile_sound)} else { audio::play_sound_once(&splash_sound)};
-                        }
+                        player_acted = true;
+                        
+                        println!("Missile {}", if hit { "hit!" } else { "missed." });
+                        if hit { audio::play_sound_once(&missile_sound)} else { audio::play_sound_once(&splash_sound)};
                     }
                 }
             }
