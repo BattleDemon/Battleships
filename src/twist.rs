@@ -6,6 +6,7 @@
 use super::base::*;
 // Random library
 use ::rand::prelude::SliceRandom;
+use ::rand::Rng;
 // Graphics library
 use macroquad:: prelude::*;
 // A module I recompiled and made small fixes to, but did not write. Used for grid graphics and logic.
@@ -491,7 +492,7 @@ pub fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
     }
 }
 
-
+/* 
 enum AIDifficulty {
     Easy,
     Medium,
@@ -506,11 +507,22 @@ struct BattleshipAI {
 impl BattleshipAI {
 
     fn make_move(&mut self, opponent:&mut TwistPlayer) {
-
+        match self.difficulty {
+            AIDifficulty::Easy => self.random_attack(opponent),
+            AIDifficulty::Medium => self.strategic_attack(opponent),
+            AIDifficulty::Hard => self.card_based_attack(opponent),
+        }
     }
 
     fn random_attack(&mut self, opponent: &mut TwistPlayer) {
+        let mut rng = ::rand::rng();
+        let x = rng.random_range(0..GRID_SIZE);
+        let y = rng.random_range(0..GRID_SIZE);
         
+        if !self.memory.contains(&(x, y)) {
+            self.memory.push((x, y));
+            // fire missle
+        }
     }
 
     fn strategic_attack(&mut self, opponent: &mut TwistPlayer) {
@@ -520,4 +532,44 @@ impl BattleshipAI {
     fn card_based_attack(&mut self, opponent: &mut TwistPlayer) {
 
     }
+
+    fn use_torpedo(&mut self, opponent: &mut TwistPlayer) {
+        let mut rng = ::rand::rng();
+        let col = rng.random_range(0..GRID_SIZE);
+        
+        opponent.use_card(ActionType::Torpedo);
+        opponent.fire_torpedo(col);
+    }
+
+    fn use_radar(&mut self, opponent: &mut TwistPlayer) {
+        let mut rng = ::rand::rng();
+        let x = rng.random_range(0..GRID_SIZE);
+        let y = rng.random_range(0..GRID_SIZE);
+        
+        opponent.use_card(ActionType::RadarScan);
+        opponent.radar_scan(x, y);
+    }
+
+    fn attack_near(&mut self, x: usize, y: usize, opponent: &mut TwistPlayer) {
+        // Check adjacent cells
+        let targets = [
+            (x.wrapping_sub(1), y),
+            (x + 1, y),
+            (x, y.wrapping_sub(1)),
+            (x, y + 1)
+        ];
+
+        for &(tx, ty) in &targets {
+            if tx < GRID_SIZE && ty < GRID_SIZE 
+                && !self.memory.contains(&(tx, ty))
+            {
+                self.memory.push((tx, ty));
+                opponent.base.fire_missile(tx, ty);
+                self.last_hit = Some((tx, ty));
+                return;
+            }
+        }
+        self.random_attack(opponent);
+    }
 }
+    */
