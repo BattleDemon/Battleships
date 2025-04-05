@@ -32,34 +32,6 @@ const SPLASH_SOUND: &[u8] = include_bytes!("Sound/Splash(new version).wav");
 #[cfg(feature = "twist")] 
 const TORPEDO_SOUND: &[u8] = include_bytes!("Sound/Torpedo(new version).wav");
 
-fn draw_help_menu() {
-    // Semi-transparent background
-    draw_rectangle(100.0, 50.0, 1080.0, 620.0, Color::new(0.0, 0.0, 0.0, 0.8));
-    
-    // Help title
-    draw_text("BATTLESHIP HELP", 150.0, 100.0, 40.0, WHITE);
-
-    // Common / shared Controls
-    draw_text("[Common Controls]", 150.0, 150.0, 30.0, YELLOW);
-    draw_text("- Left Click: Select/Fire (context sensitive)", 170.0, 190.0, 25.0, WHITE);
-    draw_text("- Space: Confirm action/End turn", 170.0, 220.0, 25.0, WHITE);
-    
-    // Classic Mode
-    draw_text("[Classic Mode]", 150.0, 270.0, 30.0, GREEN);
-    draw_text("- Just click to attack!", 170.0, 310.0, 25.0, WHITE);
-    
-    // Twist Mode
-    draw_text("[Twist Mode]", 150.0, 360.0, 30.0, PURPLE);
-    draw_text("- T: Torpedo (vertical strike)", 170.0, 400.0, 25.0, WHITE);
-    draw_text("- R: Reinforce ship cell", 170.0, 430.0, 25.0, WHITE);
-    draw_text("- S: Radar Scan (reveal 5 cells)", 170.0, 460.0, 25.0, WHITE);
-    draw_text("- P: Patrol (move ships)", 170.0, 490.0, 25.0, WHITE);
-    draw_text("  - After pressing P: Use arrow keys to move", 190.0, 520.0, 25.0, WHITE);
-    
-    // Close help menu
-    draw_text("Press H to close", 150.0, 570.0, 25.0, YELLOW);
-}
-
 /*------ Main Loop ------ */
 // Change the title of the game window based of of the compile specifications
 #[cfg_attr(feature = "twist", macroquad::main("Battleship Twisted"))]
