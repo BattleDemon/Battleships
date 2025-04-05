@@ -491,3 +491,33 @@ pub fn draw_hand_to_screen(hand: &[ActionType], x: f32, y: f32) {
     }
 }
 
+
+enum AIDifficulty {
+    Easy,
+    Medium,
+    Hard,
+}
+
+struct BattleshipAI {
+    difficulty: AIDifficulty,
+    memory: Vec<(usize, usize)>,
+}
+
+impl BattleshipAI {
+
+    fn make_move(&mut self, opponent:&mut TwistPlayer) {
+
+    }
+
+    fn random_attack(&mut self, opponent: &mut TwistPlayer) {
+        
+    }
+
+    fn strategic_attack(&mut self, opponent: &mut TwistPlayer) {
+
+    }
+
+    fn card_based_attack(&mut self, opponent: &mut TwistPlayer) {
+
+    }
+}
