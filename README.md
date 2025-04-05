@@ -1091,30 +1091,41 @@ Between `Prototype4` and now I transfered all the functions enums and structs ov
 ### How is the overall desing
 Modular desing
 
-Visual
 
-Mechanical
+Visual desing
+
+
+Mechanical desing
 
 ### What Changes could I make
 Card Balance
 
+
 Ai Opponent
 
+
 More Feedback
+
 
 ### What issues did I encounter
 Dependency Errors
 
+
 Grid Coordinates Mismatched
 
+
 Quarrels with a new language
+
 
 ### How were these issues solved
 Debugging 
 
+
 Testing 
 
+
 Updating 
+
 
 ### What would I do if I were to do this again
 
