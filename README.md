@@ -844,7 +844,7 @@ use twist::*;
 
 Twist Functionality and loop
 ```rs 
-/* --- Input for the Twisted Version --- */
+        /* --- Input for the Twisted Version --- */
         #[cfg(feature = "twist")] 
         {
             // Stops if the player has acted
@@ -992,18 +992,87 @@ Twist Functionality and loop
 
 Base Functionality and loop
 ```rs
-#[cfg(not(feature = "twist"))]{
-            if !player_acted {
+        /*--- Classic Mode input --- */
+        // Classic base mode input handleing
+        #[cfg(not(feature = "twist"))]{
+            if !player_acted && game_state != GameState::Else{
+                // Gets the grid pos of where the mouse was when it was clicked
                 if is_mouse_button_pressed(MouseButton::Left) {
                     if let Some((x,y)) = current_player.get_clicked_cell() {
                         let hit = current_player.fire_missile(&mut current_opponent, x, y);
 
                         player_acted = true;
-                        
+
                         println!("Missile {}", if hit { "hit!" } else { "missed." });
                         if hit { audio::play_sound_once(&missile_sound)} else { audio::play_sound_once(&splash_sound)};
                     }
                 }
+            }
+        }
+```
+
+Turn Change
+```rs
+        /*--- Change Turn --- */
+        if is_key_pressed(KeyCode::Space) {
+            // Switch to inbetween screen if the player has acted
+            if player_acted {
+                println!("Player changed"); 
+                println!(" ");
+                
+                // Draws cards 
+                #[cfg(feature = "twist")]{
+                    if current_player.deck.deck_list.is_empty() {
+                        current_player.draw_hand();
+                    }
+                    let newcard = current_player.draw_card().unwrap();
+                    current_player.hand.push(newcard);
+                }
+        
+                // Reset player_acted here
+                player_acted = false;
+                game_state = GameState::Else;
+                turncounter += 1.0;
+            } else {
+                // Switch to next turn
+                if game_state == GameState::Else {
+                    // Switch turns and reset state
+                    if player_turn == GameState::Player1 {
+                        game_state = GameState::Player2;
+                        player_turn = GameState::Player2;
+                    } else {
+                        game_state = GameState::Player1;
+                        player_turn = GameState::Player1;
+                    }
+                    // Ensure player_acted is reset for the new turn
+                    player_acted = false;
+                }
+            }
+        }
+```
+
+Win Check
+```rs
+        /*--- Win Check --- */
+        #[cfg(feature = "twist")]{
+            // Win check for twist (just added a .base)
+            if player1.base.ship_count == 0 {
+                player_won = GameState::Player2;
+                break;
+            }else if player2.base.ship_count == 0 {
+                player_won = GameState::Player1;
+                break;
+            }
+        }
+
+        #[cfg(not(feature = "twist"))]{
+            // Win check for base
+            if player1.ship_count == 0 {
+                player_won = GameState::Player2;
+                break;
+            }else if player2.ship_count == 0 {
+                player_won = GameState::Player1;
+                break;
             }
         }
 ```
