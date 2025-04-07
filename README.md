@@ -8,7 +8,6 @@
     - [The History of Battleships](#the-history-of-battleships)
     - [My twist](#my-twist)
     - [Flowchart](#flowchart)
-    - [Timeline](#timeline)
     - [If i get more time](#if-i-get-more-time)
 - [Prototyping](#prototyping)
     - [Prototype 1: Basic Game Loop](#prototype-1-basic-game-loop)
@@ -32,9 +31,8 @@
         - [Video of Functionality](#video-of-functionality-3)
         - [Issues and Solutions](#issues-and-solutions-4)
     - [After the planned features: AI? Save and Load?](#after-planned-features-ai-save-and-load)
-        - [Code At Submisison](#code-at-submission)
-        - [Video of Functionality](#video-of-functionality-4)
-        - [Issues and Solutions](#issues-and-solutions-5)
+        - [AI](#ai)
+        - [Save abd Load](#save-and-load)
 - [Reflection](#reflection)
     - [How is the overall desing](#how-is-the-overall-desing)
     - [What Changes could i make](#what-changes-could-i-make)
@@ -77,9 +75,6 @@
 ### Flowchart
 
 ![screenshot](images/Screenshot_flowchart.png)
-
-### Timeline
-Please see [timeline.md](timeline.md)
 
 ### If I get more time
 
@@ -368,7 +363,7 @@ Radarscan Function
 Random Ship Placement
 ```rs
     fn place_ship(&mut self, ship_type: ShipType, orientation: Orientation) -> Option<Ship> {
-        let mut rng = ::rand::rng(); // Corrected RNG call
+        let mut rng = ::rand::rng(); 
         
         let ship_length = match ship_type {
             ShipType::Battleship => 4,
@@ -388,12 +383,12 @@ Random Ship Placement
     
             // Determine possible movement directions
             let mut directions = match orientation {
-                Orientation::Horizontal => vec![(0, 1), (0, -1)], // Right, Left (y changes)
-                Orientation::Verticle => vec![(1, 0), (-1, 0)],   // Down, Up (x changes)
+                Orientation::Horizontal => vec![(0, 1), (0, -1)], 
+                Orientation::Verticle => vec![(1, 0), (-1, 0)],   
             };
             
-            directions.shuffle(&mut rng); // Randomize direction order
-            let (dx, dy) = directions[0]; // Pick a random direction
+            directions.shuffle(&mut rng); 
+            let (dx, dy) = directions[0]; 
             
             let mut positions = vec![];
     
@@ -1092,9 +1087,8 @@ To play follow the instructions in [How to run](#how-to-run)
 Between `Prototype4` and now I transfered all the functions enums and structs over to their respective files, this process was involved a lot of trial and error, and took about a day of debugging to make a compileable programm. Some of these issue included making sure everything that needs to be public was public, in the twist section every refrence to base player variabled and methods was `twistplayer.base.var/func` instead of just `twistplayer.var/func`. 
 
 ### After Planned features: AI? Save and load?
-#### Code at submission
-#### Video of functionality
-#### Issues and Solutions
+#### AI
+#### Save And Load
 
 ## Reflection
 ### How is the overall desing
