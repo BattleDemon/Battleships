@@ -37,7 +37,6 @@
     - [How is the overall desing](#how-is-the-overall-desing)
     - [What Changes could I make and What would I do if I were to do this Again](#what-changes-could-i-make-and-what-would-i-do-if-i-were-to-do-this-again)
     - [What issues did I encounter](#what-issues-did-i-encounter)
-    - [Player Feedback](#player-feedback)
     
 ## How to Play 
 ### Controls
@@ -1148,10 +1147,3 @@ Modularity: I broke up the code into modules like base.rs and twist.rs to keep t
 Crates: I used external crates like macroquad for rendering and rand for randomness to help build out the game.
 
 Traits: I used traits like Clone and PartialEq to handle copying and comparing enums/structs.
-
-### Player Feedback
-#### Gabe's feedback
-
-#### Hugo's feedback
-
-#### Kay's feedback
