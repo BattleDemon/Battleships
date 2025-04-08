@@ -124,12 +124,12 @@ impl BasePlayer {
         p.boardgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(150.));
         p.boardgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
         p.boardgrid.set_cell_bg_color(BLACK);
-        p.boardgrid.set_gap_color(GREEN);
+        p.boardgrid.set_gap_color(LIME);
         // Change grid offset and cell colour for the guess board
         p.guessgrid.set_x_offset(macroquad_grid_dex::Position::Pixels(screen_width()-100.));
         p.guessgrid.set_y_offset(macroquad_grid_dex::Position::Pixels(50.));
         p.guessgrid.set_cell_bg_color(BLACK);
-        p.guessgrid.set_gap_color(GREEN);
+        p.guessgrid.set_gap_color(LIME);
 
         return p;
     }
@@ -275,7 +275,7 @@ impl BasePlayer {
 
 pub fn draw_help_menu() {
     // Semi-transparent background
-    draw_rectangle(100.0, 50.0, 1080.0, 620.0, Color::new(0.0, 0.0, 0.0, 0.8));
+    draw_rectangle(100.0, 50.0, 1080.0, 620.0, Color::new(0.0, 0.0, 0.0, 0.85));
     
     // Help title
     draw_text("BATTLESHIP HELP", 150.0, 100.0, 40.0, WHITE);
