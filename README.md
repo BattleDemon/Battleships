@@ -35,7 +35,7 @@
         - [Save abd Load](#save-and-load)
 - [Reflection](#reflection)
     - [How is the overall desing](#how-is-the-overall-desing)
-    - [What Changes could i make](#what-changes-could-i-make)
+    - [What Changes could I make and What would I do if I were to do this Again](#what-changes-could-i-make-and-what-would-i-do-if-i-were-to-do-this-again)
     - [What issues did I encounter](#what-issues-did-i-encounter)
     - [Player Feedback](#player-feedback)
     
@@ -1088,27 +1088,25 @@ Between `Prototype4` and now I transfered all the functions enums and structs ov
 
 ### After Planned features: AI? Save and load?
 #### AI
+
+After completing work on the planned features of this project I began work on one of my additional features, AI but after working on it for about two hours I realised that this was way too ambitious to complete in the last three days before the assingment is due and so i decided to abandom this feature and focus on the documenting of this assingment and other assingments. 
+
 #### Save And Load
 
+Another feature I started working on was a save and load feature but the way I found required you to put a serialise and deserialise trait on every single struct and enum in my project and all the imported libraries I import. So eventually i decided to abandon this feature aswell. 
+
 ## Reflection
-### How is the overall desing
-Modular desing
+### How is the overall design
+The overall design of my project follows an object oriented aproach utilising Rust's features such as structs and enums. 
 
+My project follows a modula design with the diffirent versions of the game seperated into diffirent files which are then combined in the main to allow for the turning on and off of its features. 
 
-Visual desing
+The visual design of my project was made to resemble a submariens radar using the green and black screen. The colour choices for the diffirent types of cells such as occupied - Green , Hit - Red , Reinforced - Dark Green andd Missed - Grey, provide an easibly understandable meaning for the cells. 
 
+### What Changes could I make and What would I do if I were to do this again
+Currently the cards are balanced such that you have 1 in 3 cards is a missle, 3 in 16 cards is a torpedo, 1 in 6 cards is a patrol or a radarscan, and 7 in 48 cards is a reinfoce. Although this might not be the optimal compisition of the deck and if i were to release this as a proper game i would certainly do much more testing to hopefully balance the deck properly. 
 
-Mechanical desing
-
-### What Changes could I make
-Card Balance
-
-
-Ai Opponent
-
-
-More Feedback
-
+I set out origionly planning to include an AI opponet instead of the player 2 I ended up implemeting, so if i had more time i would definitly implement an AI oppenent. And if i were to do this again i would of continued with my origional plan and include the AI to begin with. 
 
 ### What issues did I encounter
 Dependency Errors
@@ -1133,7 +1131,7 @@ Updating
 ### What would I do if I were to do this again
 
 ### What have I learnt
-Rust
+This was my first proper project using Rust so most of what I learnt was about Rust and how to use it. This was also my first time working on a compiled language so It was fun learning how I could use this as a benifit with the features compile options. 
 
 ### Player Feedback
 
