@@ -32,7 +32,7 @@
         - [Issues and Solutions](#issues-and-solutions-4)
     - [After the planned features: AI? Save and Load?](#after-planned-features-ai-save-and-load)
         - [AI](#ai)
-        - [Save abd Load](#save-and-load)
+        - [Save and Load](#save-and-load)
 - [Reflection](#reflection)
     - [How is the overall desing](#how-is-the-overall-desing)
     - [What Changes could I make and What would I do if I were to do this Again](#what-changes-could-i-make-and-what-would-i-do-if-i-were-to-do-this-again)
@@ -56,8 +56,8 @@
 3. To run the twisted version of the game use 'cargo run --features'
 4. Alternatively you could navigate to the Battleships/Release folder 
 5. Launch the .exe for the version you want to play
-    - battleshipsV1.0.exe for the base game 
-    - battleshipsTwistedV1.0.exe for the twisted game
+    - battleshipsV1.1.exe for the base game 
+    - battleshipsTwistedV1.1.exe for the twisted game
 
 ## Preplanning 
 ### What is Battleships
@@ -1097,7 +1097,7 @@ Another feature I started working on was a save and load feature but the way I f
 
 ## Reflection
 ### How is the overall design
-The overall design of my project follows an object oriented aproach utilising Rust's features such as structs and enums. 
+The overall design of my project follows an object oriented aproach utilising Rust's features such as structs and enums. This allowed for a more stream lined programming expreince. 
 
 My project follows a modula design with the diffirent versions of the game seperated into diffirent files which are then combined in the main to allow for the turning on and off of its features. 
 
@@ -1109,7 +1109,7 @@ Currently the cards are balanced such that you have 1 in 3 cards is a missle, 3 
 I set out origionly planning to include an AI opponet instead of the player 2 I ended up implemeting, so if i had more time i would definitly implement an AI oppenent. And if i were to do this again i would of continued with my origional plan and include the AI to begin with. 
 
 ### What issues did I encounter
-Dependency Errors
+Through out the project I encounted many issues notibly the issue with the `Macroquad-Grid` library which required me to recompile and make small changes to the library in order to use it. 
 
 
 Grid Coordinates Mismatched
@@ -1131,7 +1131,8 @@ Updating
 ### What would I do if I were to do this again
 
 ### What have I learnt
-This was my first proper project using Rust so most of what I learnt was about Rust and how to use it. This was also my first time working on a compiled language so It was fun learning how I could use this as a benifit with the features compile options. 
+This was my first proper project using Rust so most of what I learnt was about Rust and how to use it. This included learning about ownership, borrowing and mutability. Structs, Enums and impl. Modules and Crates. Types, Traits and lifetimes. 
+This was also my first time working on a compiled language so It was fun learning how I could use this as a benifit with the features compile options. 
 
 ### Player Feedback
 
