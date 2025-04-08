@@ -1097,42 +1097,62 @@ Another feature I started working on was a save and load feature but the way I f
 
 ## Reflection
 ### How is the overall design
-The overall design of my project follows an object oriented aproach utilising Rust's features such as structs and enums. This allowed for a more stream lined programming expreince. 
+The overall design of the project successfully combines object-oriented principles with Rust’s features to create a clean, modular, and maintainable codebase. I used structs like BasePlayer, TwistPlayer, and Board to organize the game’s data and behavior in a way that made the code intuitive and easy to manage. The Board struct, for example, handled the grid state and provided methods like change_cell to update the grid during gameplay. I also utilized enums such as Cells and ActionType to model discrete game states and actions, ensuring type safety and clarity in the game’s logic.
 
-My project follows a modula design with the diffirent versions of the game seperated into diffirent files which are then combined in the main to allow for the turning on and off of its features. 
+I followed a modular design approach, splitting the code into separate files: base.rs for core gameplay mechanics, twist.rs for advanced features like action cards and ship movement, and main.rs for the game loop and user interface handling. This made it easy to separate concerns and manage different aspects of the game. Additionally, Rust’s feature flags allowed me to compile certain features, like the twisted mode, only when needed, which kept the codebase more efficient and flexible.
 
-The visual design of my project was made to resemble a submariens radar using the green and black screen. The colour choices for the diffirent types of cells such as occupied - Green , Hit - Red , Reinforced - Dark Green andd Missed - Grey, provide an easibly understandable meaning for the cells. 
+Visually, the green-and-black radar-like interface was designed to evoke the feeling of naval warfare. The color choices provided clear feedback to the player, with green indicating occupied cells, red for hits, dark green for reinforced ships, and gray for misses. I made sure the grid's offsets and cell sizes were calibrated correctly to ensure accurate mouse clicks. 
 
 ### What Changes could I make and What would I do if I were to do this again
-Currently the cards are balanced such that you have 1 in 3 cards is a missle, 3 in 16 cards is a torpedo, 1 in 6 cards is a patrol or a radarscan, and 7 in 48 cards is a reinfoce. Although this might not be the optimal compisition of the deck and if i were to release this as a proper game i would certainly do much more testing to hopefully balance the deck properly. 
+If I were to revisit this project, there are several improvements I’d consider. First, I’d focus on balancing the deck of action cards. Playtesting would likely reveal issues like torpedoes being too powerful or reinforce cards being too rare. For a better gameplay experience, I could implement a dynamic deck system where discarded cards are reshuffled, adding more strategy and unpredictability.
 
-I set out origionly planning to include an AI opponet instead of the player 2 I ended up implemeting, so if i had more time i would definitly implement an AI oppenent. And if i were to do this again i would of continued with my origional plan and include the AI to begin with. 
+Adding an AI opponent is also something I’d prioritize. The AI would track player ship locations and make strategic decisions, such as prioritizing clustered attacks. I would likely start working on the AI earlier in the project, perhaps using a state machine for decision-making. This would allow for a more polished and challenging gameplay experience.
+
+On the code side, I’d improve error handling to cover edge cases such as empty decks or invalid moves, likely using Result types to handle these situations more gracefully. I would also write unit tests for core functions like fire_missile and radar_scan to catch any regressions or bugs early on.
+
+In terms of UI/UX, I’d add animations for ship movements and attacks to make the game feel more dynamic and engaging. Tooltips explaining the different action cards in twisted mode would also help players understand the special mechanics better and improve the overall user experience.
 
 ### What issues did I encounter
-Through out the project I encounted many issues notibly the issue with the `Macroquad-Grid` library which required me to recompile and make small changes to the library in order to use it. 
+Several issues arose throughout the development process. The first major problem was library compatibility, where the macroquad-grid library was outdated and caused compilation errors with newer Rust versions. This was a significant hurdle as I couldn’t proceed with the game’s rendering until the issue was resolved.
 
+Another issue was with the grid coordinates, where mouse clicks would register in adjacent cells due to incorrect mapping between screen and grid coordinates. This caused frustration as players couldn’t interact with the grid as intended, which led to errors in gameplay.
 
-Grid Coordinates Mismatched
+The borrow checker was another challenge, particularly when trying to mutate player and opponent states during attacks. The strict ownership model in Rust made it difficult to manage mutable references, and the borrow checker flagged errors, forcing me to rethink how data was passed around between functions.
 
-
-Quarrels with a new language
-
+Lastly, during patrol mode, I ran into bugs where ships would either overlap or move outside the grid bounds. This issue resulted in incorrect gameplay behavior, making it clear that additional checks and validation were needed.
 
 ### How were these issues solved
-Debugging 
+During the development of the project, I encountered a few key challenges, but I was able to resolve them with some careful adjustments. One issue was library compatibility, specifically with the macroquad-grid library, which was outdated and caused compilation errors with newer Rust versions. To fix this, I forked the repository, updated its dependencies, and made necessary changes to the syntax to match modern Rust, ensuring the library worked correctly with the latest version.
 
+Another issue involved grid coordinate mismatches, where mouse clicks weren’t aligning with the grid cells. This was due to incorrect coordinate mapping. I resolved this by adjusting the grid offsets and double-checking the conversion between screen and grid coordinates. The correction ensured accurate mapping of mouse clicks to the correct cells.
 
-Testing 
-
-
-Updating 
-
-
-### What would I do if I were to do this again
+I also faced ownership challenges when trying to mutate player and opponent states during attacks, as Rust's borrow checker flagged errors. To overcome this, I used mutable references (&mut) sparingly and restructured the functions to minimize overlapping borrows, allowing the game to function smoothly. Lastly, in patrol mode, I encountered bugs where ships could overlap or move out of bounds. I addressed this by adding bounds checks and collision detection to prevent invalid moves and ensure ships stayed within the grid limits.
 
 ### What have I learnt
-This was my first proper project using Rust so most of what I learnt was about Rust and how to use it. This included learning about ownership, borrowing and mutability. Structs, Enums and impl. Modules and Crates. Types, Traits and lifetimes. 
-This was also my first time working on a compiled language so It was fun learning how I could use this as a benifit with the features compile options. 
+This project was my first real dive into Rust, and I got a solid understanding of its unique features while building the Battleship game. Here's a quick rundown of what I learned:
+
+Ownership: Rust's ownership system keeps things safe in memory without needing a garbage collector.
+
+Borrowing: I used references (&) to avoid copying data unnecessarily—like borrowing the opponent's board when firing a missile.
+
+Mutability: I learned when to use mut—for example, I needed mutable access in methods like change_cell to modify the grid.
+
+Structs: I used structs like Board, Player, and Ship to organize different parts of the game. The Board struct kept track of the grid and had methods to update it.
+
+Enums: I used enums to define states and actions, like Cells (Occupied, Hit) and ActionType (for the special cards in the twisted mode).
+
+impl: I attached methods to structs and enums using impl, such as adding the change_cell method to the Board.
+
+Modularity: I broke up the code into modules like base.rs and twist.rs to keep the core gameplay separate from the advanced features.
+
+Crates: I used external crates like macroquad for rendering and rand for randomness to help build out the game.
+
+Traits: I used traits like Clone and PartialEq to handle copying and comparing enums/structs.
 
 ### Player Feedback
 
+#### Gabe's feedback
+
+#### Hugo's feedback
+
+#### Kay's feedback
