@@ -1150,7 +1150,6 @@ Crates: I used external crates like macroquad for rendering and rand for randomn
 Traits: I used traits like Clone and PartialEq to handle copying and comparing enums/structs.
 
 ### Player Feedback
-
 #### Gabe's feedback
 
 #### Hugo's feedback
